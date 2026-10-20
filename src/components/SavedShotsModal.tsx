@@ -95,7 +95,7 @@ export const SavedShotsModal: React.FC<SavedShotsModalProps> = ({
               <FolderOpen className="w-4 h-4 text-white" />
             </div>
             <div>
-              <h2 className="text-sm font-bold">Meus Shots Salvos</h2>
+              <h2 className="text-sm font-bold">Meus Frames Salvos</h2>
               <p className="text-[11px] text-neutral-400">
                 Biblioteca local persistida (IndexedDB)
               </p>

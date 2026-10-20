@@ -303,7 +303,7 @@ export const TopBar = () => {
           className="flex items-center space-x-1.5 px-2.5 py-1.5 rounded-xl bg-[#1c1c1c] hover:bg-[#252525] border border-[#2b2b2b] text-xs font-semibold transition-colors cursor-pointer"
         >
           <FolderOpen className="w-3.5 h-3.5 text-indigo-400" />
-          <span>Meus Shots</span>
+          <span>Meus Frames</span>
         </button>
       </div>
 

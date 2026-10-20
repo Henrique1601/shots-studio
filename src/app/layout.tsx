@@ -20,27 +20,27 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://shots-app.vercel.app"),
-  title: "Shots Studio — Mockup Generator 3D & Presentation Studio",
+  metadataBase: new URL("https://framecraft.app"),
+  title: "FrameCraft — 3D Mockup Generator & Visual Craft Studio",
   description:
-    "Create stunning 3D device mockups for iPhone 17, MacBook Pro, iPad, Apple Watch, and Desktop. High-resolution export in 4K/6K, intelligent auto-contain, and studio lighting.",
+    "Craft studio-grade 3D device mockups for iPhone 17, MacBook Pro, iPad, Apple Watch, and Desktop. High-resolution export in 4K/6K, intelligent auto-contain, and studio lighting.",
   keywords: [
+    "framecraft",
     "mockup generator",
-    "shots.so",
     "3d mockup",
     "device mockup",
     "iphone 17 mockup",
     "macbook mockup",
     "screenshot beautifier",
-    "presentation mockup",
+    "presentation studio",
   ],
   authors: [{ name: "Henrique Bezerra" }],
   openGraph: {
-    title: "Shots Studio — Mockup Generator 3D",
+    title: "FrameCraft — 3D Mockup Generator & Visual Studio",
     description:
-      "Create high-fidelity 3D device mockups directly in your browser. iPhone 17, MacBook Pro, Watch Ultra and sleek Browser frames.",
-    url: "https://shots-app.vercel.app",
-    siteName: "Shots Studio",
+      "Craft high-fidelity 3D device mockups directly in your browser. iPhone 17, MacBook Pro, Watch Ultra and sleek Browser frames.",
+    url: "https://framecraft.app",
+    siteName: "FrameCraft",
     locale: "en_US",
     type: "website",
     images: [
@@ -48,15 +48,15 @@ export const metadata: Metadata = {
         url: "/shots-assets/apple-touch-icon-512.png",
         width: 512,
         height: 512,
-        alt: "Shots Studio Logo",
+        alt: "FrameCraft Studio Logo",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Shots Studio — Mockup Generator 3D",
+    title: "FrameCraft — 3D Mockup Generator & Visual Studio",
     description:
-      "Create high-fidelity 3D device mockups directly in your browser. iPhone 17, MacBook Pro, Watch Ultra and sleek Browser frames.",
+      "Craft high-fidelity 3D device mockups directly in your browser. iPhone 17, MacBook Pro, Watch Ultra and sleek Browser frames.",
     images: ["/shots-assets/apple-touch-icon-512.png"],
   },
   icons: {
