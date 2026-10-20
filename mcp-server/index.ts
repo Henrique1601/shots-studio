@@ -3,9 +3,9 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { z } from "zod";
 
-// Initialize Shots Studio MCP Server
+// Initialize FrameCraft Studio MCP Server
 const server = new McpServer({
-  name: "shots-studio-mcp",
+  name: "framecraft-mcp",
   version: "1.0.0",
 });
 
@@ -43,8 +43,8 @@ const GRADIENT_PRESETS = [
 
 // TOOL 1: List all available presets
 server.tool(
-  "shots_list_presets",
-  "Lists all available mockup devices, frames, social media aspect ratios, and background presets in Shots Studio",
+  "framecraft_list_presets",
+  "Lists all available mockup devices, frames, social media aspect ratios, and background presets in FrameCraft Studio",
   {},
   async () => {
     return {
@@ -91,8 +91,8 @@ server.tool(
 
 // TOOL 2: Create a complete mockup configuration
 server.tool(
-  "shots_create_mockup",
-  "Creates a ready-to-use Shots Studio mockup configuration with devices, backgrounds, 3D tilt, annotations and shadows",
+  "framecraft_create_mockup",
+  "Creates a ready-to-use FrameCraft Studio mockup configuration with devices, backgrounds, 3D tilt, annotations and shadows",
   {
     image: z.string().describe("Image URL or file path for the primary mockup screen"),
     frameType: z
@@ -108,7 +108,7 @@ server.tool(
     headline: z.string().optional().describe("Top or bottom headline overlay banner"),
     badge: z.string().optional().describe("Accent badge tag (e.g. 'NEW', '2.0', 'BETA')"),
     subtitle: z.string().optional().describe("Descriptive subtitle text under the headline"),
-    watermarkText: z.string().default("Shots.so").describe("Custom watermark or brand signature text"),
+    watermarkText: z.string().default("FrameCraft").describe("Custom watermark or brand signature text"),
     backgroundBlur: z.number().min(0).max(40).default(0).describe("Studio Depth of Field Bokeh blur (0 to 40px)"),
     grainIntensity: z.number().min(0).max(100).default(0).describe("Film grain texture intensity (0 to 100%)"),
     aspectRatio: z.enum(["16:9", "1:1", "4:5", "9:16", "3:1", "16:10", "custom"]).default("16:9").describe("Canvas aspect ratio"),
@@ -148,7 +148,7 @@ server.tool(
       shadowOpacity: 45,
       aspectRatio,
       watermark: !!watermarkText,
-      watermarkText: watermarkText || "Shots.so",
+      watermarkText: watermarkText || "FrameCraft",
       backgroundBlur,
       grainIntensity,
       annotationsEnabled: !!headline || !!badge,
@@ -166,7 +166,7 @@ server.tool(
       content: [
         {
           type: "text",
-          text: `### 📸 Shots Studio Mockup Configuration Created Successfully!\n\n` +
+          text: `### 📸 FrameCraft Studio Mockup Configuration Created Successfully!\n\n` +
             `* **Device:** \`${frameType}\`\n` +
             `* **Canvas Ratio:** \`${aspectRatio}\` (Export scale 2x Retina)\n` +
             `* **3D Tilt:** TiltX: \`${tiltX}°\`, TiltY: \`${tiltY}°\`\n` +
@@ -182,7 +182,7 @@ server.tool(
 
 // TOOL 3: Automated Social Media Post Mockup Generator
 server.tool(
-  "shots_social_post",
+  "framecraft_social_post",
   "Creates an automated, platform-optimized social media post mockup for Twitter, Instagram, LinkedIn, Dribbble, YouTube or Product Hunt",
   {
     platform: z.enum(["twitter", "instagram", "linkedin", "dribbble", "youtube", "producthunt"]).describe("Target social media platform"),
@@ -238,7 +238,7 @@ server.tool(
       annotationBadgeColor: platform === "twitter" ? "#0284c7" : platform === "linkedin" ? "#2563eb" : "#ec4899",
       watermark: true,
       watermarkPlatform: platform === "twitter" ? "twitter" : platform === "instagram" ? "instagram" : "shots",
-      watermarkText: "@shots",
+      watermarkText: "@framecraft_app",
       exportScale: 2,
     };
 
@@ -261,7 +261,7 @@ server.tool(
 
 // TOOL 4: Ray.so / Carbon Code Snippet Studio Generator
 server.tool(
-  "shots_code_snippet",
+  "framecraft_code_snippet",
   "Creates a professional code snippet frame mockup (Ray.so / Carbon style) with syntax highlighting, IDE title and themes",
   {
     code: z.string().describe("Source code snippet string"),
@@ -299,7 +299,7 @@ server.tool(
       tiltZ: 0,
       zoom: 100,
       watermark: true,
-      watermarkText: "Shots.so/code",
+      watermarkText: "FrameCraft/code",
       backgroundBlur: 0,
       grainIntensity: 10,
     };
@@ -322,7 +322,7 @@ server.tool(
 
 // TOOL 5: Magic Palette Gradient Generator
 server.tool(
-  "shots_magic_palette",
+  "framecraft_magic_palette",
   "Generates 4 harmonious studio gradients from one or more hex colors",
   {
     colors: z.array(z.string()).min(1).max(3).describe("Array of 1 to 3 hex color codes (e.g. ['#6366f1', '#ec4899'])"),
@@ -376,6 +376,6 @@ async function run() {
 }
 
 run().catch((error) => {
-  console.error("Fatal error starting Shots Studio MCP Server:", error);
+  console.error("Fatal error starting FrameCraft Studio MCP Server:", error);
   process.exit(1);
 });

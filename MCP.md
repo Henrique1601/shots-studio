@@ -1,6 +1,6 @@
-# 🔌 Shots Studio MCP Server (Model Context Protocol)
+# 🔌 FrameCraft Studio MCP Server (Model Context Protocol)
 
-O **Shots Studio MCP Server** permite que inteligências artificiais (Claude Desktop, Antigravity, Cursor, agentes autônomos ou scripts CLI) automatizem a criação de mockups profissionais, posts para redes sociais e apresentações de código sem precisar abrir o navegador manualmente.
+O **FrameCraft Studio MCP Server** permite que inteligências artificiais (Claude Desktop, Antigravity, Cursor, agentes autônomos ou scripts CLI) automatizem a criação de mockups profissionais, posts para redes sociais e apresentações de código sem precisar abrir o navegador manualmente.
 
 ---
 
@@ -30,11 +30,11 @@ No macOS: `~/Library/Application Support/Claude/claude_desktop_config.json`
 ```json
 {
   "mcpServers": {
-    "shots-studio": {
+    "framecraft-studio": {
       "command": "node",
       "args": [
         "--experimental-strip-types",
-        "c:/Users/Public/Downloads/shots-studio/mcp-server/index.ts"
+        "c:/Users/Public/Downloads/framecraft-studio/mcp-server/index.ts"
       ]
     }
   }
@@ -48,11 +48,11 @@ Adicione nas configurações de MCP (`mcp.json`):
 ```json
 {
   "mcpServers": {
-    "shots-studio": {
+    "framecraft-studio": {
       "command": "node",
       "args": [
         "--experimental-strip-types",
-        "c:\\Users\\Public\\Downloads\\shots-studio\\mcp-server\\index.ts"
+        "c:\\Users\\Public\\Downloads\\framecraft-studio\\mcp-server\\index.ts"
       ]
     }
   }
@@ -63,7 +63,7 @@ Adicione nas configurações de MCP (`mcp.json`):
 
 ## 🧰 Ferramentas Disponíveis (Tools)
 
-### 1. `shots_social_post`
+### 1. `framecraft_social_post`
 Cria automaticamente um post de rede social otimizado com dimensões exatas, staging 3D, sombras e paleta harmoniosa.
 
 * **Parâmetros:**
@@ -80,7 +80,7 @@ Cria automaticamente um post de rede social otimizado com dimensões exatas, sta
   {
     "platform": "twitter",
     "image": "https://meu-app.com/preview.png",
-    "headline": "Apresentando o Shots Studio v2.0",
+    "headline": "Apresentando o FrameCraft Studio v2.0",
     "subtitle": "Crie mockups impressionantes em segundos",
     "badge": "LANÇAMENTO",
     "device": "macbook",
@@ -90,7 +90,7 @@ Cria automaticamente um post de rede social otimizado com dimensões exatas, sta
 
 ---
 
-### 2. `shots_code_snippet`
+### 2. `framecraft_code_snippet`
 Gera mockups de código estilo Ray.so / Carbon com janela macOS, realce de sintaxe, numeração de linhas e temas modernos.
 
 * **Parâmetros:**
@@ -103,7 +103,7 @@ Gera mockups de código estilo Ray.so / Carbon com janela macOS, realce de sinta
 
 ---
 
-### 3. `shots_create_mockup`
+### 3. `framecraft_create_mockup`
 Criação com controle total de aparelhos, ângulo 3D, profundidade de campo e efeitos.
 
 * **Parâmetros:**
@@ -118,10 +118,10 @@ Criação com controle total de aparelhos, ângulo 3D, profundidade de campo e e
 
 ---
 
-### 4. `shots_magic_palette`
+### 4. `framecraft_magic_palette`
 Gera 4 gradientes de estúdio harmônicos (Mesh, Ambient Glow, Linear Duo, Deep Velvet Contrast) a partir de cores hexadecimais fornecidas.
 
 ---
 
-### 5. `shots_list_presets`
+### 5. `framecraft_list_presets`
 Lista todos os aparelhos suportados, formatos de tela para mídias sociais, coleções 3D e layouts disponíveis.
