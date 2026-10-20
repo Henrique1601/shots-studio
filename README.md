@@ -3,7 +3,7 @@
 [![Next.js](https://img.shields.io/badge/Next.js-16.4.2-black?style=for-the-badge&logo=next.js)](https://nextjs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue?style=for-the-badge&logo=typescript)](https://www.typescriptlang.org/)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind-CSS-38B2AC?style=for-the-badge&logo=tailwind-css)](https://tailwindcss.com/)
-[![Tests](https://img.shields.io/badge/Tests-16%20Passing-brightgreen?style=for-the-badge)](package.json)
+[![Tests](https://img.shields.io/badge/Tests-17%20Passing-brightgreen?style=for-the-badge)](package.json)
 [![SEO](https://img.shields.io/badge/SEO-Lighthouse%2090%2B-orange?style=for-the-badge)](src/app/sitemap.ts)
 [![Security](https://img.shields.io/badge/OWASP-Secured-darkgreen?style=for-the-badge)](next.config.ts)
 [![Vercel](https://img.shields.io/badge/Vercel-Deployed-000000?style=for-the-badge&logo=vercel)](https://shots-app.vercel.app)
@@ -28,42 +28,30 @@ O **Shots Studio** reproduz a experiência completa de desktop app do Shots.so d
 
 ## ✨ Recursos & Funcionalidades
 
-### 📱 Dispositivos e Molduras Fotorrealistas
+### 📱 Dispositivos e Molduras Fotorrealistas (100% Calibrados)
+- **Calibração Subpixel Perfeita:** Recortes milimétricos com zero sangramento de fundo (*zero background bleed*).
 - **iPhone 17 & iPhone 16 Pro:** Proporção 1508 × 3278 com Dynamic Island e máscara SVG de display com cantos curvos.
-- **MacBook Pro 16:** Tampa de tela de alumínio com base de teclado e proporção 4893 × 3164.
+- **MacBook Pro 16:** Tampa de alumínio, base de teclado, proporção 4893 × 3164 e recorte milimétrico perfeito.
 - **iPad Pro 13:** Borda ultrafina simétrica e display 2048 × 3415.
-- **Apple Watch Ultra:** Caixa de titânio robusta e visor 1640 × 2009.
+- **Apple Watch Ultra:** Caixa de titânio robusta e visor calibrado.
 - **Minimal Desktop:** Janela moderna 16:10 com botões de controle de janela nativos e título dinâmico.
 - **Screenshot & Browser:** Molduras configuráveis com estilos *Glass Dark*, *Glass Light*, *Liquid Glass*, *Inset Light*, *Inset Dark*, *Border* e *Outline*, com barra de URL/Título totalmente personalizável.
 
-### 🎨 Backgrounds e Cenários 3D
+### 🎨 Backgrounds e Cenários 3D (Ultra-HD 4K)
 - **Gradients Oficiais:** Paleta de gradientes vibrantes (*Shots Official, Sunset Glow, Pastel Dream, Sky Coral, Mint Punch, Cosmic, Hyper Violet, Aurora Borealis, Midnight Obsidian, Cyberpunk Neon, Hyperion Gold*).
-- **Paper Glass Textures:** 5 papéis de parede fotorrealistas de vidro texturizado (*Glass 1 a 5*).
-- **macOS Tahoe Wallpapers:** Coleção de paisagens de alta resolução (*Tahoe Day, Night, Light e Dark*).
+- **Paper Glass Textures (Ultra-HD):** Fundos de vidro prismático vetorial com refração e ruído iridescente (*Prism Glass, Frosted Silk, Obsidian Glass, Liquid Cyber, Aurora Glass*).
+- **macOS Tahoe & Landscape 4K:** Fotografias e paisagens em altíssima resolução 2560px Retina (*Tahoe Valley 4K, Sierra Night 4K, Alpine Mist 4K, Pacific Horizon 4K*).
 - **Cores Sólidas:** Fundos minimalistas de alto contraste (*Deep Black, Studio Dark, Cyber Slate, Clean White*).
-- **3D Shapes Scene:** Formas volumétricas flutuantes (esferas, anéis, prismas) com profundidade de campo (*depth blur*) e rotação espacial.
+- **3D Shapes Scene (7 Packs em Resolução Completa):** Modelos volumétricos 3D descompactados em 4K (*Glass Blue, Glass Pink, Metal 3D, Dark Metal, Light Metal, Inflatable, Plushy*) com 6 layouts espaciais (*Corners, Cluster, Diagonal, Orbit, Cascade, Framing*).
 
-### 📐 Dimensões & Presets Sociais
-- **Padrões:** 16:9, 3:2, 4:3, 5:4, 1:1, 4:5, 3:4, 2:3, 9:16.
-- **Redes Sociais:** Instagram Post (1:1), Stories/Reels/TikTok (9:16), Portrait (4:5), Twitter/X (16:9), Dribbble Shot (4:3), Banner (16:9).
-- **Tamanho Customizado:** Entradas de largura e altura manuais em pixels.
+### 🗄️ "Meus Shots" — Biblioteca Local com Dexie (IndexedDB)
+- **Persistência Completa sem Login:** Salve suas composições com 1 clique direto no navegador.
+- **Gerenciador de Projetos:** Reabra, renomeie e continue editando projetos anteriores instantaneamente.
 
-### 🎮 Controles Espaciais 3D
-- **Zoom Pad:** De 70% a 200% de escala fluida.
-- **Tilt X, Y & Z:** Rotação tridimensional em tempo real com perspectiva física de `150em`.
-- **Presets de Ângulo:** *Flat Center, Isometric Left, Isometric Right, Perspective Tilt, Rear Elevation, Bottom Focus, Side Angle*.
-- **Quick 1-Click Reset:** Botão flutuante para restaurar a rotação e o zoom imediatamente.
-
-### 🎬 Presets de Animação 3D & Video Timeline
-- **Presets Cinematográficos em Tempo Real:**
-  - *Float:* Oscilação suave com efeito flutuante gravitacional no eixo Y e Z.
-  - *Spin 3D (Turntable):* Rotação horizontal panorâmica contínua em 360°.
-  - *Breathe (Pulse):* Respiração e zoom sutil de alta elegância.
-  - *Orbit:* Movimento orbital tridimensional combinando eixos X, Y e Z.
-- **Linha do Tempo Interativa:**
-  - Play/Pause com timer em décimos de segundo (`0:00.0 / 0:05.0`).
-  - Barra de progresso deslizável (*scrubber*) interativa com arraste.
-  - Controle de duração ajustável (`3s`, `5s`, `10s`) e modo Loop contínuo.
+### 🎬 Presets de Animação 3D, Video Timeline & Exportação WebM
+- **Exportação de Vídeo (.webm):** Gravação nativa a 30 FPS diretamente no browser sem servidor.
+- **Presets Cinematográficos em Tempo Real:** *Float*, *Spin 3D (Turntable)*, *Breathe (Pulse)*, *Orbit*.
+- **Linha do Tempo Interativa:** Play/Pause com timer em décimos de segundo (`0:00.0 / 0:05.0`), barra de progresso deslizável (*scrubber*) e modo Loop.
 
 ### ⚡ Exportação Client-Side de Alta Resolução
 - Formatos: **PNG**, **JPEG**, **WebP**.

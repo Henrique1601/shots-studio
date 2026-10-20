@@ -493,20 +493,24 @@ export const LeftSidebar = () => {
               {config.shapesSceneEnabled && (
                 <div className="space-y-2 pt-2 border-t border-[#333]">
                   <div className="text-[9px] text-neutral-400 uppercase font-semibold">
-                    Shapes Pack
+                    Shapes Pack (7 Collections)
                   </div>
-                  <div className="grid grid-cols-3 gap-1">
+                  <div className="grid grid-cols-2 gap-1">
                     {(
                       [
-                        { id: "glass-blue", label: "Blue" },
-                        { id: "glass-pink", label: "Pink" },
+                        { id: "glass-blue", label: "Glass Blue" },
+                        { id: "glass-pink", label: "Glass Pink" },
+                        { id: "metal", label: "Metal 3D" },
+                        { id: "metal-gradient-dark", label: "Dark Metal" },
+                        { id: "metal-gradient-light", label: "Light Metal" },
+                        { id: "inflatable", label: "Inflatable" },
                         { id: "plushy", label: "Plushy" },
                       ] as const
                     ).map((pack) => (
                       <button
                         key={pack.id}
                         onClick={() => updateConfig({ shapesPack: pack.id })}
-                        className={`py-1 rounded text-[9px] font-medium border text-center transition-all cursor-pointer ${
+                        className={`py-1 px-1.5 rounded text-[9px] font-medium border text-center transition-all cursor-pointer ${
                           config.shapesPack === pack.id
                             ? "border-cyan-400 bg-cyan-400/10 text-white"
                             : "border-transparent bg-[#1c1c1c] text-neutral-400 hover:text-white"
@@ -518,26 +522,31 @@ export const LeftSidebar = () => {
                   </div>
 
                   <div className="text-[9px] text-neutral-400 uppercase font-semibold">
-                    Layout Pattern
+                    Layout Pattern (6 Layouts)
                   </div>
                   <div className="grid grid-cols-3 gap-1">
-                    {(["layout-7", "layout-1", "layout-3"] as const).map(
-                      (lay) => (
-                        <button
-                          key={lay}
-                          onClick={() =>
-                            updateConfig({ shapesLayoutName: lay })
-                          }
-                          className={`py-1 rounded text-[9px] font-medium border text-center transition-all cursor-pointer ${
-                            config.shapesLayoutName === lay
-                              ? "border-white bg-[#333] text-white"
-                              : "border-transparent bg-[#1c1c1c] text-neutral-400 hover:text-white"
-                          }`}
-                        >
-                          {lay}
-                        </button>
-                      )
-                    )}
+                    {(
+                      [
+                        { id: "layout-1", label: "Corners" },
+                        { id: "layout-7", label: "Cluster" },
+                        { id: "layout-3", label: "Diagonal" },
+                        { id: "layout-orbit", label: "Orbit" },
+                        { id: "layout-cascade", label: "Cascade" },
+                        { id: "layout-framing", label: "Framing" },
+                      ] as const
+                    ).map((lay) => (
+                      <button
+                        key={lay.id}
+                        onClick={() => updateConfig({ shapesLayoutName: lay.id })}
+                        className={`py-1 rounded text-[9px] font-medium border text-center transition-all cursor-pointer ${
+                          config.shapesLayoutName === lay.id
+                            ? "border-white bg-[#333] text-white"
+                            : "border-transparent bg-[#1c1c1c] text-neutral-400 hover:text-white"
+                        }`}
+                      >
+                        {lay.label}
+                      </button>
+                    ))}
                   </div>
                 </div>
               )}

@@ -102,7 +102,14 @@ export interface MockupConfig {
   portraitEffect: boolean;
   // 3D Shapes Scene
   shapesSceneEnabled: boolean;
-  shapesPack: "glass-blue" | "glass-pink" | "plushy";
+  shapesPack:
+    | "glass-blue"
+    | "glass-pink"
+    | "inflatable"
+    | "metal"
+    | "metal-gradient-dark"
+    | "metal-gradient-light"
+    | "plushy";
   shapesLayoutName: string;
   shapesItems: number[];
   // Animation & Motion
@@ -152,9 +159,9 @@ export const DEVICE_SPECS: Record<FrameType, DeviceSpec> = {
     maskSvg: "/shots-assets/devices/iphone17_display.svg",
     screenBounds: {
       left: "10.01%",
-      top: "14.61%",
-      width: "79.91%",
-      height: "75.35%",
+      top: "10.01%",
+      width: "79.98%",
+      height: "79.98%",
     },
     containerClass: "iphone-17",
   },
@@ -166,9 +173,9 @@ export const DEVICE_SPECS: Record<FrameType, DeviceSpec> = {
     maskSvg: "/shots-assets/devices/iphone16pro_display.svg",
     screenBounds: {
       left: "10.01%",
-      top: "14.61%",
-      width: "79.91%",
-      height: "75.35%",
+      top: "10.03%",
+      width: "79.97%",
+      height: "79.96%",
     },
     containerClass: "iphone-16-pro",
   },
@@ -180,9 +187,9 @@ export const DEVICE_SPECS: Record<FrameType, DeviceSpec> = {
     maskSvg: "/shots-assets/devices/macbook_portrait_display.svg",
     screenBounds: {
       left: "16.70%",
-      top: "18.62%",
-      width: "66.61%",
-      height: "64.66%",
+      top: "16.72%",
+      width: "66.65%",
+      height: "66.59%",
     },
     containerClass: "macbook-pro-16",
   },
@@ -193,9 +200,9 @@ export const DEVICE_SPECS: Record<FrameType, DeviceSpec> = {
     deviceImg: "/shots-assets/devices/ipad_portrait_spacegray.png",
     maskSvg: "/shots-assets/devices/ipad_portrait_display.svg",
     screenBounds: {
-      left: "9.96%",
-      top: "9.99%",
-      width: "80.04%",
+      left: "10.00%",
+      top: "10.01%",
+      width: "80.00%",
       height: "80.00%",
     },
     containerClass: "ipad-pro-13",
@@ -207,10 +214,10 @@ export const DEVICE_SPECS: Record<FrameType, DeviceSpec> = {
     deviceImg: "/shots-assets/devices/watch_portrait_ultra.png",
     maskSvg: "/shots-assets/devices/watch_portrait_display.svg",
     screenBounds: {
-      left: "24.94%",
-      top: "25.04%",
-      width: "50.06%",
-      height: "49.98%",
+      left: "25.00%",
+      top: "39.62%",
+      width: "50.00%",
+      height: "22.65%",
     },
     containerClass: "watch-ultra",
   },
@@ -246,6 +253,34 @@ export const SHAPES_LAYOUTS: ShapesLayout[] = [
       { scale: 1.2, stick: "bottom right", x: 40, y: 40, rotate: 0, blur: 0.5, zIndex: -1 },
       { scale: 1.1, stick: "bottom left", x: -50, y: 50, rotate: 0, blur: 0.5, zIndex: 1 },
       { scale: 0.5, stick: "bottom left", x: -130, y: -50, rotate: 0, blur: 0, zIndex: 1 },
+    ],
+  },
+  {
+    name: "layout-orbit",
+    layout: [
+      { scale: 1.3, stick: "top left", x: -40, y: -40, rotate: 15, blur: 0, zIndex: 1 },
+      { scale: 0.9, stick: "top right", x: 50, y: -30, rotate: -20, blur: 0.5, zIndex: -1 },
+      { scale: 1.4, stick: "bottom right", x: 60, y: 50, rotate: 30, blur: 0, zIndex: 2 },
+      { scale: 0.8, stick: "bottom left", x: -50, y: 40, rotate: -10, blur: 1, zIndex: -1 },
+      { scale: 0.6, stick: "top left", x: 60, y: -80, rotate: 45, blur: 2, zIndex: -2 },
+    ],
+  },
+  {
+    name: "layout-cascade",
+    layout: [
+      { scale: 1.5, stick: "top right", x: 80, y: -40, rotate: -15, blur: 0, zIndex: 2 },
+      { scale: 1.1, stick: "top right", x: 20, y: 30, rotate: 25, blur: 0.5, zIndex: 1 },
+      { scale: 0.8, stick: "bottom left", x: -60, y: 60, rotate: 10, blur: 1, zIndex: -1 },
+      { scale: 0.5, stick: "bottom left", x: 30, y: 90, rotate: -30, blur: 2, zIndex: -2 },
+    ],
+  },
+  {
+    name: "layout-framing",
+    layout: [
+      { scale: 1.1, stick: "top left", x: -50, y: 0, rotate: -20, blur: 0, zIndex: 1 },
+      { scale: 0.9, stick: "bottom left", x: -50, y: 0, rotate: 20, blur: 0.5, zIndex: 1 },
+      { scale: 1.1, stick: "top right", x: 50, y: 0, rotate: 20, blur: 0, zIndex: 1 },
+      { scale: 0.9, stick: "bottom right", x: 50, y: 0, rotate: -20, blur: 0.5, zIndex: 1 },
     ],
   },
 ];
@@ -367,32 +402,32 @@ export const PRESET_GRADIENTS = [
 export const PRESET_PAPER_GLASS = [
   {
     id: "glass-1",
-    name: "Glass 1",
-    value: "url('/shots-assets/display-assets_backgrounds_paper-glass_preview_glass-1.jpg') center/cover no-repeat",
+    name: "Prism Glass (HD)",
+    value: "radial-gradient(circle at 15% 15%, rgba(255, 255, 255, 0.45) 0%, transparent 40%), linear-gradient(135deg, #e0e7ff 0%, #fae8ff 50%, #f1f5f9 100%)",
     preview: "/shots-assets/display-assets_backgrounds_paper-glass_preview_glass-1.jpg",
   },
   {
     id: "glass-2",
-    name: "Glass 2",
-    value: "url('/shots-assets/display-assets_backgrounds_paper-glass_preview_glass-2.jpg') center/cover no-repeat",
+    name: "Frosted Silk (HD)",
+    value: "radial-gradient(circle at 85% 15%, rgba(255, 255, 255, 0.6) 0%, transparent 45%), linear-gradient(135deg, #fdfbf7 0%, #ebedee 100%)",
     preview: "/shots-assets/display-assets_backgrounds_paper-glass_preview_glass-2.jpg",
   },
   {
     id: "glass-3",
-    name: "Glass 3",
-    value: "url('/shots-assets/display-assets_backgrounds_paper-glass_preview_glass-3.jpg') center/cover no-repeat",
+    name: "Obsidian Glass (HD)",
+    value: "radial-gradient(circle at 50% 10%, rgba(129, 140, 248, 0.25) 0%, transparent 50%), linear-gradient(135deg, #090d16 0%, #1e1b4b 50%, #030712 100%)",
     preview: "/shots-assets/display-assets_backgrounds_paper-glass_preview_glass-3.jpg",
   },
   {
     id: "glass-4",
-    name: "Glass 4",
-    value: "url('/shots-assets/display-assets_backgrounds_paper-glass_preview_glass-4.jpg') center/cover no-repeat",
+    name: "Liquid Cyber (HD)",
+    value: "radial-gradient(circle at 90% 90%, rgba(244, 63, 94, 0.3) 0%, transparent 45%), radial-gradient(circle at 10% 10%, rgba(99, 102, 241, 0.35) 0%, transparent 50%), linear-gradient(135deg, #09090b 0%, #18181b 100%)",
     preview: "/shots-assets/display-assets_backgrounds_paper-glass_preview_glass-4.jpg",
   },
   {
     id: "glass-5",
-    name: "Glass 5",
-    value: "url('/shots-assets/display-assets_backgrounds_paper-glass_preview_glass-5.jpg') center/cover no-repeat",
+    name: "Aurora Glass (HD)",
+    value: "radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.4) 0%, transparent 60%), linear-gradient(135deg, #052e16 0%, #064e3b 50%, #022c22 100%)",
     preview: "/shots-assets/display-assets_backgrounds_paper-glass_preview_glass-5.jpg",
   },
 ];
@@ -400,26 +435,26 @@ export const PRESET_PAPER_GLASS = [
 export const PRESET_TAHOE = [
   {
     id: "tahoe-day",
-    name: "Tahoe Day",
-    value: "url('/shots-assets/display-assets_backgrounds_desktop_preview_tahoe-landscape-day.jpg') center/cover no-repeat",
+    name: "Tahoe Valley 4K",
+    value: "url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=2560&q=85') center/cover no-repeat",
     preview: "/shots-assets/display-assets_backgrounds_desktop_preview_tahoe-landscape-day.jpg",
   },
   {
     id: "tahoe-night",
-    name: "Tahoe Night",
-    value: "url('/shots-assets/display-assets_backgrounds_desktop_preview_tahoe-landscape-night.jpg') center/cover no-repeat",
+    name: "Sierra Night 4K",
+    value: "url('https://images.unsplash.com/photo-1519681393784-d120267933ba?auto=format&fit=crop&w=2560&q=85') center/cover no-repeat",
     preview: "/shots-assets/display-assets_backgrounds_desktop_preview_tahoe-landscape-night.jpg",
   },
   {
     id: "tahoe-light",
-    name: "Tahoe Light",
-    value: "url('/shots-assets/display-assets_backgrounds_desktop_preview_tahoe-light.jpg') center/cover no-repeat",
+    name: "Alpine Mist 4K",
+    value: "url('https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?auto=format&fit=crop&w=2560&q=85') center/cover no-repeat",
     preview: "/shots-assets/display-assets_backgrounds_desktop_preview_tahoe-light.jpg",
   },
   {
     id: "tahoe-dark-desk",
-    name: "Tahoe Dark",
-    value: "url('/shots-assets/display-assets_backgrounds_desktop_preview_tahoe-dark.jpg') center/cover no-repeat",
+    name: "Pacific Horizon 4K",
+    value: "url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=2560&q=85') center/cover no-repeat",
     preview: "/shots-assets/display-assets_backgrounds_desktop_preview_tahoe-dark.jpg",
   },
 ];

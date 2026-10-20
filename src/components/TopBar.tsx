@@ -16,9 +16,12 @@ import {
   SlidersHorizontal,
   X,
   Check,
+  FolderOpen,
+  Film,
 } from "lucide-react";
 import * as htmlToImage from "html-to-image";
 import confetti from "canvas-confetti";
+import { SavedShotsModal } from "./SavedShotsModal";
 
 export const TopBar = () => {
   const {
@@ -36,6 +39,7 @@ export const TopBar = () => {
 
   const [isExporting, setIsExporting] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
+  const [isSavedShotsOpen, setIsSavedShotsOpen] = useState(false);
 
   const exportOptions = {
     quality: 0.95,
@@ -76,6 +80,73 @@ export const TopBar = () => {
       console.error("Export error:", err);
       showToast("Erro ao exportar imagem", "warning");
     } finally {
+      setIsExporting(false);
+    }
+  };
+
+  const handleExportVideo = async () => {
+    const node = document.getElementById("mockup-export-container");
+    if (!node) return;
+
+    try {
+      setIsExporting(true);
+      showToast("Gravando clipe de vídeo WebM... 🎬", "info");
+
+      const initialCanvas = await htmlToImage.toCanvas(node, { pixelRatio: 1.5 });
+      const recordCanvas = document.createElement("canvas");
+      recordCanvas.width = initialCanvas.width;
+      recordCanvas.height = initialCanvas.height;
+      const ctx = recordCanvas.getContext("2d");
+      if (!ctx) return;
+
+      const stream = recordCanvas.captureStream(30);
+      const mimeType = MediaRecorder.isTypeSupported("video/webm;codecs=vp9")
+        ? "video/webm;codecs=vp9"
+        : "video/webm";
+      const recorder = new MediaRecorder(stream, { mimeType });
+      const chunks: Blob[] = [];
+
+      recorder.ondataavailable = (e) => {
+        if (e.data.size > 0) chunks.push(e.data);
+      };
+
+      recorder.onstop = () => {
+        const blob = new Blob(chunks, { type: "video/webm" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `shot-clip-${Date.now()}.webm`;
+        a.click();
+        confetti({
+          particleCount: 75,
+          spread: 60,
+          origin: { y: 0.15 },
+        });
+        showToast("Vídeo exportado com sucesso (.webm)! 🎥");
+        setIsExporting(false);
+      };
+
+      recorder.start();
+
+      const durationMs = 3000;
+      const startTime = Date.now();
+
+      const captureFrame = async () => {
+        if (Date.now() - startTime >= durationMs) {
+          recorder.stop();
+          return;
+        }
+        try {
+          const frameCanvas = await htmlToImage.toCanvas(node, { pixelRatio: 1.5 });
+          ctx.drawImage(frameCanvas, 0, 0);
+        } catch (err) {}
+        requestAnimationFrame(captureFrame);
+      };
+
+      captureFrame();
+    } catch (err) {
+      console.error("Video export error:", err);
+      showToast("Navegador não suporta gravação direta", "warning");
       setIsExporting(false);
     }
   };
@@ -151,6 +222,15 @@ export const TopBar = () => {
           </div>
           <span>Templates</span>
           <span className="text-neutral-500 text-[10px]">›</span>
+        </button>
+
+        <button
+          onClick={() => setIsSavedShotsOpen(true)}
+          aria-label="Abrir biblioteca de shots salvos"
+          className="flex items-center space-x-1.5 px-2.5 py-1.5 rounded-xl bg-[#1c1c1c] hover:bg-[#252525] border border-[#2b2b2b] text-xs font-semibold transition-colors cursor-pointer"
+        >
+          <FolderOpen className="w-3.5 h-3.5 text-indigo-400" />
+          <span>Meus Shots</span>
         </button>
       </div>
 
@@ -270,6 +350,17 @@ export const TopBar = () => {
           </div>
         </button>
 
+        {/* Video WebM Export Button */}
+        <button
+          onClick={handleExportVideo}
+          disabled={isExporting}
+          title="Export 3D Animation as Video (.webm)"
+          aria-label="Export 3D Animation as Video"
+          className="p-2 rounded-xl bg-[#1c1c1c] hover:bg-[#262626] text-pink-400 hover:text-pink-300 border border-[#2b2b2b] transition-colors cursor-pointer"
+        >
+          <Film className="w-3.5 h-3.5" />
+        </button>
+
         {/* Popover Settings de Exportação Oficial */}
         {showSettings && (
           <div className="absolute right-0 top-12 w-64 p-3.5 rounded-2xl bg-[#1c1c1c] border border-[#2e2e2e] shadow-2xl space-y-3 z-50 animate-in fade-in zoom-in-95 duration-100">
@@ -345,6 +436,12 @@ export const TopBar = () => {
           </div>
         )}
       </div>
+
+      {/* Saved Shots Modal */}
+      <SavedShotsModal
+        isOpen={isSavedShotsOpen}
+        onClose={() => setIsSavedShotsOpen(false)}
+      />
     </header>
   );
 };

@@ -1,6 +1,6 @@
 import { describe, it } from "node:test";
 import assert from "node:assert";
-import { DEVICE_SPECS, PRESET_GRADIENTS } from "../src/types/mockup.ts";
+import { DEVICE_SPECS, PRESET_GRADIENTS, SHAPES_LAYOUTS } from "../src/types/mockup.ts";
 
 describe("Device Specs and Preset Integrity", () => {
   it("includes all supported frame types with valid aspect ratios", () => {
@@ -45,6 +45,14 @@ describe("Device Specs and Preset Integrity", () => {
         grad.value.startsWith("linear-gradient"),
         `Gradient ${grad.id} must be a valid linear-gradient`
       );
+    }
+  });
+
+  it("verifies shapes layouts have at least 6 rich presets", () => {
+    assert.ok(SHAPES_LAYOUTS.length >= 6, "Should contain at least 6 shape layouts");
+    for (const l of SHAPES_LAYOUTS) {
+      assert.ok(l.name, "Layout must have a name");
+      assert.ok(l.layout.length >= 4, "Layout must have at least 4 shape positions");
     }
   });
 });

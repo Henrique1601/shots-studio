@@ -253,7 +253,7 @@ export const MockupCanvas = () => {
         {config.shapesSceneEnabled &&
           currentShapesLayout.layout.map((shape, idx) => {
             const itemNumber = config.shapesItems[idx % config.shapesItems.length] || 1;
-            const imgSrc = `/shots-assets/3d-shapes/${config.shapesPack}/${itemNumber}.avif`;
+            const imgSrc = `/shots-assets/3d-shapes/${config.shapesPack}/full/${itemNumber}.avif`;
             return (
               <motion.img
                 key={idx}
@@ -321,6 +321,7 @@ export const MockupCanvas = () => {
                     WebkitMaskImage: deviceSpec.maskSvg ? `url("${deviceSpec.maskSvg}")` : undefined,
                     maskSize: "100% 100%",
                     WebkitMaskSize: "100% 100%",
+                    boxShadow: "0 0 0 1px #050505",
                   }}
                   className="overflow-hidden bg-[#0a0a0a] flex items-center justify-center cursor-pointer z-10"
                   onClick={() => !imageUrl && fileInputRef.current?.click()}
@@ -351,7 +352,7 @@ export const MockupCanvas = () => {
                   <img
                     src={deviceSpec.deviceImg}
                     alt={deviceSpec.name}
-                    className="absolute inset-0 w-full h-full object-contain block select-none pointer-events-none z-20"
+                    className="absolute inset-0 w-full h-full object-fill block select-none pointer-events-none z-20"
                   />
                 )}
               </div>
