@@ -101,22 +101,79 @@ export const RightSidebar = () => {
           </button>
         </div>
 
-        {/* Viewport Presets: 1 col, 2 cols, 3 cols */}
+        {/* Device Mode / Multi-Device Layout: 1 (Single), 2 (Duo), 3 (Trio) */}
         <div className="flex bg-[#141414] p-0.5 rounded-xl">
-          <button className="flex-1 py-1 flex items-center justify-center text-white bg-[#282828] rounded-lg">
-            <span className="w-1.5 h-3 bg-white rounded-sm" />
+          <button
+            onClick={() => {
+              updateConfig({ mockupMode: "single" });
+              showToast("Layout: 1 Aparelho (Single) 📱", "info");
+            }}
+            title="Single Device (1)"
+            className={`flex-1 py-1 flex items-center justify-center rounded-lg transition-all cursor-pointer ${
+              config.mockupMode === "single"
+                ? "bg-[#282828] text-white shadow-sm"
+                : "text-neutral-400 hover:text-white"
+            }`}
+          >
+            <span
+              className={`w-1.5 h-3 rounded-sm ${
+                config.mockupMode === "single" ? "bg-white" : "bg-neutral-500"
+              }`}
+            />
           </button>
-          <button className="flex-1 py-1 flex items-center justify-center text-neutral-400 hover:text-white">
+          <button
+            onClick={() => {
+              updateConfig({ mockupMode: "duo" });
+              showToast("Layout: 2 Aparelhos (Duo) 📱📱", "info");
+            }}
+            title="Duo Devices (2)"
+            className={`flex-1 py-1 flex items-center justify-center rounded-lg transition-all cursor-pointer ${
+              config.mockupMode === "duo"
+                ? "bg-[#282828] text-white shadow-sm"
+                : "text-neutral-400 hover:text-white"
+            }`}
+          >
             <span className="flex space-x-0.5">
-              <span className="w-1 h-3 bg-neutral-500 rounded-sm" />
-              <span className="w-1 h-3 bg-neutral-500 rounded-sm" />
+              <span
+                className={`w-1 h-3 rounded-sm ${
+                  config.mockupMode === "duo" ? "bg-white" : "bg-neutral-500"
+                }`}
+              />
+              <span
+                className={`w-1 h-3 rounded-sm ${
+                  config.mockupMode === "duo" ? "bg-white" : "bg-neutral-500"
+                }`}
+              />
             </span>
           </button>
-          <button className="flex-1 py-1 flex items-center justify-center text-neutral-400 hover:text-white">
+          <button
+            onClick={() => {
+              updateConfig({ mockupMode: "trio" });
+              showToast("Layout: 3 Aparelhos (Trio) 📱📱📱", "info");
+            }}
+            title="Trio Devices (3)"
+            className={`flex-1 py-1 flex items-center justify-center rounded-lg transition-all cursor-pointer ${
+              config.mockupMode === "trio"
+                ? "bg-[#282828] text-white shadow-sm"
+                : "text-neutral-400 hover:text-white"
+            }`}
+          >
             <span className="flex space-x-0.5">
-              <span className="w-0.5 h-3 bg-neutral-500 rounded-sm" />
-              <span className="w-0.5 h-3 bg-neutral-500 rounded-sm" />
-              <span className="w-0.5 h-3 bg-neutral-500 rounded-sm" />
+              <span
+                className={`w-0.5 h-3 rounded-sm ${
+                  config.mockupMode === "trio" ? "bg-white" : "bg-neutral-500"
+                }`}
+              />
+              <span
+                className={`w-0.5 h-3 rounded-sm ${
+                  config.mockupMode === "trio" ? "bg-white" : "bg-neutral-500"
+                }`}
+              />
+              <span
+                className={`w-0.5 h-3 rounded-sm ${
+                  config.mockupMode === "trio" ? "bg-white" : "bg-neutral-500"
+                }`}
+              />
             </span>
           </button>
         </div>

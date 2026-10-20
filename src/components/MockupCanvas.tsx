@@ -14,12 +14,14 @@ export const MockupCanvas = () => {
     imageDimensions,
     setImageUrl,
     setSecondaryImageUrl,
+    setTertiaryImageUrl,
     setImageDimensions,
     updateConfig,
     showToast,
   } = useMockupStore();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const secondaryFileInputRef = useRef<HTMLInputElement>(null);
+  const tertiaryFileInputRef = useRef<HTMLInputElement>(null);
   const canvasWrapperRef = useRef<HTMLDivElement>(null);
   const [isDragging, setIsDragging] = useState(false);
   const [wrapperSize, setWrapperSize] = useState<{ width: number; height: number }>({
@@ -107,6 +109,12 @@ export const MockupCanvas = () => {
     showToast("Segunda imagem carregada com sucesso! 📱", "success");
   };
 
+  const processTertiaryFile = (file: File) => {
+    const url = URL.createObjectURL(file);
+    setTertiaryImageUrl(url);
+    showToast("Terceira imagem carregada com sucesso! 📱", "success");
+  };
+
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault();
     setIsDragging(false);
@@ -138,7 +146,12 @@ export const MockupCanvas = () => {
 
   const mockupRatio = getMockupRatio();
   const isDuo = config.mockupMode === "duo";
-  const effectiveMockupRatio = isDuo ? mockupRatio * 2 + 0.15 : mockupRatio;
+  const isTrio = config.mockupMode === "trio";
+  const effectiveMockupRatio = isTrio
+    ? mockupRatio * 3 + 0.25
+    : isDuo
+    ? mockupRatio * 2 + 0.15
+    : mockupRatio;
 
   // Intelligent Auto-Contain:
   // If mockup is taller than frame, clamp height. If wider, clamp width.
@@ -548,11 +561,23 @@ export const MockupCanvas = () => {
           <motion.div
             {...getMotionAnimation()}
             style={{
-              width: isMockupTallerThanFrame ? "auto" : isDuo ? "86%" : "78%",
-              height: isMockupTallerThanFrame ? (isDuo ? "84%" : "78%") : "auto",
+              width: isMockupTallerThanFrame
+                ? "auto"
+                : isTrio
+                ? "94%"
+                : isDuo
+                ? "86%"
+                : "78%",
+              height: isMockupTallerThanFrame
+                ? isTrio
+                  ? "88%"
+                  : isDuo
+                  ? "84%"
+                  : "78%"
+                : "auto",
               aspectRatio: `${effectiveMockupRatio}`,
-              maxWidth: "92%",
-              maxHeight: "92%",
+              maxWidth: "96%",
+              maxHeight: "94%",
               display: "flex",
               justifyContent: "center",
               alignItems: "center",
@@ -562,7 +587,66 @@ export const MockupCanvas = () => {
               transformOrigin: "center",
             }}
           >
-            {isDuo ? (
+            {isTrio ? (
+              <div
+                className="w-full h-full flex items-center justify-center"
+                style={{ gap: `${config.duoGap ?? 24}px` }}
+              >
+                {/* 1. Left Device */}
+                <div
+                  className="h-full flex items-center justify-center transition-transform duration-300 flex-1 max-w-[34%]"
+                  style={{
+                    aspectRatio: `${mockupRatio}`,
+                    transform:
+                      config.animationPreset === "none"
+                        ? "rotateZ(-3deg) translateY(10px) scale(0.96)"
+                        : undefined,
+                  }}
+                >
+                  {renderMockupItem(
+                    imageUrl,
+                    () => fileInputRef.current?.click(),
+                    false
+                  )}
+                </div>
+
+                {/* 2. Center Device (Elevated) */}
+                <div
+                  className="h-full flex items-center justify-center transition-transform duration-300 flex-1 max-w-[34%] z-15"
+                  style={{
+                    aspectRatio: `${mockupRatio}`,
+                    transform:
+                      config.animationPreset === "none"
+                        ? "translateY(-4px) scale(1.02)"
+                        : undefined,
+                  }}
+                >
+                  {renderMockupItem(
+                    config.secondaryImageUrl || imageUrl,
+                    () => secondaryFileInputRef.current?.click(),
+                    true
+                  )}
+                </div>
+
+                {/* 3. Right Device */}
+                <div
+                  className="h-full flex items-center justify-center transition-transform duration-300 flex-1 max-w-[34%]"
+                  style={{
+                    aspectRatio: `${mockupRatio}`,
+                    transform:
+                      config.animationPreset === "none"
+                        ? "rotateZ(3deg) translateY(10px) scale(0.96)"
+                        : undefined,
+                  }}
+                >
+                  {renderMockupItem(
+                    config.tertiaryImageUrl || imageUrl,
+                    () => tertiaryFileInputRef.current?.click(),
+                    true
+                  )}
+                </div>
+              </div>
+            ) : isDuo ? (
               <div
                 className="w-full h-full flex items-center justify-center"
                 style={{ gap: `${config.duoGap ?? 32}px` }}
@@ -623,6 +707,16 @@ export const MockupCanvas = () => {
           onChange={(e) => {
             const f = e.target.files?.[0];
             if (f) processSecondaryFile(f);
+          }}
+        />
+        <input
+          ref={tertiaryFileInputRef}
+          type="file"
+          accept="image/*"
+          className="hidden"
+          onChange={(e) => {
+            const f = e.target.files?.[0];
+            if (f) processTertiaryFile(f);
           }}
         />
       </div>

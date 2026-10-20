@@ -34,6 +34,7 @@ export const LeftSidebar = () => {
     imageUrl,
     setImageUrl,
     setSecondaryImageUrl,
+    setTertiaryImageUrl,
     setImageDimensions,
     updateConfig,
     setDeviceModalOpen,
@@ -41,6 +42,7 @@ export const LeftSidebar = () => {
   } = useMockupStore();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const secondaryFileInputRef = useRef<HTMLInputElement>(null);
+  const tertiaryFileInputRef = useRef<HTMLInputElement>(null);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   const [inputW, setInputW] = useState(config.customWidth.toString());
@@ -105,6 +107,15 @@ export const LeftSidebar = () => {
       const url = URL.createObjectURL(file);
       setSecondaryImageUrl(url);
       showToast("Segunda imagem carregada! 📱", "success");
+    }
+  };
+
+  const handleTertiaryUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const url = URL.createObjectURL(file);
+      setTertiaryImageUrl(url);
+      showToast("Terceira imagem carregada! 📱", "success");
     }
   };
 
@@ -213,7 +224,7 @@ export const LeftSidebar = () => {
             </div>
           )}
 
-          {/* LAYOUT MODE (Single vs Duo) */}
+          {/* LAYOUT MODE (Single, Duo, Trio) */}
           <div>
             <div className="text-[10px] font-bold text-neutral-400 tracking-wider mb-1.5">
               LAYOUT MODE
@@ -227,7 +238,7 @@ export const LeftSidebar = () => {
                     : "text-neutral-400 hover:text-white"
                 }`}
               >
-                Single
+                1 Single
               </button>
               <button
                 onClick={() => updateConfig({ mockupMode: "duo" })}
@@ -237,15 +248,25 @@ export const LeftSidebar = () => {
                     : "text-neutral-400 hover:text-white"
                 }`}
               >
-                Duo / Multi
+                2 Duo
+              </button>
+              <button
+                onClick={() => updateConfig({ mockupMode: "trio" })}
+                className={`flex-1 py-1.5 text-xs rounded-lg transition-all cursor-pointer ${
+                  config.mockupMode === "trio"
+                    ? "bg-[#333333] text-white font-medium"
+                    : "text-neutral-400 hover:text-white"
+                }`}
+              >
+                3 Trio
               </button>
             </div>
           </div>
 
-          {/* Media Upload Area */}
+          {/* Media Upload Area (Slot 1) */}
           <div>
             <div className="text-[10px] font-bold text-neutral-400 tracking-wider mb-1.5">
-              {config.mockupMode === "duo" ? "PRIMARY MEDIA (1º DISPOSITIVO)" : "MEDIA"}
+              {config.mockupMode !== "single" ? "1º DISPOSITIVO (MEDIA)" : "MEDIA"}
             </div>
             <div
               onClick={() => fileInputRef.current?.click()}
@@ -255,7 +276,7 @@ export const LeftSidebar = () => {
                 <Plus className="w-3.5 h-3.5 text-neutral-200 group-hover:text-white" />
               </div>
               <span className="text-[10px] text-neutral-400 group-hover:text-neutral-200">
-                {imageUrl ? "Substituir mídia" : "Drop media or click to choose"}
+                {imageUrl ? "Substituir 1ª mídia" : "Drop media or click to choose"}
               </span>
             </div>
             <input
@@ -267,11 +288,11 @@ export const LeftSidebar = () => {
             />
           </div>
 
-          {/* SECONDARY MEDIA (Duo Mode) */}
-          {config.mockupMode === "duo" && (
+          {/* SECONDARY MEDIA (Slot 2 for Duo or Trio) */}
+          {(config.mockupMode === "duo" || config.mockupMode === "trio") && (
             <div>
               <div className="text-[10px] font-bold text-neutral-400 tracking-wider mb-1.5">
-                SECONDARY MEDIA (2º DISPOSITIVO)
+                2º DISPOSITIVO (MEDIA)
               </div>
               <div
                 onClick={() => secondaryFileInputRef.current?.click()}
@@ -291,25 +312,54 @@ export const LeftSidebar = () => {
                 className="hidden"
                 onChange={handleSecondaryUpload}
               />
+            </div>
+          )}
 
-              {/* Duo Gap Slider */}
-              <div className="mt-2 flex items-center justify-between text-xs px-1">
-                <span className="text-neutral-400 text-[11px]">Duo Spacing</span>
-                <div className="flex items-center space-x-2 w-28">
-                  <input
-                    type="range"
-                    min="0"
-                    max="100"
-                    value={config.duoGap ?? 32}
-                    onChange={(e) =>
-                      updateConfig({ duoGap: Number(e.target.value) })
-                    }
-                    className="w-full accent-white h-1 bg-[#3a3a3a] rounded-lg appearance-none cursor-pointer"
-                  />
-                  <span className="text-[10px] text-neutral-300 w-4 text-right">
-                    {config.duoGap ?? 32}
-                  </span>
+          {/* TERTIARY MEDIA (Slot 3 for Trio) */}
+          {config.mockupMode === "trio" && (
+            <div>
+              <div className="text-[10px] font-bold text-neutral-400 tracking-wider mb-1.5">
+                3º DISPOSITIVO (MEDIA)
+              </div>
+              <div
+                onClick={() => tertiaryFileInputRef.current?.click()}
+                className="w-full h-16 rounded-xl bg-[#222222] hover:bg-[#282828] border border-dashed border-neutral-700 hover:border-neutral-500 flex flex-col items-center justify-center cursor-pointer transition-all group"
+              >
+                <div className="w-6 h-6 rounded-lg bg-[#303030] group-hover:bg-[#383838] flex items-center justify-center mb-1 transition-colors">
+                  <Plus className="w-3 h-3 text-neutral-200 group-hover:text-white" />
                 </div>
+                <span className="text-[9px] text-neutral-400 group-hover:text-neutral-200">
+                  {config.tertiaryImageUrl ? "Substituir 3ª imagem" : "Upload 3rd device media"}
+                </span>
+              </div>
+              <input
+                ref={tertiaryFileInputRef}
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={handleTertiaryUpload}
+              />
+            </div>
+          )}
+
+          {/* Spacing Slider for Duo / Trio */}
+          {(config.mockupMode === "duo" || config.mockupMode === "trio") && (
+            <div className="flex items-center justify-between text-xs px-1">
+              <span className="text-neutral-400 text-[11px]">Multi Spacing</span>
+              <div className="flex items-center space-x-2 w-28">
+                <input
+                  type="range"
+                  min="0"
+                  max="80"
+                  value={config.duoGap ?? 24}
+                  onChange={(e) =>
+                    updateConfig({ duoGap: Number(e.target.value) })
+                  }
+                  className="w-full accent-white h-1 bg-[#3a3a3a] rounded-lg appearance-none cursor-pointer"
+                />
+                <span className="text-[10px] text-neutral-300 w-4 text-right">
+                  {config.duoGap ?? 24}
+                </span>
               </div>
             </div>
           )}

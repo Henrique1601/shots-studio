@@ -44,6 +44,14 @@ describe("Duo Layout & Canvas Annotations Logic", () => {
     assert.ok(duoRatio > 1.0, "Two vertical devices with spacing form a roughly 1:1 or landscape box");
   });
 
+  it("calculates effective trio aspect ratio wider than duo mockup", () => {
+    const singleRatio = 9 / 19.5;
+    const duoRatio = singleRatio * 2 + 0.15;
+    const trioRatio = singleRatio * 3 + 0.25;
+    assert.ok(trioRatio > duoRatio, "Trio ratio must be wider than duo ratio");
+    assert.ok(trioRatio > 1.5, "Three vertical devices form a widescreen 16:9 composition");
+  });
+
   it("builds valid 2-color linear-gradient string with specified angle", () => {
     const color1 = "#6366f1";
     const color2 = "#ec4899";

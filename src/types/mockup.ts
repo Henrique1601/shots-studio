@@ -116,9 +116,10 @@ export interface MockupConfig {
   animationPreset: AnimationPreset;
   isAnimationPlaying: boolean;
   animationDuration: number;
-  // Duo / Multi-Device Mode
-  mockupMode: "single" | "duo";
+  // Duo / Multi-Device Mode (Single, Duo, Trio)
+  mockupMode: "single" | "duo" | "trio";
   secondaryImageUrl?: string | null;
+  tertiaryImageUrl?: string | null;
   duoGap: number;
   // Text Annotations
   annotationsEnabled: boolean;

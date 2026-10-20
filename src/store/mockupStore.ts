@@ -21,6 +21,7 @@ interface MockupStore {
   removeToast: (id: string) => void;
   setImageUrl: (url: string | null) => void;
   setSecondaryImageUrl: (url: string | null) => void;
+  setTertiaryImageUrl: (url: string | null) => void;
   setImageDimensions: (dims: { width: number; height: number } | null) => void;
   setDeviceModalOpen: (open: boolean) => void;
   setExportSettingsOpen: (open: boolean) => void;
@@ -68,6 +69,7 @@ const defaultConfig: MockupConfig = {
   animationDuration: 5,
   mockupMode: "single",
   secondaryImageUrl: null,
+  tertiaryImageUrl: null,
   duoGap: 24,
   annotationsEnabled: false,
   annotationHeadline: "Your Headline Here",
@@ -105,6 +107,11 @@ export const useMockupStore = create<MockupStore>((set, get) => ({
   setSecondaryImageUrl: (url) => {
     set((state) => ({
       config: { ...state.config, secondaryImageUrl: url },
+    }));
+  },
+  setTertiaryImageUrl: (url) => {
+    set((state) => ({
+      config: { ...state.config, tertiaryImageUrl: url },
     }));
   },
   setImageDimensions: (dims) => set({ imageDimensions: dims }),
