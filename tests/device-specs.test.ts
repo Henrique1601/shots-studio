@@ -34,6 +34,14 @@ describe("Device Specs and Preset Integrity", () => {
       assert.ok(spec.screenBounds.height.endsWith("%"));
       assert.ok(spec.maskSvg, `Device ${device} must have maskSvg`);
     }
+
+    // Verify calibrated bounds for specific devices
+    assert.strictEqual(DEVICE_SPECS["watch"].screenBounds?.top, "25.09%");
+    assert.strictEqual(DEVICE_SPECS["watch"].screenBounds?.height, "50.00%");
+    assert.strictEqual(DEVICE_SPECS["macbook"].screenBounds?.top, "18.65%");
+    assert.strictEqual(DEVICE_SPECS["macbook"].screenBounds?.height, "64.67%");
+    assert.strictEqual(DEVICE_SPECS["iphone-17"].screenBounds?.top, "10.00%");
+    assert.strictEqual(DEVICE_SPECS["iphone-17"].screenBounds?.height, "80.00%");
   });
 
   it("verifies all preset gradients are valid linear-gradient syntax", () => {

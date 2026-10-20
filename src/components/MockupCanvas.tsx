@@ -58,7 +58,7 @@ export const MockupCanvas = () => {
 
   const deviceSpec = DEVICE_SPECS[config.frameType] || DEVICE_SPECS.screenshot;
 
-  // Exact 4-layer box-shadow formula from Shots.so
+  // Exact 4-layer box-shadow formula from Shots.so for rectangular frames
   const getShotsShadow = () => {
     if (config.shadowMode === "none") return "none";
     const opacity = (config.shadowOpacity / 100) * 0.4;
@@ -70,6 +70,21 @@ export const MockupCanvas = () => {
       case "adaptive":
       default:
         return `rgba(0, 0, 0, ${opacity}) 0px 10.472px 15.708px -23.8px, rgba(0, 0, 0, ${opacity}) 0px 31.416px 47.124px -23.8px, rgba(0, 0, 0, ${opacity}) 0px 62.832px 94.2481px -23.8px, rgba(0, 0, 0, ${opacity}) 0px 104.72px 157.08px -23.8px`;
+    }
+  };
+
+  // Realistic alpha-hugging drop-shadow for transparent PNG physical device mockups (prevents square box shadows)
+  const getDeviceShadowFilter = () => {
+    if (config.shadowMode === "none") return undefined;
+    const opacity = (config.shadowOpacity / 100) * 0.45;
+    switch (config.shadowMode) {
+      case "spread":
+        return `drop-shadow(0px 24px 38px rgba(0, 0, 0, ${opacity * 1.5})) drop-shadow(0px 6px 14px rgba(0, 0, 0, ${opacity * 0.9}))`;
+      case "hug":
+        return `drop-shadow(0px 10px 18px rgba(0, 0, 0, ${opacity * 1.7}))`;
+      case "adaptive":
+      default:
+        return `drop-shadow(0px 12px 24px rgba(0, 0, 0, ${opacity * 0.9})) drop-shadow(0px 32px 54px rgba(0, 0, 0, ${opacity * 1.25}))`;
     }
   };
 
@@ -340,7 +355,6 @@ export const MockupCanvas = () => {
         {/* 3D Spatial Container with Auto-Contain & Smooth Spring Physics */}
         {config.showMockup && (
           <motion.div
-            layout
             {...getMotionAnimation()}
             style={{
               width: isMockupTallerThanFrame ? "auto" : "78%",
@@ -362,11 +376,31 @@ export const MockupCanvas = () => {
               <div
                 style={{
                   aspectRatio: deviceSpec.aspectRatio,
-                  boxShadow: getShotsShadow(),
+                  filter: getDeviceShadowFilter(),
                 }}
                 className="w-full h-full relative flex items-center justify-center transition-all duration-300"
               >
-                {/* 1. Screen Mask & Media Container (under the bezel cutout) */}
+                {/* 1. Black underlay plate (extends slightly under the bezel to guarantee zero canvas gradient bleed) */}
+                <div
+                  style={{
+                    position: "absolute",
+                    left: deviceSpec.screenBounds?.left ?? "0%",
+                    top: deviceSpec.screenBounds?.top ?? "0%",
+                    width: deviceSpec.screenBounds?.width ?? "100%",
+                    height: deviceSpec.screenBounds?.height ?? "100%",
+                    transform: "scale(1.025)",
+                    transformOrigin: "center",
+                    backgroundColor: "#000000",
+                    borderRadius: deviceSpec.name.includes("iPhone")
+                      ? "54px"
+                      : deviceSpec.name.includes("Watch")
+                      ? "42px"
+                      : "16px",
+                  }}
+                  className="pointer-events-none z-5"
+                />
+
+                {/* 2. Screen Mask & Media Container (under the bezel cutout) */}
                 <div
                   style={{
                     position: "absolute",
@@ -378,7 +412,6 @@ export const MockupCanvas = () => {
                     WebkitMaskImage: deviceSpec.maskSvg ? `url("${deviceSpec.maskSvg}")` : undefined,
                     maskSize: "100% 100%",
                     WebkitMaskSize: "100% 100%",
-                    boxShadow: "0 0 0 1px #050505",
                   }}
                   className="overflow-hidden bg-[#0a0a0a] flex items-center justify-center cursor-pointer z-10"
                   onClick={() => !imageUrl && fileInputRef.current?.click()}
@@ -404,7 +437,7 @@ export const MockupCanvas = () => {
                   )}
                 </div>
 
-                {/* 2. Device Bezel Overlay (PNG with transparent screen cutout) */}
+                {/* 3. Device Bezel Overlay (PNG with transparent screen cutout) */}
                 {deviceSpec.deviceImg && (
                   <img
                     src={deviceSpec.deviceImg}
