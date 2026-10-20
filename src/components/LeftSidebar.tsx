@@ -10,6 +10,7 @@ import {
   ASPECT_RATIOS_STANDARD,
   ASPECT_RATIOS_SOCIAL,
   AspectRatioType,
+  DEVICE_SPECS,
 } from "@/types/mockup";
 import {
   ChevronDown,
@@ -61,8 +62,10 @@ export const LeftSidebar = () => {
     }
   };
 
+  const deviceSpec = DEVICE_SPECS[config.frameType] || DEVICE_SPECS.screenshot;
+
   return (
-    <aside className="w-[228px] shrink-0 bg-[#1c1c1c] rounded-2xl flex flex-col h-[calc(100vh-6.5rem)] my-auto ml-3 select-none text-white overflow-hidden shadow-2xl border border-white/5 relative z-20">
+    <aside className="hidden lg:flex w-[228px] shrink-0 bg-[#1c1c1c] rounded-2xl flex-col h-[calc(100vh-6.5rem)] my-auto ml-3 select-none text-white overflow-hidden shadow-2xl border border-white/5 relative z-20">
       {/* Top Tabs: Mockup vs Frame with active indicator pill */}
       <div className="p-2 border-b border-[#262626] shrink-0">
         <div className="flex bg-[#141414] p-0.5 rounded-xl relative">
@@ -103,19 +106,22 @@ export const LeftSidebar = () => {
               className="w-full flex items-center justify-between p-2 rounded-xl bg-[#242424] hover:bg-[#2c2c2c] transition-all group cursor-pointer"
             >
               <div className="flex items-center space-x-2.5">
-                <div className="w-8 h-8 rounded-lg bg-black/40 overflow-hidden flex items-center justify-center">
+                <div className="w-8 h-8 rounded-lg bg-black/40 overflow-hidden flex items-center justify-center p-0.5">
                   <img
-                    src="/shots-assets/image_mockup-icons_screenshot.png"
-                    alt="Device"
-                    className="w-full h-full object-cover"
+                    src={
+                      deviceSpec.deviceImg ||
+                      "/shots-assets/image_mockup-icons_screenshot.png"
+                    }
+                    alt={deviceSpec.name}
+                    className="w-full h-full object-contain"
                   />
                 </div>
                 <div className="text-left">
-                  <div className="text-xs font-semibold capitalize text-white">
-                    {config.frameType.replace("-", " ")}
+                  <div className="text-xs font-semibold capitalize text-white truncate max-w-[120px]">
+                    {deviceSpec.name}
                   </div>
                   <div className="text-[10px] text-neutral-400">
-                    Adapts To Media
+                    {deviceSpec.isDevice ? "Device Mockup" : "Adapts To Media"}
                   </div>
                 </div>
               </div>

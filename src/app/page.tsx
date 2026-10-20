@@ -7,6 +7,7 @@ import { RightSidebar } from "@/components/RightSidebar";
 import { MockupCanvas } from "@/components/MockupCanvas";
 import { DeviceModal } from "@/components/DeviceModal";
 import { VideoTimeline } from "@/components/VideoTimeline";
+import { MobileDrawer } from "@/components/MobileDrawer";
 import { useMockupStore } from "@/store/mockupStore";
 
 export default function Home() {
@@ -53,6 +54,9 @@ export default function Home() {
 
       {/* Bottom: Timeline de Animação e Vídeo */}
       <VideoTimeline />
+
+      {/* Mobile Bottom Dock & Controls Drawer */}
+      <MobileDrawer />
 
       {/* Modal para Escolha de Dispositivos (iPhone 17, Mac, Browser) */}
       <DeviceModal />

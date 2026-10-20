@@ -9,7 +9,7 @@ export const VideoTimeline = () => {
   const [totalTime] = useState("0:10");
 
   return (
-    <footer className="h-14 border-t border-[#262626] bg-[#121212] px-4 flex items-center justify-between z-30 select-none text-white">
+    <footer className="hidden lg:flex h-14 border-t border-[#262626] bg-[#121212] px-4 items-center justify-between z-30 select-none text-white">
       {/* Left Action: Add Animation */}
       <div className="flex items-center space-x-2">
         <button className="flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-[#1c1c1c] hover:bg-[#252525] border border-[#2b2b2b] text-xs font-semibold text-neutral-200 transition-colors">

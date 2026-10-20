@@ -128,7 +128,7 @@ export const TopBar = () => {
       </div>
 
       {/* 2. Center: Command Bar Desktop (Os 7 botões reais do Shots.so) */}
-      <div className="flex items-center space-x-1.5 bg-[#181818] px-2 py-1 rounded-2xl border border-[#262626]">
+      <div className="hidden md:flex items-center space-x-1.5 bg-[#181818] px-2 py-1 rounded-2xl border border-[#262626]">
         {/* Undo */}
         <button
           onClick={undo}

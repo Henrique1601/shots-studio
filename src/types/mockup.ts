@@ -98,18 +98,23 @@ export interface MockupConfig {
   shapesItems: number[];
 }
 
-export const DEVICE_SPECS: Record<
-  FrameType,
-  {
-    name: string;
-    aspectRatio: string;
-    isDevice: boolean;
-    deviceImg?: string;
-    maskSvg?: string;
-    scaleMultiplier?: number;
-    containerClass?: string;
-  }
-> = {
+export interface DeviceSpec {
+  name: string;
+  aspectRatio: string;
+  isDevice: boolean;
+  deviceImg?: string;
+  maskSvg?: string;
+  screenBounds?: {
+    left: string;
+    top: string;
+    width: string;
+    height: string;
+  };
+  scaleMultiplier?: number;
+  containerClass?: string;
+}
+
+export const DEVICE_SPECS: Record<FrameType, DeviceSpec> = {
   screenshot: {
     name: "Screenshot",
     aspectRatio: "4 / 3",
@@ -122,47 +127,72 @@ export const DEVICE_SPECS: Record<
   },
   "iphone-17": {
     name: "iPhone 17",
-    aspectRatio: "402 / 874",
+    aspectRatio: "1508 / 3278",
     isDevice: true,
     deviceImg: "/shots-assets/devices/iphone17_black.png",
     maskSvg: "/shots-assets/devices/iphone17_display.svg",
-    scaleMultiplier: 1.248,
+    screenBounds: {
+      left: "10.01%",
+      top: "14.61%",
+      width: "79.91%",
+      height: "75.35%",
+    },
     containerClass: "iphone-17",
   },
   "iphone-16-pro": {
     name: "iPhone 16 Pro",
-    aspectRatio: "402 / 874",
+    aspectRatio: "1508 / 3279",
     isDevice: true,
     deviceImg: "/shots-assets/devices/iphone16pro_portrait.png",
     maskSvg: "/shots-assets/devices/iphone16pro_display.svg",
-    scaleMultiplier: 1.248,
+    screenBounds: {
+      left: "10.01%",
+      top: "14.61%",
+      width: "79.91%",
+      height: "75.35%",
+    },
     containerClass: "iphone-16-pro",
   },
   macbook: {
     name: "MacBook Pro 16",
-    aspectRatio: "3456 / 2234",
+    aspectRatio: "4893 / 3164",
     isDevice: true,
     deviceImg: "/shots-assets/devices/macbook_portrait_silver.png",
     maskSvg: "/shots-assets/devices/macbook_portrait_display.svg",
-    scaleMultiplier: 1.49,
+    screenBounds: {
+      left: "16.70%",
+      top: "18.62%",
+      width: "66.61%",
+      height: "64.66%",
+    },
     containerClass: "macbook-pro-16",
   },
   "ipad-pro": {
     name: "iPad Pro 13",
-    aspectRatio: "2048 / 2732",
+    aspectRatio: "2560 / 3415",
     isDevice: true,
     deviceImg: "/shots-assets/devices/ipad_portrait_spacegray.png",
     maskSvg: "/shots-assets/devices/ipad_portrait_display.svg",
-    scaleMultiplier: 1.18,
+    screenBounds: {
+      left: "9.96%",
+      top: "9.99%",
+      width: "80.04%",
+      height: "80.00%",
+    },
     containerClass: "ipad-pro-13",
   },
   watch: {
     name: "Apple Watch Ultra",
-    aspectRatio: "410 / 502",
+    aspectRatio: "1640 / 2009",
     isDevice: true,
     deviceImg: "/shots-assets/devices/watch_portrait_ultra.png",
     maskSvg: "/shots-assets/devices/watch_portrait_display.svg",
-    scaleMultiplier: 1.85,
+    screenBounds: {
+      left: "24.94%",
+      top: "25.04%",
+      width: "50.06%",
+      height: "49.98%",
+    },
     containerClass: "watch-ultra",
   },
 };

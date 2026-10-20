@@ -5,7 +5,7 @@ import { useMockupStore } from "@/store/mockupStore";
 import { SHAPES_LAYOUTS, DEVICE_SPECS } from "@/types/mockup";
 import { Plus } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 
 export const MockupCanvas = () => {
   const {
@@ -54,6 +54,36 @@ export const MockupCanvas = () => {
     }
   };
 
+  // Determine frame aspect ratio
+  const getFrameRatio = () => {
+    if (config.aspectRatio === "custom") {
+      return (config.customWidth || 1920) / (config.customHeight || 1080);
+    }
+    const [w, h] = config.aspectRatio.split(":").map(Number);
+    if (w && h) return w / h;
+    return 16 / 9;
+  };
+
+  // Determine mockup natural aspect ratio
+  const getMockupRatio = () => {
+    if (deviceSpec.isDevice) {
+      const [w, h] = deviceSpec.aspectRatio.split("/").map((s) => Number(s.trim()));
+      if (w && h) return w / h;
+      return 1;
+    }
+    if (imageDimensions && imageDimensions.width && imageDimensions.height) {
+      return imageDimensions.width / imageDimensions.height;
+    }
+    return config.frameType === "browser" ? 16 / 10 : 4 / 3;
+  };
+
+  const frameRatio = getFrameRatio();
+  const mockupRatio = getMockupRatio();
+
+  // Intelligent Auto-Contain:
+  // If mockup is taller than frame, clamp height. If wider, clamp width.
+  const isMockupTallerThanFrame = mockupRatio < frameRatio;
+
   const getCanvasAspectStyle = () => {
     if (config.aspectRatio === "custom") {
       return {
@@ -64,7 +94,7 @@ export const MockupCanvas = () => {
     if (w && h) {
       return { aspectRatio: `${w} / ${h}` };
     }
-    return { minHeight: "560px" };
+    return { aspectRatio: "16 / 9" };
   };
 
   const currentShapesLayout =
@@ -72,7 +102,7 @@ export const MockupCanvas = () => {
     SHAPES_LAYOUTS[0];
 
   return (
-    <div className="flex-1 flex items-center justify-center p-4 lg:p-6 overflow-hidden bg-black relative select-none">
+    <div className="flex-1 flex items-center justify-center p-3 sm:p-4 lg:p-6 overflow-hidden bg-black relative select-none w-full h-full">
       {/* Outer Remotion Canvas Frame */}
       <div
         id="mockup-export-container"
@@ -88,9 +118,13 @@ export const MockupCanvas = () => {
           ...getCanvasAspectStyle(),
           maxHeight: "92%",
           maxWidth: "92%",
+          width: "100%",
+          height: "100%",
+          boxSizing: "border-box",
         }}
         className={cn(
-          "rounded-2xl transition-all duration-300 flex items-center justify-center shadow-2xl relative overflow-hidden"
+          "rounded-2xl transition-all duration-300 flex items-center justify-center shadow-2xl relative overflow-hidden",
+          isDragging && "ring-2 ring-indigo-500 ring-offset-2 ring-offset-black"
         )}
       >
         {/* Noise Overlay */}
@@ -145,13 +179,17 @@ export const MockupCanvas = () => {
             );
           })}
 
-        {/* 3D Spatial Container with Smooth Spring Physics */}
+        {/* 3D Spatial Container with Auto-Contain & Smooth Spring Physics */}
         {config.showMockup && (
           <motion.div
             layout
-            transition={{ type: "spring", stiffness: 300, damping: 28 }}
+            transition={{ type: "spring", stiffness: 320, damping: 28 }}
             style={{
-              width: deviceSpec.isDevice ? "65%" : "75%",
+              width: isMockupTallerThanFrame ? "auto" : "78%",
+              height: isMockupTallerThanFrame ? "78%" : "auto",
+              aspectRatio: `${mockupRatio}`,
+              maxWidth: "88%",
+              maxHeight: "88%",
               display: "flex",
               justifyContent: "center",
               alignItems: "center",
@@ -162,50 +200,39 @@ export const MockupCanvas = () => {
               transformOrigin: "center",
             }}
           >
-            {/* DEVICE MOCKUP RENDERER (iPhone 17, Macbook Pro, iPad Pro, Apple Watch) */}
+            {/* DEVICE MOCKUP RENDERER (iPhone 17, MacBook Pro, iPad Pro, Apple Watch Ultra) */}
             {deviceSpec.isDevice ? (
               <div
                 style={{
                   aspectRatio: deviceSpec.aspectRatio,
                   boxShadow: getShotsShadow(),
                 }}
-                className="w-full relative flex items-center justify-center transition-all duration-300"
+                className="w-full h-full relative flex items-center justify-center transition-all duration-300"
               >
-                {/* 1. Device Bezel Asset Frame (Overlay) */}
-                <div
-                  className="absolute inset-0 pointer-events-none z-20 flex items-center justify-center"
-                  style={{
-                    transform: `scale(${deviceSpec.scaleMultiplier || 1})`,
-                    transformOrigin: "center",
-                  }}
-                >
-                  <img
-                    src={deviceSpec.deviceImg}
-                    alt={deviceSpec.name}
-                    className="w-full h-full object-contain block select-none pointer-events-none"
-                  />
-                </div>
-
-                {/* 2. Screen Mask & Media Container */}
+                {/* 1. Screen Mask & Media Container (under the bezel cutout) */}
                 <div
                   style={{
-                    aspectRatio: deviceSpec.aspectRatio,
-                    maskImage: `url("${deviceSpec.maskSvg}")`,
-                    WebkitMaskImage: `url("${deviceSpec.maskSvg}")`,
+                    position: "absolute",
+                    left: deviceSpec.screenBounds?.left ?? "0%",
+                    top: deviceSpec.screenBounds?.top ?? "0%",
+                    width: deviceSpec.screenBounds?.width ?? "100%",
+                    height: deviceSpec.screenBounds?.height ?? "100%",
+                    maskImage: deviceSpec.maskSvg ? `url("${deviceSpec.maskSvg}")` : undefined,
+                    WebkitMaskImage: deviceSpec.maskSvg ? `url("${deviceSpec.maskSvg}")` : undefined,
                     maskSize: "100% 100%",
                     WebkitMaskSize: "100% 100%",
                   }}
-                  className="w-full h-full relative z-10 overflow-hidden bg-[#0d0d0d] flex items-center justify-center cursor-pointer"
+                  className="overflow-hidden bg-[#0a0a0a] flex items-center justify-center cursor-pointer z-10"
                   onClick={() => !imageUrl && fileInputRef.current?.click()}
                 >
                   {imageUrl ? (
                     <img
                       src={imageUrl}
                       alt="Uploaded media"
-                      className="w-full h-full object-cover block select-none"
+                      className="w-full h-full object-cover block select-none pointer-events-none"
                     />
                   ) : (
-                    <div className="flex flex-col items-center justify-center p-8 text-center group">
+                    <div className="flex flex-col items-center justify-center p-6 text-center group">
                       <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center mb-2 group-hover:scale-110 transition-transform border border-white/20 shadow-md">
                         <Plus className="w-5 h-5 text-white" />
                       </div>
@@ -218,6 +245,15 @@ export const MockupCanvas = () => {
                     </div>
                   )}
                 </div>
+
+                {/* 2. Device Bezel Overlay (PNG with transparent screen cutout) */}
+                {deviceSpec.deviceImg && (
+                  <img
+                    src={deviceSpec.deviceImg}
+                    alt={deviceSpec.name}
+                    className="absolute inset-0 w-full h-full object-contain block select-none pointer-events-none z-20"
+                  />
+                )}
               </div>
             ) : (
               /* SCREENSHOT / BROWSER MOCKUP RENDERER */
@@ -225,13 +261,10 @@ export const MockupCanvas = () => {
                 style={{
                   boxShadow: getShotsShadow(),
                   borderRadius: `${config.borderRadius}px`,
-                  aspectRatio: imageDimensions
-                    ? `${imageDimensions.width} / ${imageDimensions.height}`
-                    : "4 / 3",
-                  maxHeight: "85%",
+                  aspectRatio: `${mockupRatio}`,
                 }}
                 className={cn(
-                  "w-full overflow-hidden relative flex flex-col items-center justify-center transition-all duration-300",
+                  "w-full h-full overflow-hidden relative flex flex-col items-center justify-center transition-all duration-300",
                   config.frameStyle === "glass-dark" && "bg-neutral-900/60 backdrop-blur-xl border border-white/20",
                   config.frameStyle === "glass-light" && "bg-white/40 backdrop-blur-xl border border-white/40",
                   config.frameStyle === "liquid-glass" && "bg-gradient-to-br from-white/25 via-white/5 to-white/10 border border-white/30 backdrop-blur-2xl",
@@ -244,7 +277,7 @@ export const MockupCanvas = () => {
               >
                 {/* Browser Header */}
                 {config.frameType === "browser" && (
-                  <div className="w-full flex items-center justify-between px-3 py-2 bg-neutral-900/80 border-b border-white/10">
+                  <div className="w-full flex items-center justify-between px-3 py-2 bg-neutral-900/80 border-b border-white/10 shrink-0">
                     <div className="flex items-center space-x-1.5">
                       <span className="w-2.5 h-2.5 rounded-full bg-[#FF5F56]" />
                       <span className="w-2.5 h-2.5 rounded-full bg-[#FFBD2E]" />
@@ -259,14 +292,14 @@ export const MockupCanvas = () => {
 
                 {/* Media Content */}
                 <div
-                  className="relative w-full h-full flex items-center justify-center cursor-pointer bg-[#0d0d0d]"
+                  className="relative w-full h-full flex items-center justify-center cursor-pointer bg-[#0d0d0d] overflow-hidden"
                   onClick={() => !imageUrl && fileInputRef.current?.click()}
                 >
                   {imageUrl ? (
                     <img
                       src={imageUrl}
                       alt="Uploaded mockup"
-                      className="w-full h-full object-contain block select-none"
+                      className="w-full h-full object-cover block select-none"
                     />
                   ) : (
                     <div className="flex flex-col items-center justify-center p-12 text-center group">

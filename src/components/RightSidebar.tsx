@@ -69,7 +69,7 @@ export const RightSidebar = () => {
   };
 
   return (
-    <aside className="w-[228px] shrink-0 bg-[#1c1c1c] rounded-2xl flex flex-col h-[calc(100vh-6.5rem)] my-auto mr-3 select-none text-white overflow-hidden shadow-2xl border border-white/5">
+    <aside className="hidden lg:flex w-[228px] shrink-0 bg-[#1c1c1c] rounded-2xl flex-col h-[calc(100vh-6.5rem)] my-auto mr-3 select-none text-white overflow-hidden shadow-2xl border border-white/5">
       {/* Top Export Bar */}
       <div className="p-2 border-b border-[#262626] space-y-2">
         <div className="flex items-center space-x-1.5">
