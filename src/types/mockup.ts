@@ -1,6 +1,7 @@
 export type FrameType =
   | "screenshot"
   | "browser"
+  | "minimal-desktop"
   | "iphone-17"
   | "iphone-16-pro"
   | "macbook"
@@ -87,6 +88,7 @@ export interface MockupConfig {
   layoutPreset: LayoutPreset;
   exportScale: 1 | 2 | 3; // 1x (FHD), 2x (4K), 3x (6K)
   exportFormat: "PNG" | "JPEG" | "WEBP";
+  browserUrl?: string;
   // Effects & Watermark
   watermark: boolean;
   noiseOverlay: boolean;
@@ -124,6 +126,12 @@ export const DEVICE_SPECS: Record<FrameType, DeviceSpec> = {
     name: "Browser",
     aspectRatio: "16 / 10",
     isDevice: false,
+  },
+  "minimal-desktop": {
+    name: "Minimal Desktop",
+    aspectRatio: "16 / 10",
+    isDevice: false,
+    deviceImg: "/shots-assets/devices/minimaldesktop.png",
   },
   "iphone-17": {
     name: "iPhone 17",
@@ -322,6 +330,26 @@ export const PRESET_GRADIENTS = [
     id: "hyper-violet",
     name: "Hyper Violet",
     value: "linear-gradient(135deg, #4f46e5 0%, #7c3aed 50%, #db2777 100%)",
+  },
+  {
+    id: "aurora-borealis",
+    name: "Aurora Borealis",
+    value: "linear-gradient(135deg, #00C9FF 0%, #92FE9D 100%)",
+  },
+  {
+    id: "midnight-obsidian",
+    name: "Midnight Obsidian",
+    value: "linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%)",
+  },
+  {
+    id: "cyberpunk-neon",
+    name: "Cyberpunk Neon",
+    value: "linear-gradient(135deg, #FA8BFF 0%, #2BD2FF 52%, #2BFF88 90%)",
+  },
+  {
+    id: "hyperion-gold",
+    name: "Hyperion Gold",
+    value: "linear-gradient(135deg, #FFE000 0%, #799F0C 100%)",
   },
 ];
 

@@ -3,7 +3,7 @@
 import React, { useRef, useState } from "react";
 import { useMockupStore } from "@/store/mockupStore";
 import { SHAPES_LAYOUTS, DEVICE_SPECS } from "@/types/mockup";
-import { Plus } from "lucide-react";
+import { Plus, RotateCcw } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
 
@@ -14,6 +14,7 @@ export const MockupCanvas = () => {
     imageDimensions,
     setImageUrl,
     setImageDimensions,
+    updateConfig,
   } = useMockupStore();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isDragging, setIsDragging] = useState(false);
@@ -275,16 +276,16 @@ export const MockupCanvas = () => {
                   config.frameStyle === "default" && "bg-[#0d0d0d]"
                 )}
               >
-                {/* Browser Header */}
-                {config.frameType === "browser" && (
-                  <div className="w-full flex items-center justify-between px-3 py-2 bg-neutral-900/80 border-b border-white/10 shrink-0">
-                    <div className="flex items-center space-x-1.5">
-                      <span className="w-2.5 h-2.5 rounded-full bg-[#FF5F56]" />
-                      <span className="w-2.5 h-2.5 rounded-full bg-[#FFBD2E]" />
-                      <span className="w-2.5 h-2.5 rounded-full bg-[#27C93F]" />
+                {/* Browser & Minimal Desktop Header */}
+                {(config.frameType === "browser" || config.frameType === "minimal-desktop") && (
+                  <div className="w-full flex items-center justify-between px-3.5 py-2.5 bg-neutral-900/90 border-b border-white/10 shrink-0 select-none">
+                    <div className="flex items-center space-x-2">
+                      <span className="w-2.5 h-2.5 rounded-full bg-[#FF5F56] shadow-sm" />
+                      <span className="w-2.5 h-2.5 rounded-full bg-[#FFBD2E] shadow-sm" />
+                      <span className="w-2.5 h-2.5 rounded-full bg-[#27C93F] shadow-sm" />
                     </div>
-                    <div className="h-4 px-3 rounded bg-white/5 text-[9px] text-neutral-400 flex items-center justify-center">
-                      shots.so/editor
+                    <div className="h-5 px-3 rounded-md bg-white/5 border border-white/5 text-[9px] text-neutral-300 flex items-center justify-center font-mono max-w-[220px] truncate">
+                      {config.browserUrl || (config.frameType === "minimal-desktop" ? "Studio Workspace" : "shots.so/editor")}
                     </div>
                     <div className="w-8" />
                   </div>
@@ -331,6 +332,17 @@ export const MockupCanvas = () => {
           }}
         />
       </div>
+
+      {/* Floating Quick Reset for 3D Angle */}
+      {(config.tiltX !== 0 || config.tiltY !== 0 || config.tiltZ !== 0 || config.zoom !== 100) && (
+        <button
+          onClick={() => updateConfig({ tiltX: 0, tiltY: 0, tiltZ: 0, zoom: 100 })}
+          className="absolute bottom-5 right-5 z-40 flex items-center space-x-1.5 px-3 py-1.5 rounded-full bg-neutral-900/90 border border-white/15 text-xs text-neutral-200 hover:text-white hover:bg-neutral-800 backdrop-blur-md shadow-xl transition-all cursor-pointer group"
+        >
+          <RotateCcw className="w-3.5 h-3.5 text-neutral-400 group-hover:rotate-[-90deg] transition-transform" />
+          <span>Reset 3D Angle</span>
+        </button>
+      )}
     </div>
   );
 };

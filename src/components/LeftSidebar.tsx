@@ -145,6 +145,22 @@ export const LeftSidebar = () => {
             </div>
           </div>
 
+          {/* Browser / Desktop Window Title or URL */}
+          {(config.frameType === "browser" || config.frameType === "minimal-desktop") && (
+            <div>
+              <div className="text-[10px] font-bold text-neutral-400 tracking-wider mb-1.5">
+                WINDOW URL / TITLE
+              </div>
+              <input
+                type="text"
+                value={config.browserUrl ?? ""}
+                onChange={(e) => updateConfig({ browserUrl: e.target.value })}
+                placeholder={config.frameType === "minimal-desktop" ? "Studio Workspace" : "shots.so/editor"}
+                className="w-full px-2.5 py-1.5 rounded-xl bg-[#222222] border border-neutral-700 hover:border-neutral-500 focus:border-indigo-500 text-xs text-white placeholder-neutral-500 focus:outline-none transition-colors"
+              />
+            </div>
+          )}
+
           {/* Media Upload Area */}
           <div>
             <div className="text-[10px] font-bold text-neutral-400 tracking-wider mb-1.5">

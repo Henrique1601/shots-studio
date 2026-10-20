@@ -44,6 +44,14 @@ export const DeviceModal = () => {
       thumb: "/shots-assets/devices/safari_light.png",
     },
     {
+      id: "minimal-desktop",
+      category: "mac",
+      name: "Minimal Desktop",
+      sub: "16 / 10 Window",
+      badge: "New",
+      thumb: "/shots-assets/devices/minimaldesktop.png",
+    },
+    {
       id: "iphone-17",
       category: "iphone",
       name: "iPhone 17",

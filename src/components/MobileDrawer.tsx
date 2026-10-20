@@ -154,6 +154,22 @@ export const MobileDrawer = () => {
                     </button>
                   </div>
 
+                  {/* Browser & Desktop Title / URL */}
+                  {(config.frameType === "browser" || config.frameType === "minimal-desktop") && (
+                    <div>
+                      <label className="text-[11px] font-medium text-neutral-400 block mb-1.5">
+                        URL ou Título da Janela
+                      </label>
+                      <input
+                        type="text"
+                        value={config.browserUrl ?? ""}
+                        onChange={(e) => updateConfig({ browserUrl: e.target.value })}
+                        placeholder={config.frameType === "minimal-desktop" ? "Studio Workspace" : "shots.so/editor"}
+                        className="w-full px-3 py-2 rounded-xl bg-[#222222] border border-white/10 text-xs text-white placeholder-neutral-500 focus:outline-none focus:border-indigo-500"
+                      />
+                    </div>
+                  )}
+
                   {/* Frame Style Options */}
                   <div>
                     <label className="text-[11px] font-medium text-neutral-400 block mb-1.5">

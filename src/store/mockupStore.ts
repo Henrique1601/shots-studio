@@ -52,6 +52,7 @@ const defaultConfig: MockupConfig = {
   layoutPreset: "center",
   exportScale: 1,
   exportFormat: "PNG",
+  browserUrl: "shots.so/editor",
   watermark: true,
   noiseOverlay: false,
   portraitEffect: false,
