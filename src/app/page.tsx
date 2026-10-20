@@ -8,13 +8,41 @@ import { MockupCanvas } from "@/components/MockupCanvas";
 import { DeviceModal } from "@/components/DeviceModal";
 import { VideoTimeline } from "@/components/VideoTimeline";
 import { MobileDrawer } from "@/components/MobileDrawer";
+import { ToastContainer } from "@/components/ToastContainer";
 import { useMockupStore } from "@/store/mockupStore";
 
 export default function Home() {
-  const { setImageUrl } = useMockupStore();
+  const { setImageUrl, setImageDimensions, undo, redo, showToast, setDeviceModalOpen } = useMockupStore();
 
-  // Colar imagens diretamente da área de transferência (Ctrl + V)
+  // Global Keyboard Shortcuts (Ctrl+V, Ctrl+Z, Ctrl+Y, Delete, Esc)
   useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      const activeTag = document.activeElement?.tagName.toLowerCase();
+      if (activeTag === "input" || activeTag === "textarea") return;
+
+      const isMac = navigator.platform.toUpperCase().indexOf("MAC") >= 0;
+      const modKey = isMac ? e.metaKey : e.ctrlKey;
+
+      if (modKey && e.key.toLowerCase() === "z" && !e.shiftKey) {
+        e.preventDefault();
+        undo();
+        showToast("Desfazer (Undo) ↩️", "info");
+      } else if (
+        (modKey && e.key.toLowerCase() === "y") ||
+        (modKey && e.shiftKey && e.key.toLowerCase() === "z")
+      ) {
+        e.preventDefault();
+        redo();
+        showToast("Refazer (Redo) ↪️", "info");
+      } else if (e.key === "Delete" || e.key === "Backspace") {
+        setImageUrl(null);
+        setImageDimensions(null);
+        showToast("Imagem removida do mockup", "info");
+      } else if (e.key === "Escape") {
+        setDeviceModalOpen(false);
+      }
+    };
+
     const handlePaste = (e: ClipboardEvent) => {
       const items = e.clipboardData?.items;
       if (!items) return;
@@ -24,16 +52,26 @@ export default function Home() {
           const blob = items[i].getAsFile();
           if (blob) {
             const url = URL.createObjectURL(blob);
-            setImageUrl(url);
+            const img = new Image();
+            img.onload = () => {
+              setImageDimensions({ width: img.naturalWidth, height: img.naturalHeight });
+              setImageUrl(url);
+              showToast("Imagem colada com sucesso! ✨");
+            };
+            img.src = url;
           }
           break;
         }
       }
     };
 
+    window.addEventListener("keydown", handleKeyDown);
     window.addEventListener("paste", handlePaste);
-    return () => window.removeEventListener("paste", handlePaste);
-  }, [setImageUrl]);
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+      window.removeEventListener("paste", handlePaste);
+    };
+  }, [setImageUrl, setImageDimensions, undo, redo, showToast, setDeviceModalOpen]);
 
   return (
     <div className="h-screen w-screen overflow-hidden bg-[#0d0d0d] text-white flex flex-col font-sans select-none">
@@ -60,6 +98,9 @@ export default function Home() {
 
       {/* Modal para Escolha de Dispositivos (iPhone 17, Mac, Browser) */}
       <DeviceModal />
+
+      {/* Global Toast Notification System */}
+      <ToastContainer />
     </div>
   );
 }

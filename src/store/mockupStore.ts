@@ -1,6 +1,12 @@
 import { create } from "zustand";
 import { MockupConfig, PRESET_GRADIENTS, STYLE_OPTIONS } from "@/types/mockup";
 
+export interface ToastItem {
+  id: string;
+  message: string;
+  type?: "success" | "info" | "warning";
+}
+
 interface MockupStore {
   config: MockupConfig;
   imageUrl: string | null;
@@ -9,6 +15,9 @@ interface MockupStore {
   isExportSettingsOpen: boolean;
   history: MockupConfig[];
   historyIndex: number;
+  toasts: ToastItem[];
+  showToast: (message: string, type?: "success" | "info" | "warning") => void;
+  removeToast: (id: string) => void;
   setImageUrl: (url: string | null) => void;
   setImageDimensions: (dims: { width: number; height: number } | null) => void;
   setDeviceModalOpen: (open: boolean) => void;
@@ -60,6 +69,17 @@ export const useMockupStore = create<MockupStore>((set, get) => ({
   isExportSettingsOpen: false,
   history: [defaultConfig],
   historyIndex: 0,
+  toasts: [],
+  showToast: (message, type = "success") => {
+    const id = Math.random().toString(36).substring(2, 9);
+    set((state) => ({ toasts: [...state.toasts, { id, message, type }] }));
+    setTimeout(() => {
+      get().removeToast(id);
+    }, 2800);
+  },
+  removeToast: (id) => {
+    set((state) => ({ toasts: state.toasts.filter((t) => t.id !== id) }));
+  },
   setImageUrl: (url) => set({ imageUrl: url }),
   setImageDimensions: (dims) => set({ imageDimensions: dims }),
   setDeviceModalOpen: (open) => set({ isDeviceModalOpen: open }),

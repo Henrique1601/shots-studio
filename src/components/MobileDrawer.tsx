@@ -34,6 +34,7 @@ export const MobileDrawer = () => {
     config,
     updateConfig,
     setDeviceModalOpen,
+    showToast,
   } = useMockupStore();
 
   const [activeTab, setActiveTab] = useState<"mockup" | "frame" | "style" | null>(null);
@@ -63,8 +64,10 @@ export const MobileDrawer = () => {
         spread: 50,
         origin: { y: 0.3 },
       });
+      showToast("Shot baixado com sucesso! 🚀");
     } catch (err) {
       console.error("Export error:", err);
+      showToast("Erro ao exportar", "warning");
     } finally {
       setIsExporting(false);
     }

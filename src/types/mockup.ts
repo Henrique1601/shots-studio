@@ -318,4 +318,78 @@ export const PRESET_GRADIENTS = [
     name: "Tahoe Dark",
     value: "linear-gradient(135deg, #0f172a 0%, #1e293b 100%)",
   },
+  {
+    id: "hyper-violet",
+    name: "Hyper Violet",
+    value: "linear-gradient(135deg, #4f46e5 0%, #7c3aed 50%, #db2777 100%)",
+  },
+];
+
+export const PRESET_PAPER_GLASS = [
+  {
+    id: "glass-1",
+    name: "Glass 1",
+    value: "url('/shots-assets/display-assets_backgrounds_paper-glass_preview_glass-1.jpg') center/cover no-repeat",
+    preview: "/shots-assets/display-assets_backgrounds_paper-glass_preview_glass-1.jpg",
+  },
+  {
+    id: "glass-2",
+    name: "Glass 2",
+    value: "url('/shots-assets/display-assets_backgrounds_paper-glass_preview_glass-2.jpg') center/cover no-repeat",
+    preview: "/shots-assets/display-assets_backgrounds_paper-glass_preview_glass-2.jpg",
+  },
+  {
+    id: "glass-3",
+    name: "Glass 3",
+    value: "url('/shots-assets/display-assets_backgrounds_paper-glass_preview_glass-3.jpg') center/cover no-repeat",
+    preview: "/shots-assets/display-assets_backgrounds_paper-glass_preview_glass-3.jpg",
+  },
+  {
+    id: "glass-4",
+    name: "Glass 4",
+    value: "url('/shots-assets/display-assets_backgrounds_paper-glass_preview_glass-4.jpg') center/cover no-repeat",
+    preview: "/shots-assets/display-assets_backgrounds_paper-glass_preview_glass-4.jpg",
+  },
+  {
+    id: "glass-5",
+    name: "Glass 5",
+    value: "url('/shots-assets/display-assets_backgrounds_paper-glass_preview_glass-5.jpg') center/cover no-repeat",
+    preview: "/shots-assets/display-assets_backgrounds_paper-glass_preview_glass-5.jpg",
+  },
+];
+
+export const PRESET_TAHOE = [
+  {
+    id: "tahoe-day",
+    name: "Tahoe Day",
+    value: "url('/shots-assets/display-assets_backgrounds_desktop_preview_tahoe-landscape-day.jpg') center/cover no-repeat",
+    preview: "/shots-assets/display-assets_backgrounds_desktop_preview_tahoe-landscape-day.jpg",
+  },
+  {
+    id: "tahoe-night",
+    name: "Tahoe Night",
+    value: "url('/shots-assets/display-assets_backgrounds_desktop_preview_tahoe-landscape-night.jpg') center/cover no-repeat",
+    preview: "/shots-assets/display-assets_backgrounds_desktop_preview_tahoe-landscape-night.jpg",
+  },
+  {
+    id: "tahoe-light",
+    name: "Tahoe Light",
+    value: "url('/shots-assets/display-assets_backgrounds_desktop_preview_tahoe-light.jpg') center/cover no-repeat",
+    preview: "/shots-assets/display-assets_backgrounds_desktop_preview_tahoe-light.jpg",
+  },
+  {
+    id: "tahoe-dark-desk",
+    name: "Tahoe Dark",
+    value: "url('/shots-assets/display-assets_backgrounds_desktop_preview_tahoe-dark.jpg') center/cover no-repeat",
+    preview: "/shots-assets/display-assets_backgrounds_desktop_preview_tahoe-dark.jpg",
+  },
+];
+
+export const PRESET_SOLIDS = [
+  { id: "solid-black", name: "Deep Black", value: "#000000" },
+  { id: "solid-studio", name: "Studio Dark", value: "#111111" },
+  { id: "solid-slate", name: "Cyber Slate", value: "#1e293b" },
+  { id: "solid-indigo", name: "Neon Indigo", value: "#4338ca" },
+  { id: "solid-emerald", name: "Emerald", value: "#065f46" },
+  { id: "solid-white", name: "Clean White", value: "#ffffff" },
 ];

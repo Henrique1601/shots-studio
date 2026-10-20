@@ -13,7 +13,7 @@ import * as htmlToImage from "html-to-image";
 import confetti from "canvas-confetti";
 
 export const RightSidebar = () => {
-  const { config, updateConfig } = useMockupStore();
+  const { config, updateConfig, showToast } = useMockupStore();
   const [activeMode, setActiveMode] = useState<"zoom" | "tilt">("zoom");
   const [isExporting, setIsExporting] = useState(false);
 
@@ -45,8 +45,10 @@ export const RightSidebar = () => {
         spread: 60,
         origin: { y: 0.15 },
       });
+      showToast(`Exportado com sucesso (${config.exportFormat})! 🚀`);
     } catch (err) {
       console.error("Export error:", err);
+      showToast("Erro ao exportar", "warning");
     } finally {
       setIsExporting(false);
     }
@@ -61,10 +63,11 @@ export const RightSidebar = () => {
         await navigator.clipboard.write([
           new ClipboardItem({ "image/png": blob }),
         ]);
-        alert("Copiado para a área de transferência!");
+        showToast("Copiado para a área de transferência! 📋");
       }
     } catch (e) {
       console.error("Copy error:", e);
+      showToast("Erro ao copiar", "warning");
     }
   };
 

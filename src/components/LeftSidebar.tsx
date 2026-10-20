@@ -7,6 +7,9 @@ import {
   SHADOW_OPTIONS,
   BorderRoundness,
   PRESET_GRADIENTS,
+  PRESET_PAPER_GLASS,
+  PRESET_TAHOE,
+  PRESET_SOLIDS,
   ASPECT_RATIOS_STANDARD,
   ASPECT_RATIOS_SOCIAL,
   AspectRatioType,
@@ -38,6 +41,7 @@ export const LeftSidebar = () => {
 
   const [inputW, setInputW] = useState(config.customWidth.toString());
   const [inputH, setInputH] = useState(config.customHeight.toString());
+  const [bgTab, setBgTab] = useState<"gradients" | "glass" | "tahoe" | "solid">("gradients");
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -524,31 +528,143 @@ export const LeftSidebar = () => {
             </div>
           </div>
 
-          {/* BACKGROUND PRESETS */}
+          {/* BACKGROUND PRESETS CATEGORIZED */}
           <div>
-            <div className="text-[10px] font-bold text-neutral-400 tracking-wider mb-2">
-              BACKGROUNDS
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-[10px] font-bold text-neutral-400 tracking-wider">
+                BACKGROUNDS
+              </span>
             </div>
-            <div className="grid grid-cols-2 gap-1.5">
-              {PRESET_GRADIENTS.map((g) => (
+
+            {/* Background Category Selector */}
+            <div className="flex bg-[#141414] p-0.5 rounded-lg mb-2 text-[10px] font-medium">
+              {(
+                [
+                  { id: "gradients", label: "Gradient" },
+                  { id: "glass", label: "Glass" },
+                  { id: "tahoe", label: "Tahoe" },
+                  { id: "solid", label: "Solid" },
+                ] as const
+              ).map((t) => (
                 <button
-                  key={g.id}
-                  onClick={() =>
-                    updateConfig({
-                      backgroundType: "gradient",
-                      backgroundValue: g.value,
-                    })
-                  }
-                  style={{ background: g.value }}
-                  className={`h-10 rounded-lg transition-all cursor-pointer ${
-                    config.backgroundValue === g.value
-                      ? "ring-2 ring-white scale-102"
-                      : "opacity-85 hover:opacity-100"
+                  key={t.id}
+                  onClick={() => setBgTab(t.id)}
+                  className={`flex-1 py-1 rounded text-center transition-all cursor-pointer ${
+                    bgTab === t.id
+                      ? "bg-[#282828] text-white shadow-sm font-semibold"
+                      : "text-neutral-400 hover:text-white"
                   }`}
-                  title={g.name}
-                />
+                >
+                  {t.label}
+                </button>
               ))}
             </div>
+
+            {/* 1. Gradients */}
+            {bgTab === "gradients" && (
+              <div className="grid grid-cols-2 gap-1.5">
+                {PRESET_GRADIENTS.map((g) => (
+                  <button
+                    key={g.id}
+                    onClick={() =>
+                      updateConfig({
+                        backgroundType: "gradient",
+                        backgroundValue: g.value,
+                      })
+                    }
+                    style={{ background: g.value }}
+                    className={`h-9 rounded-lg transition-all cursor-pointer ${
+                      config.backgroundValue === g.value
+                        ? "ring-2 ring-white scale-102"
+                        : "opacity-85 hover:opacity-100"
+                    }`}
+                    title={g.name}
+                  />
+                ))}
+              </div>
+            )}
+
+            {/* 2. Paper Glass */}
+            {bgTab === "glass" && (
+              <div className="grid grid-cols-2 gap-1.5">
+                {PRESET_PAPER_GLASS.map((p) => (
+                  <button
+                    key={p.id}
+                    onClick={() =>
+                      updateConfig({
+                        backgroundType: "image",
+                        backgroundValue: p.value,
+                      })
+                    }
+                    className={`h-11 rounded-lg overflow-hidden border transition-all cursor-pointer relative ${
+                      config.backgroundValue === p.value
+                        ? "ring-2 ring-white border-transparent"
+                        : "border-white/10 opacity-85 hover:opacity-100"
+                    }`}
+                    title={p.name}
+                  >
+                    <img
+                      src={p.preview}
+                      alt={p.name}
+                      className="w-full h-full object-cover"
+                    />
+                  </button>
+                ))}
+              </div>
+            )}
+
+            {/* 3. Tahoe */}
+            {bgTab === "tahoe" && (
+              <div className="grid grid-cols-2 gap-1.5">
+                {PRESET_TAHOE.map((t) => (
+                  <button
+                    key={t.id}
+                    onClick={() =>
+                      updateConfig({
+                        backgroundType: "image",
+                        backgroundValue: t.value,
+                      })
+                    }
+                    className={`h-11 rounded-lg overflow-hidden border transition-all cursor-pointer relative ${
+                      config.backgroundValue === t.value
+                        ? "ring-2 ring-white border-transparent"
+                        : "border-white/10 opacity-85 hover:opacity-100"
+                    }`}
+                    title={t.name}
+                  >
+                    <img
+                      src={t.preview}
+                      alt={t.name}
+                      className="w-full h-full object-cover"
+                    />
+                  </button>
+                ))}
+              </div>
+            )}
+
+            {/* 4. Solid */}
+            {bgTab === "solid" && (
+              <div className="grid grid-cols-3 gap-1.5">
+                {PRESET_SOLIDS.map((s) => (
+                  <button
+                    key={s.id}
+                    onClick={() =>
+                      updateConfig({
+                        backgroundType: "solid",
+                        backgroundValue: s.value,
+                      })
+                    }
+                    style={{ background: s.value }}
+                    className={`h-9 rounded-lg border transition-all cursor-pointer ${
+                      config.backgroundValue === s.value
+                        ? "ring-2 ring-white scale-102 border-transparent"
+                        : "border-white/10 opacity-85 hover:opacity-100"
+                    }`}
+                    title={s.name}
+                  />
+                ))}
+              </div>
+            )}
           </div>
         </div>
       </div>

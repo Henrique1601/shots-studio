@@ -31,6 +31,7 @@ export const TopBar = () => {
     randomize,
     historyIndex,
     history,
+    showToast,
   } = useMockupStore();
 
   const [isExporting, setIsExporting] = useState(false);
@@ -70,8 +71,10 @@ export const TopBar = () => {
         spread: 60,
         origin: { y: 0.15 },
       });
+      showToast(`Shot exportado com sucesso (${config.exportFormat})! 🚀`);
     } catch (err) {
       console.error("Export error:", err);
+      showToast("Erro ao exportar imagem", "warning");
     } finally {
       setIsExporting(false);
     }
@@ -86,11 +89,33 @@ export const TopBar = () => {
         await navigator.clipboard.write([
           new ClipboardItem({ "image/png": blob }),
         ]);
-        alert("Copiado para a área de transferência!");
+        showToast("Copiado para a área de transferência! 📋");
       }
     } catch (e) {
       console.error("Copy error:", e);
+      showToast("Erro ao copiar imagem", "warning");
     }
+  };
+
+  const getOutputResolution = () => {
+    let baseW = 1920;
+    let baseH = 1080;
+    if (config.aspectRatio === "custom") {
+      baseW = config.customWidth || 1920;
+      baseH = config.customHeight || 1080;
+    } else {
+      const [w, h] = config.aspectRatio.split(":").map(Number);
+      if (w && h) {
+        if (w >= h) {
+          baseW = 1920;
+          baseH = Math.round((1920 * h) / w);
+        } else {
+          baseH = 1920;
+          baseW = Math.round((1920 * w) / h);
+        }
+      }
+    }
+    return `${baseW * config.exportScale} x ${baseH * config.exportScale}`;
   };
 
   const toggleFullScreen = () => {
@@ -178,7 +203,7 @@ export const TopBar = () => {
 
         {/* Feedback */}
         <button
-          onClick={() => alert("Obrigado pelo feedback!")}
+          onClick={() => showToast("Obrigado pelo seu feedback! 💬", "info")}
           title="Feedback"
           className="p-1.5 rounded-xl hover:bg-[#252525] text-neutral-400 hover:text-white transition-colors cursor-pointer"
         >
@@ -188,8 +213,9 @@ export const TopBar = () => {
         {/* Performance Mode */}
         <button
           onClick={() =>
-            alert(
-              "Modo de Alta Performance ativado (aceleração de hardware WebGL)"
+            showToast(
+              "Modo de Alta Performance ativado (WebGL 60fps) ⚡",
+              "info"
             )
           }
           title="Performance Mode"
@@ -301,7 +327,7 @@ export const TopBar = () => {
             <div className="pt-2 border-t border-[#262626] flex justify-between text-[10px]">
               <span className="text-neutral-400">Output Resolution</span>
               <span className="text-neutral-200 font-mono font-semibold">
-                {1920 * config.exportScale} x {1080 * config.exportScale}
+                {getOutputResolution()} px
               </span>
             </div>
           </div>
