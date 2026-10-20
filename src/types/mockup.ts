@@ -116,6 +116,22 @@ export interface MockupConfig {
   animationPreset: AnimationPreset;
   isAnimationPlaying: boolean;
   animationDuration: number;
+  // Duo / Multi-Device Mode
+  mockupMode: "single" | "duo";
+  secondaryImageUrl?: string | null;
+  duoGap: number;
+  // Text Annotations
+  annotationsEnabled: boolean;
+  annotationHeadline: string;
+  annotationSubtitle: string;
+  annotationBadge: string;
+  annotationBadgeColor: string;
+  annotationPosition: "top" | "bottom";
+  annotationAlign: "left" | "center" | "right";
+  // Custom Color / Gradient
+  customColor1: string;
+  customColor2: string;
+  customGradientAngle: number;
 }
 
 export interface DeviceSpec {
@@ -504,4 +520,201 @@ export const PRESET_SOLIDS = [
   { id: "solid-indigo", name: "Neon Indigo", value: "#4338ca" },
   { id: "solid-emerald", name: "Emerald", value: "#065f46" },
   { id: "solid-white", name: "Clean White", value: "#ffffff" },
+];
+
+export interface TemplatePreset {
+  id: string;
+  name: string;
+  tagline: string;
+  category: "marketing" | "social" | "mobile" | "minimal";
+  badge?: string;
+  config: Partial<MockupConfig>;
+}
+
+export const CURATED_TEMPLATES: TemplatePreset[] = [
+  {
+    id: "saas-launch",
+    name: "SaaS Launch Pro",
+    tagline: "Minimal desktop window, floating 3D shapes & dark gradient",
+    category: "marketing",
+    badge: "Trending",
+    config: {
+      frameType: "minimal-desktop",
+      backgroundType: "gradient",
+      backgroundValue: "linear-gradient(135deg, #1e1b4b 0%, #312e81 50%, #4338ca 100%)",
+      aspectRatio: "16:9",
+      customWidth: 1920,
+      customHeight: 1080,
+      shapesSceneEnabled: true,
+      shapesPack: "metal",
+      shapesLayoutName: "layout-orbit",
+      shadowMode: "adaptive",
+      shadowOpacity: 45,
+      watermark: true,
+      annotationsEnabled: true,
+      annotationHeadline: "Ship Faster with AI",
+      annotationSubtitle: "The all-in-one developer workspace",
+      annotationBadge: "v2.0 LAUNCH",
+      annotationBadgeColor: "#6366f1",
+      annotationPosition: "top",
+      annotationAlign: "center",
+    },
+  },
+  {
+    id: "mobile-app-store",
+    name: "Mobile App Showcase",
+    tagline: "iPhone 17 on Tahoe Nature wallpaper with clean shadow",
+    category: "mobile",
+    badge: "Popular",
+    config: {
+      frameType: "iphone-17",
+      backgroundType: "image",
+      backgroundValue: "url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=2560&q=85') center/cover no-repeat",
+      aspectRatio: "4:5",
+      customWidth: 1080,
+      customHeight: 1350,
+      shapesSceneEnabled: false,
+      shadowMode: "adaptive",
+      shadowOpacity: 40,
+      watermark: false,
+      annotationsEnabled: true,
+      annotationHeadline: "Crafted for iOS 18",
+      annotationSubtitle: "Available now on the App Store",
+      annotationBadge: "FEATURED",
+      annotationBadgeColor: "#ec4899",
+      annotationPosition: "bottom",
+      annotationAlign: "center",
+    },
+  },
+  {
+    id: "twitter-release",
+    name: "X / Twitter Announcement",
+    tagline: "High-contrast browser mockup with Shots Official gradient",
+    category: "social",
+    config: {
+      frameType: "browser",
+      backgroundType: "gradient",
+      backgroundValue: "linear-gradient(140deg, rgb(255, 100, 50) 12.8%, rgb(255, 0, 101) 43.52%, rgb(123, 46, 255) 84.34%)",
+      aspectRatio: "16:9",
+      customWidth: 1920,
+      customHeight: 1080,
+      shapesSceneEnabled: false,
+      shadowMode: "spread",
+      shadowOpacity: 50,
+      watermark: true,
+      annotationsEnabled: false,
+    },
+  },
+  {
+    id: "story-reel-viral",
+    name: "Instagram Story & Reel",
+    tagline: "Vertical 9:16 iPhone 17 on Paper Glass 4K",
+    category: "social",
+    badge: "Story",
+    config: {
+      frameType: "iphone-17",
+      backgroundType: "image",
+      backgroundValue: "radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.4) 0%, transparent 60%), linear-gradient(135deg, #18181b 0%, #27272a 50%, #09090b 100%)",
+      aspectRatio: "9:16",
+      customWidth: 1080,
+      customHeight: 1920,
+      shapesSceneEnabled: true,
+      shapesPack: "glass-pink",
+      shapesLayoutName: "layout-cascade",
+      shadowMode: "adaptive",
+      shadowOpacity: 45,
+      watermark: false,
+      annotationsEnabled: true,
+      annotationHeadline: "Tap To Learn More",
+      annotationSubtitle: "Swipe up or check link in bio",
+      annotationBadge: "NEW DROP",
+      annotationBadgeColor: "#a855f7",
+      annotationPosition: "bottom",
+      annotationAlign: "center",
+    },
+  },
+  {
+    id: "dribbble-shot",
+    name: "Dribbble Design Case",
+    tagline: "iPad Pro 13 on Pastel Dream gradient in 4:3 format",
+    category: "marketing",
+    config: {
+      frameType: "ipad-pro",
+      backgroundType: "gradient",
+      backgroundValue: "linear-gradient(135deg, rgb(238, 221, 243), rgb(238, 146, 177), rgb(99, 48, 180))",
+      aspectRatio: "4:3",
+      customWidth: 1600,
+      customHeight: 1200,
+      shapesSceneEnabled: false,
+      shadowMode: "spread",
+      shadowOpacity: 35,
+      watermark: false,
+      annotationsEnabled: false,
+    },
+  },
+  {
+    id: "duo-product-hunt",
+    name: "Product Hunt Duo",
+    tagline: "Two devices side-by-side with Sunset Glow and Badge",
+    category: "marketing",
+    badge: "Duo Mode",
+    config: {
+      frameType: "iphone-17",
+      mockupMode: "duo",
+      duoGap: 28,
+      backgroundType: "gradient",
+      backgroundValue: "linear-gradient(140deg, rgb(244, 229, 240), rgb(229, 54, 171), rgb(92, 3, 188), rgb(14, 7, 37))",
+      aspectRatio: "16:9",
+      customWidth: 1920,
+      customHeight: 1080,
+      shapesSceneEnabled: false,
+      shadowMode: "adaptive",
+      shadowOpacity: 45,
+      watermark: true,
+      annotationsEnabled: true,
+      annotationHeadline: "Product of the Day #1",
+      annotationSubtitle: "Join 10,000+ creators building with Shots",
+      annotationBadge: "LIVE ON PRODUCT HUNT",
+      annotationBadgeColor: "#ea580c",
+      annotationPosition: "top",
+      annotationAlign: "center",
+    },
+  },
+  {
+    id: "minimal-dark-studio",
+    name: "Minimal Studio Dark",
+    tagline: "Solid black matte background, pure focus on product",
+    category: "minimal",
+    config: {
+      frameType: "iphone-16-pro",
+      backgroundType: "solid",
+      backgroundValue: "#000000",
+      aspectRatio: "1:1",
+      customWidth: 1080,
+      customHeight: 1080,
+      shapesSceneEnabled: false,
+      shadowMode: "none",
+      watermark: false,
+      annotationsEnabled: false,
+    },
+  },
+  {
+    id: "macbook-tahoe-desk",
+    name: "MacBook Pacific Horizon",
+    tagline: "MacBook Pro 16 on 4K Pacific Horizon with natural depth",
+    category: "minimal",
+    config: {
+      frameType: "macbook",
+      backgroundType: "image",
+      backgroundValue: "url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=2560&q=85') center/cover no-repeat",
+      aspectRatio: "16:10",
+      customWidth: 1920,
+      customHeight: 1200,
+      shapesSceneEnabled: false,
+      shadowMode: "adaptive",
+      shadowOpacity: 40,
+      watermark: true,
+      annotationsEnabled: false,
+    },
+  },
 ];

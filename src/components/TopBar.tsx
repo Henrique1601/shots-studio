@@ -29,6 +29,7 @@ export const TopBar = () => {
     updateConfig,
     resetConfig,
     setDeviceModalOpen,
+    setTemplatesModalOpen,
     undo,
     redo,
     randomize,
@@ -213,7 +214,7 @@ export const TopBar = () => {
           />
         </button>
         <button
-          onClick={() => setDeviceModalOpen(true)}
+          onClick={() => setTemplatesModalOpen(true)}
           aria-label="Open mockup templates catalog"
           className="flex items-center space-x-2 px-3 py-1.5 rounded-xl bg-[#1c1c1c] hover:bg-[#252525] border border-[#2b2b2b] text-xs font-semibold transition-colors cursor-pointer"
         >

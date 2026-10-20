@@ -13,15 +13,18 @@ interface MockupStore {
   imageDimensions: { width: number; height: number } | null;
   isDeviceModalOpen: boolean;
   isExportSettingsOpen: boolean;
+  isTemplatesModalOpen: boolean;
   history: MockupConfig[];
   historyIndex: number;
   toasts: ToastItem[];
   showToast: (message: string, type?: "success" | "info" | "warning") => void;
   removeToast: (id: string) => void;
   setImageUrl: (url: string | null) => void;
+  setSecondaryImageUrl: (url: string | null) => void;
   setImageDimensions: (dims: { width: number; height: number } | null) => void;
   setDeviceModalOpen: (open: boolean) => void;
   setExportSettingsOpen: (open: boolean) => void;
+  setTemplatesModalOpen: (open: boolean) => void;
   updateConfig: (partial: Partial<MockupConfig>) => void;
   undo: () => void;
   redo: () => void;
@@ -63,6 +66,19 @@ const defaultConfig: MockupConfig = {
   animationPreset: "none",
   isAnimationPlaying: false,
   animationDuration: 5,
+  mockupMode: "single",
+  secondaryImageUrl: null,
+  duoGap: 24,
+  annotationsEnabled: false,
+  annotationHeadline: "Your Headline Here",
+  annotationSubtitle: "Craft beautiful mockups in seconds",
+  annotationBadge: "NEW",
+  annotationBadgeColor: "#6366f1",
+  annotationPosition: "top",
+  annotationAlign: "center",
+  customColor1: "#6366f1",
+  customColor2: "#ec4899",
+  customGradientAngle: 135,
 };
 
 export const useMockupStore = create<MockupStore>((set, get) => ({
@@ -71,6 +87,7 @@ export const useMockupStore = create<MockupStore>((set, get) => ({
   imageDimensions: null,
   isDeviceModalOpen: false,
   isExportSettingsOpen: false,
+  isTemplatesModalOpen: false,
   history: [defaultConfig],
   historyIndex: 0,
   toasts: [],
@@ -85,9 +102,15 @@ export const useMockupStore = create<MockupStore>((set, get) => ({
     set((state) => ({ toasts: state.toasts.filter((t) => t.id !== id) }));
   },
   setImageUrl: (url) => set({ imageUrl: url }),
+  setSecondaryImageUrl: (url) => {
+    set((state) => ({
+      config: { ...state.config, secondaryImageUrl: url },
+    }));
+  },
   setImageDimensions: (dims) => set({ imageDimensions: dims }),
   setDeviceModalOpen: (open) => set({ isDeviceModalOpen: open }),
   setExportSettingsOpen: (open) => set({ isExportSettingsOpen: open }),
+  setTemplatesModalOpen: (open) => set({ isTemplatesModalOpen: open }),
   updateConfig: (partial) => {
     const current = get().config;
     const nextConfig = { ...current, ...partial };

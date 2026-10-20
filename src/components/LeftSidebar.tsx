@@ -33,17 +33,21 @@ export const LeftSidebar = () => {
     config,
     imageUrl,
     setImageUrl,
+    setSecondaryImageUrl,
     setImageDimensions,
     updateConfig,
     setDeviceModalOpen,
     showToast,
   } = useMockupStore();
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const secondaryFileInputRef = useRef<HTMLInputElement>(null);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   const [inputW, setInputW] = useState(config.customWidth.toString());
   const [inputH, setInputH] = useState(config.customHeight.toString());
-  const [bgTab, setBgTab] = useState<"gradients" | "glass" | "tahoe" | "solid">("gradients");
+  const [bgTab, setBgTab] = useState<
+    "gradients" | "glass" | "tahoe" | "solid" | "custom"
+  >("gradients");
 
   useEffect(() => {
     setInputW(config.customWidth.toString());
@@ -92,6 +96,15 @@ export const LeftSidebar = () => {
         setImageUrl(url);
       };
       img.src = url;
+    }
+  };
+
+  const handleSecondaryUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const url = URL.createObjectURL(file);
+      setSecondaryImageUrl(url);
+      showToast("Segunda imagem carregada! 📱", "success");
     }
   };
 
@@ -200,10 +213,39 @@ export const LeftSidebar = () => {
             </div>
           )}
 
+          {/* LAYOUT MODE (Single vs Duo) */}
+          <div>
+            <div className="text-[10px] font-bold text-neutral-400 tracking-wider mb-1.5">
+              LAYOUT MODE
+            </div>
+            <div className="flex bg-[#222222] p-0.5 rounded-xl">
+              <button
+                onClick={() => updateConfig({ mockupMode: "single" })}
+                className={`flex-1 py-1.5 text-xs rounded-lg transition-all cursor-pointer ${
+                  config.mockupMode === "single"
+                    ? "bg-[#333333] text-white font-medium"
+                    : "text-neutral-400 hover:text-white"
+                }`}
+              >
+                Single
+              </button>
+              <button
+                onClick={() => updateConfig({ mockupMode: "duo" })}
+                className={`flex-1 py-1.5 text-xs rounded-lg transition-all cursor-pointer ${
+                  config.mockupMode === "duo"
+                    ? "bg-[#333333] text-white font-medium"
+                    : "text-neutral-400 hover:text-white"
+                }`}
+              >
+                Duo / Multi
+              </button>
+            </div>
+          </div>
+
           {/* Media Upload Area */}
           <div>
             <div className="text-[10px] font-bold text-neutral-400 tracking-wider mb-1.5">
-              MEDIA
+              {config.mockupMode === "duo" ? "PRIMARY MEDIA (1º DISPOSITIVO)" : "MEDIA"}
             </div>
             <div
               onClick={() => fileInputRef.current?.click()}
@@ -213,7 +255,7 @@ export const LeftSidebar = () => {
                 <Plus className="w-3.5 h-3.5 text-neutral-200 group-hover:text-white" />
               </div>
               <span className="text-[10px] text-neutral-400 group-hover:text-neutral-200">
-                Drop media or click to choose
+                {imageUrl ? "Substituir mídia" : "Drop media or click to choose"}
               </span>
             </div>
             <input
@@ -224,6 +266,53 @@ export const LeftSidebar = () => {
               onChange={handleFileUpload}
             />
           </div>
+
+          {/* SECONDARY MEDIA (Duo Mode) */}
+          {config.mockupMode === "duo" && (
+            <div>
+              <div className="text-[10px] font-bold text-neutral-400 tracking-wider mb-1.5">
+                SECONDARY MEDIA (2º DISPOSITIVO)
+              </div>
+              <div
+                onClick={() => secondaryFileInputRef.current?.click()}
+                className="w-full h-16 rounded-xl bg-[#222222] hover:bg-[#282828] border border-dashed border-neutral-700 hover:border-neutral-500 flex flex-col items-center justify-center cursor-pointer transition-all group"
+              >
+                <div className="w-6 h-6 rounded-lg bg-[#303030] group-hover:bg-[#383838] flex items-center justify-center mb-1 transition-colors">
+                  <Plus className="w-3 h-3 text-neutral-200 group-hover:text-white" />
+                </div>
+                <span className="text-[9px] text-neutral-400 group-hover:text-neutral-200">
+                  {config.secondaryImageUrl ? "Substituir 2ª imagem" : "Upload 2nd device media"}
+                </span>
+              </div>
+              <input
+                ref={secondaryFileInputRef}
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={handleSecondaryUpload}
+              />
+
+              {/* Duo Gap Slider */}
+              <div className="mt-2 flex items-center justify-between text-xs px-1">
+                <span className="text-neutral-400 text-[11px]">Duo Spacing</span>
+                <div className="flex items-center space-x-2 w-28">
+                  <input
+                    type="range"
+                    min="0"
+                    max="100"
+                    value={config.duoGap ?? 32}
+                    onChange={(e) =>
+                      updateConfig({ duoGap: Number(e.target.value) })
+                    }
+                    className="w-full accent-white h-1 bg-[#3a3a3a] rounded-lg appearance-none cursor-pointer"
+                  />
+                  <span className="text-[10px] text-neutral-300 w-4 text-right">
+                    {config.duoGap ?? 32}
+                  </span>
+                </div>
+              </div>
+            </div>
+          )}
 
           {/* STYLE Selector */}
           <div>
@@ -486,6 +575,142 @@ export const LeftSidebar = () => {
             </div>
           </div>
 
+          {/* TEXT & BADGES ANNOTATIONS */}
+          <div>
+            <div className="flex items-center justify-between mb-1.5">
+              <span className="text-[10px] font-bold text-neutral-400 tracking-wider">
+                TEXT & BADGES
+              </span>
+              <input
+                type="checkbox"
+                checked={config.annotationsEnabled}
+                onChange={(e) =>
+                  updateConfig({ annotationsEnabled: e.target.checked })
+                }
+                className="w-3.5 h-3.5 accent-white cursor-pointer"
+              />
+            </div>
+
+            {config.annotationsEnabled && (
+              <div className="p-2.5 rounded-xl bg-[#242424] space-y-2 mt-1">
+                <div>
+                  <div className="text-[9px] text-neutral-400 font-semibold mb-1">
+                    BADGE / PILL
+                  </div>
+                  <div className="flex items-center space-x-1.5">
+                    <input
+                      type="text"
+                      value={config.annotationBadge || ""}
+                      onChange={(e) =>
+                        updateConfig({ annotationBadge: e.target.value })
+                      }
+                      placeholder="Ex: NOVO V2.0"
+                      className="flex-1 px-2 py-1 rounded-lg bg-[#181818] border border-neutral-700 text-xs text-white placeholder-neutral-500 focus:outline-none"
+                    />
+                    <input
+                      type="color"
+                      value={config.annotationBadgeColor || "#6366f1"}
+                      onChange={(e) =>
+                        updateConfig({ annotationBadgeColor: e.target.value })
+                      }
+                      className="w-7 h-7 rounded border-0 cursor-pointer bg-transparent"
+                      title="Badge Color"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <div className="text-[9px] text-neutral-400 font-semibold mb-1">
+                    HEADLINE
+                  </div>
+                  <input
+                    type="text"
+                    value={config.annotationHeadline || ""}
+                    onChange={(e) =>
+                      updateConfig({ annotationHeadline: e.target.value })
+                    }
+                    placeholder="Título chamativo..."
+                    className="w-full px-2 py-1 rounded-lg bg-[#181818] border border-neutral-700 text-xs text-white placeholder-neutral-500 focus:outline-none"
+                  />
+                </div>
+
+                <div>
+                  <div className="text-[9px] text-neutral-400 font-semibold mb-1">
+                    SUBTITLE
+                  </div>
+                  <input
+                    type="text"
+                    value={config.annotationSubtitle || ""}
+                    onChange={(e) =>
+                      updateConfig({ annotationSubtitle: e.target.value })
+                    }
+                    placeholder="Descrição secundária..."
+                    className="w-full px-2 py-1 rounded-lg bg-[#181818] border border-neutral-700 text-xs text-white placeholder-neutral-500 focus:outline-none"
+                  />
+                </div>
+
+                <div className="flex items-center space-x-1 pt-1">
+                  <div className="flex-1">
+                    <div className="text-[9px] text-neutral-400 font-semibold mb-1">
+                      POSIÇÃO
+                    </div>
+                    <div className="flex bg-[#181818] p-0.5 rounded-lg text-[10px]">
+                      <button
+                        onClick={() => updateConfig({ annotationPosition: "top" })}
+                        className={`flex-1 py-1 rounded transition-colors ${
+                          config.annotationPosition === "top"
+                            ? "bg-[#333] text-white font-medium"
+                            : "text-neutral-400 hover:text-white"
+                        }`}
+                      >
+                        Top
+                      </button>
+                      <button
+                        onClick={() =>
+                          updateConfig({ annotationPosition: "bottom" })
+                        }
+                        className={`flex-1 py-1 rounded transition-colors ${
+                          config.annotationPosition === "bottom"
+                            ? "bg-[#333] text-white font-medium"
+                            : "text-neutral-400 hover:text-white"
+                        }`}
+                      >
+                        Bottom
+                      </button>
+                    </div>
+                  </div>
+
+                  <div className="flex-1">
+                    <div className="text-[9px] text-neutral-400 font-semibold mb-1">
+                      ALINHAR
+                    </div>
+                    <div className="flex bg-[#181818] p-0.5 rounded-lg text-[10px]">
+                      {(
+                        [
+                          { id: "left", label: "L" },
+                          { id: "center", label: "C" },
+                          { id: "right", label: "R" },
+                        ] as const
+                      ).map((a) => (
+                        <button
+                          key={a.id}
+                          onClick={() => updateConfig({ annotationAlign: a.id })}
+                          className={`flex-1 py-1 rounded transition-colors ${
+                            config.annotationAlign === a.id
+                              ? "bg-[#333] text-white font-medium"
+                              : "text-neutral-400 hover:text-white"
+                          }`}
+                        >
+                          {a.label}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+
           {/* EFFECTS & WATERMARK */}
           <div>
             <div className="text-[10px] font-bold text-neutral-400 tracking-wider mb-1.5">
@@ -617,6 +842,7 @@ export const LeftSidebar = () => {
                   { id: "glass", label: "Glass" },
                   { id: "tahoe", label: "Tahoe" },
                   { id: "solid", label: "Solid" },
+                  { id: "custom", label: "Custom" },
                 ] as const
               ).map((t) => (
                 <button
@@ -736,6 +962,118 @@ export const LeftSidebar = () => {
                     title={s.name}
                   />
                 ))}
+              </div>
+            )}
+
+            {/* 5. Custom Solid & Gradient Builder */}
+            {bgTab === "custom" && (
+              <div className="space-y-3 p-2.5 rounded-xl bg-[#242424]">
+                {/* Solid Color Picker */}
+                <div>
+                  <div className="text-[9px] text-neutral-400 uppercase font-semibold mb-1">
+                    Cor Sólida Customizada
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <input
+                      type="color"
+                      value={config.customColor1 || "#0f172a"}
+                      onChange={(e) => {
+                        const col = e.target.value;
+                        updateConfig({
+                          customColor1: col,
+                          backgroundType: "solid",
+                          backgroundValue: col,
+                        });
+                      }}
+                      className="w-8 h-8 rounded border-0 cursor-pointer bg-transparent"
+                    />
+                    <input
+                      type="text"
+                      value={config.customColor1 || "#0f172a"}
+                      onChange={(e) => {
+                        const col = e.target.value;
+                        updateConfig({
+                          customColor1: col,
+                          backgroundType: "solid",
+                          backgroundValue: col,
+                        });
+                      }}
+                      className="flex-1 px-2 py-1 rounded bg-[#181818] border border-neutral-700 text-xs text-white font-mono uppercase"
+                    />
+                  </div>
+                </div>
+
+                {/* 2-Stop Gradient Builder */}
+                <div className="pt-2 border-t border-[#333] space-y-2">
+                  <div className="text-[9px] text-neutral-400 uppercase font-semibold">
+                    Gradiente 2 Cores
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <div className="flex-1 flex items-center space-x-1.5 bg-[#181818] p-1 rounded-lg">
+                      <input
+                        type="color"
+                        value={config.customColor1 || "#6366f1"}
+                        onChange={(e) =>
+                          updateConfig({ customColor1: e.target.value })
+                        }
+                        className="w-5 h-5 rounded cursor-pointer bg-transparent border-0"
+                      />
+                      <span className="text-[10px] font-mono text-neutral-300">
+                        {config.customColor1 || "#6366f1"}
+                      </span>
+                    </div>
+                    <span className="text-neutral-500 text-xs">→</span>
+                    <div className="flex-1 flex items-center space-x-1.5 bg-[#181818] p-1 rounded-lg">
+                      <input
+                        type="color"
+                        value={config.customColor2 || "#ec4899"}
+                        onChange={(e) =>
+                          updateConfig({ customColor2: e.target.value })
+                        }
+                        className="w-5 h-5 rounded cursor-pointer bg-transparent border-0"
+                      />
+                      <span className="text-[10px] font-mono text-neutral-300">
+                        {config.customColor2 || "#ec4899"}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Angle Slider */}
+                  <div className="flex items-center justify-between text-xs px-1">
+                    <span className="text-neutral-400 text-[10px]">
+                      Ângulo ({config.customGradientAngle ?? 135}°)
+                    </span>
+                    <input
+                      type="range"
+                      min="0"
+                      max="360"
+                      value={config.customGradientAngle ?? 135}
+                      onChange={(e) =>
+                        updateConfig({
+                          customGradientAngle: Number(e.target.value),
+                        })
+                      }
+                      className="w-24 accent-white h-1 bg-[#3a3a3a] rounded-lg appearance-none cursor-pointer"
+                    />
+                  </div>
+
+                  <button
+                    onClick={() => {
+                      const c1 = config.customColor1 || "#6366f1";
+                      const c2 = config.customColor2 || "#ec4899";
+                      const ang = config.customGradientAngle ?? 135;
+                      const gradVal = `linear-gradient(${ang}deg, ${c1} 0%, ${c2} 100%)`;
+                      updateConfig({
+                        backgroundType: "gradient",
+                        backgroundValue: gradVal,
+                      });
+                      showToast("Gradiente aplicado ao canvas! ✨", "success");
+                    }}
+                    className="w-full py-1.5 rounded-lg bg-white text-black text-xs font-semibold hover:bg-neutral-200 transition-colors cursor-pointer"
+                  >
+                    Aplicar Gradiente
+                  </button>
+                </div>
               </div>
             )}
           </div>

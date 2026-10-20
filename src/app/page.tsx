@@ -6,13 +6,22 @@ import { LeftSidebar } from "@/components/LeftSidebar";
 import { RightSidebar } from "@/components/RightSidebar";
 import { MockupCanvas } from "@/components/MockupCanvas";
 import { DeviceModal } from "@/components/DeviceModal";
+import { TemplatesModal } from "@/components/TemplatesModal";
 import { VideoTimeline } from "@/components/VideoTimeline";
 import { MobileDrawer } from "@/components/MobileDrawer";
 import { ToastContainer } from "@/components/ToastContainer";
 import { useMockupStore } from "@/store/mockupStore";
 
 export default function Home() {
-  const { setImageUrl, setImageDimensions, undo, redo, showToast, setDeviceModalOpen } = useMockupStore();
+  const {
+    setImageUrl,
+    setImageDimensions,
+    undo,
+    redo,
+    showToast,
+    setDeviceModalOpen,
+    setTemplatesModalOpen,
+  } = useMockupStore();
 
   // Global Keyboard Shortcuts (Ctrl+V, Ctrl+Z, Ctrl+Y, Delete, Esc)
   useEffect(() => {
@@ -40,10 +49,21 @@ export default function Home() {
         showToast("Imagem removida do mockup", "info");
       } else if (e.key === "Escape") {
         setDeviceModalOpen(false);
+        setTemplatesModalOpen(false);
       }
     };
 
     const handlePaste = (e: ClipboardEvent) => {
+      const activeEl = document.activeElement;
+      if (
+        activeEl &&
+        (activeEl.tagName === "INPUT" ||
+          activeEl.tagName === "TEXTAREA" ||
+          activeEl.getAttribute("contenteditable") === "true")
+      ) {
+        return;
+      }
+
       const items = e.clipboardData?.items;
       if (!items) return;
 
@@ -51,12 +71,13 @@ export default function Home() {
         if (items[i].type.indexOf("image") !== -1) {
           const blob = items[i].getAsFile();
           if (blob) {
+            e.preventDefault();
             const url = URL.createObjectURL(blob);
             const img = new Image();
             img.onload = () => {
               setImageDimensions({ width: img.naturalWidth, height: img.naturalHeight });
               setImageUrl(url);
-              showToast("Imagem colada com sucesso! ✨");
+              showToast("Imagem colada da área de transferência! 📋", "success");
             };
             img.src = url;
           }
@@ -71,7 +92,15 @@ export default function Home() {
       window.removeEventListener("keydown", handleKeyDown);
       window.removeEventListener("paste", handlePaste);
     };
-  }, [setImageUrl, setImageDimensions, undo, redo, showToast, setDeviceModalOpen]);
+  }, [
+    setImageUrl,
+    setImageDimensions,
+    undo,
+    redo,
+    showToast,
+    setDeviceModalOpen,
+    setTemplatesModalOpen,
+  ]);
 
   return (
     <div className="h-screen w-screen overflow-hidden bg-[#0d0d0d] text-white flex flex-col font-sans select-none">
@@ -98,6 +127,9 @@ export default function Home() {
 
       {/* Modal para Escolha de Dispositivos (iPhone 17, Mac, Browser) */}
       <DeviceModal />
+
+      {/* Modal da Galeria de Templates Curados */}
+      <TemplatesModal />
 
       {/* Global Toast Notification System */}
       <ToastContainer />
