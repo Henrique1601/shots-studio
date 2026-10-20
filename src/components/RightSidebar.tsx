@@ -4,19 +4,11 @@ import React, { useState, useRef } from "react";
 import { useMockupStore } from "@/store/mockupStore";
 import { LAYOUT_PRESETS_LIST } from "@/types/mockup";
 import { cn } from "@/lib/utils";
-import {
-  Upload,
-  Copy,
-  SlidersHorizontal,
-  X,
-} from "lucide-react";
-import * as htmlToImage from "html-to-image";
-import confetti from "canvas-confetti";
+import { X } from "lucide-react";
 
 export const RightSidebar = () => {
   const { config, updateConfig, showToast } = useMockupStore();
   const [activeMode, setActiveMode] = useState<"zoom" | "tilt">("zoom");
-  const [isExporting, setIsExporting] = useState(false);
   const padRef = useRef<HTMLDivElement>(null);
   const [isDraggingPad, setIsDraggingPad] = useState(false);
 
@@ -61,91 +53,10 @@ export const RightSidebar = () => {
     showToast("Ângulo 3D resetado para o centro! 🎯", "info");
   };
 
-  const exportOptions = {
-    quality: 0.95,
-    pixelRatio: config.exportScale,
-    cacheBust: false,
-    skipFonts: true,
-    filter: (node: HTMLElement) => {
-      if (node.tagName === "SCRIPT" || node.tagName === "INPUT") return false;
-      return true;
-    },
-  };
-
-  const handleExport = async () => {
-    const node = document.getElementById("mockup-export-container");
-    if (!node) return;
-
-    try {
-      setIsExporting(true);
-      const dataUrl = await htmlToImage.toPng(node, exportOptions);
-      const link = document.createElement("a");
-      link.download = `shot-${Date.now()}.png`;
-      link.href = dataUrl;
-      link.click();
-
-      confetti({
-        particleCount: 70,
-        spread: 60,
-        origin: { y: 0.15 },
-      });
-      showToast(`Exportado com sucesso (${config.exportFormat})! 🚀`);
-    } catch (err) {
-      console.error("Export error:", err);
-      showToast("Erro ao exportar", "warning");
-    } finally {
-      setIsExporting(false);
-    }
-  };
-
-  const handleCopy = async () => {
-    const node = document.getElementById("mockup-export-container");
-    if (!node) return;
-    try {
-      const blob = await htmlToImage.toBlob(node, exportOptions);
-      if (blob) {
-        await navigator.clipboard.write([
-          new ClipboardItem({ "image/png": blob }),
-        ]);
-        showToast("Copiado para a área de transferência! 📋");
-      }
-    } catch (e) {
-      console.error("Copy error:", e);
-      showToast("Erro ao copiar", "warning");
-    }
-  };
-
   return (
     <aside className="hidden lg:flex w-[228px] shrink-0 bg-[#1c1c1c] rounded-2xl flex-col h-[calc(100vh-6.5rem)] my-auto mr-3 select-none text-white overflow-hidden shadow-2xl border border-white/5">
-      {/* Top Export Bar */}
-      <div className="p-2 border-b border-[#262626] space-y-2">
-        <div className="flex items-center space-x-1.5">
-          <button
-            onClick={handleExport}
-            disabled={isExporting}
-            className="flex-1 flex items-center justify-center space-x-1.5 py-1.5 px-2 rounded-xl bg-white text-black font-semibold text-xs hover:bg-neutral-200 transition-all shadow-sm active:scale-98 disabled:opacity-50 cursor-pointer"
-          >
-            <Upload className="w-3.5 h-3.5 rotate-180" />
-            <span>
-              {isExporting ? "Exporting..." : `Export ${config.exportScale}x · ${config.exportFormat}`}
-            </span>
-          </button>
-          <button
-            onClick={handleCopy}
-            title="Copy image"
-            className="p-1.5 rounded-xl bg-[#282828] hover:bg-[#333333] text-neutral-300 hover:text-white transition-colors cursor-pointer"
-          >
-            <Copy className="w-3.5 h-3.5" />
-          </button>
-          <button
-            title="Export settings"
-            className="p-1.5 rounded-xl bg-[#282828] hover:bg-[#333333] text-neutral-300 hover:text-white transition-colors cursor-pointer"
-          >
-            <SlidersHorizontal className="w-3.5 h-3.5" />
-          </button>
-        </div>
-
-        {/* Device Mode / Multi-Device Layout: 1 (Single), 2 (Duo), 3 (Trio) */}
+      {/* Device Mode / Multi-Device Layout: 1 (Single), 2 (Duo), 3 (Trio) */}
+      <div className="p-2 border-b border-[#262626]">
         <div className="flex bg-[#141414] p-0.5 rounded-xl">
           <button
             onClick={() => {

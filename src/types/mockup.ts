@@ -90,6 +90,20 @@ export type WatermarkPosition =
   | "bottom-left"
   | "bottom-right";
 
+export type WatermarkStyle = "default" | "shadow" | "glass" | "badge";
+export type WatermarkTheme = "light" | "dark";
+
+export type VfxType =
+  | "none"
+  | "noise"
+  | "vhs"
+  | "tv"
+  | "vhs-glitch"
+  | "tech-glitch"
+  | "light-leak"
+  | "particles"
+  | "glitter";
+
 export type DeviceColorFinish =
   | "default"
   | "space-black"
@@ -127,19 +141,25 @@ export interface MockupConfig {
   tiltX: number; // -45 to 45
   tiltY: number; // -45 to 45
   tiltZ: number; // -45 to 45
-  backgroundType: "gradient" | "solid" | "image";
+  backgroundType: "gradient" | "solid" | "image" | "transparent";
   backgroundValue: string;
   aspectRatio: AspectRatioType;
   customWidth: number;
   customHeight: number;
   layoutPreset: LayoutPreset;
   exportScale: 1 | 2 | 3; // 1x (FHD), 2x (4K), 3x (6K)
-  exportFormat: "PNG" | "JPEG" | "WEBP" | "GIF";
+  exportFormat: "PNG" | "JPEG" | "WEBP" | "GIF" | "VIDEO";
   browserUrl?: string;
   // Effects & Watermark
   watermark: boolean;
   noiseOverlay: boolean;
   portraitEffect: boolean;
+  watermarkStyle?: WatermarkStyle;
+  watermarkTheme?: WatermarkTheme;
+  watermarkSize?: number;
+  watermarkInset?: number;
+  vfxType?: VfxType;
+  vfxIntensity?: number;
   // 3D Shapes Scene
   shapesSceneEnabled: boolean;
   shapesPack:
@@ -456,7 +476,7 @@ export const DEFAULT_RATIO_DIMENSIONS: Record<AspectRatioType, { width: number; 
   "16:10": { width: 1920, height: 1200 },
   "3:2": { width: 1800, height: 1200 },
   "4:3": { width: 1600, height: 1200 },
-  "5:4": { width: 1500, height: 1200 },
+  "5:4": { width: 1920, height: 1536 },
   "1:1": { width: 1080, height: 1080 },
   "4:5": { width: 1080, height: 1350 },
   "3:4": { width: 1080, height: 1440 },
@@ -495,6 +515,25 @@ export const ASPECT_RATIOS_SOCIAL: { id: AspectRatioType; label: string; ratio: 
   { id: "16:9", label: "Banner", ratio: "16:9" },
   { id: "16:9", label: "Thumbnail", ratio: "16:9" },
   { id: "4:3", label: "Shot", ratio: "4:3" },
+];
+
+export const PRESET_MYSTIC = [
+  { id: "mystic-1", name: "Aura Blue", value: "radial-gradient(circle at 50% 120%, #2563eb 0%, #1e1b4b 60%, #030712 100%)" },
+  { id: "mystic-2", name: "Violet Arch", value: "radial-gradient(circle at 50% 120%, #9333ea 0%, #ec4899 50%, #fdf2f8 100%)" },
+  { id: "mystic-3", name: "Cosmic Ripple", value: "radial-gradient(circle at 50% 110%, #6366f1 0%, #a855f7 40%, #09090b 100%)" },
+  { id: "mystic-4", name: "Indigo Wave", value: "radial-gradient(circle at 0% 100%, #3b82f6 0%, #1d4ed8 40%, #0f172a 100%)" },
+  { id: "mystic-5", name: "Vortex Bloom", value: "radial-gradient(circle at 50% 50%, #f472b6 0%, #a855f7 50%, #fdf4ff 100%)" },
+  { id: "mystic-6", name: "Mint Emerald", value: "radial-gradient(circle at 50% 110%, #10b981 0%, #06b6d4 50%, #f0fdf4 100%)" },
+  { id: "mystic-7", name: "Neon Swirl", value: "radial-gradient(circle at 70% 30%, #f43f5e 0%, #ec4899 40%, #fef2f2 100%)" },
+  { id: "mystic-8", name: "Sunset Peach", value: "radial-gradient(circle at 50% 120%, #f97316 0%, #ec4899 50%, #fff7ed 100%)" },
+  { id: "mystic-9", name: "Cotton Candy", value: "radial-gradient(circle at 30% 70%, #ec4899 0%, #f472b6 40%, #faf5ff 100%)" },
+  { id: "mystic-10", name: "Magenta Dome", value: "radial-gradient(circle at 50% 110%, #e11d48 0%, #fb7185 50%, #fff1f2 100%)" },
+  { id: "mystic-11", name: "Apricot Warm", value: "radial-gradient(circle at 50% 120%, #fb923c 0%, #f43f5e 50%, #fff7ed 100%)" },
+  { id: "mystic-12", name: "Periwinkle Mist", value: "radial-gradient(circle at 50% 110%, #818cf8 0%, #c084fc 50%, #eff6ff 100%)" },
+  { id: "mystic-13", name: "Lavender Glow", value: "radial-gradient(circle at 20% 80%, #a855f7 0%, #e879f9 50%, #faf5ff 100%)" },
+  { id: "mystic-14", name: "Dawn Mint", value: "radial-gradient(circle at 50% 110%, #2dd4bf 0%, #38bdf8 50%, #f0fdfa 100%)" },
+  { id: "mystic-15", name: "Amber Beam", value: "radial-gradient(circle at 20% 100%, #eab308 0%, #ca8a04 40%, #1c1917 100%)" },
+  { id: "mystic-16", name: "Tahoe Mist", value: "radial-gradient(circle at 50% 120%, #0284c7 0%, #0f172a 70%, #020617 100%)" },
 ];
 
 export const PRESET_GRADIENTS = [

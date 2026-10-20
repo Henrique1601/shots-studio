@@ -19,6 +19,7 @@ import {
   FolderOpen,
   Film,
   Sparkles,
+  ChevronDown,
 } from "lucide-react";
 import * as htmlToImage from "html-to-image";
 import confetti from "canvas-confetti";
@@ -386,167 +387,158 @@ export const TopBar = () => {
         </button>
       </div>
 
-      {/* 3. Right: Export Pill & Settings Popover */}
-      <div className="flex items-center space-x-1.5 relative">
-        <button
-          onClick={handleCopy}
-          title="Copy Image"
-          aria-label="Copy mockup image to clipboard"
-          className="p-2 rounded-xl bg-[#1c1c1c] hover:bg-[#262626] text-neutral-300 hover:text-white border border-[#2b2b2b] transition-colors cursor-pointer"
-        >
-          <Copy className="w-3.5 h-3.5" />
-        </button>
-
+      {/* 3. Right: Single Canonical Global Export Dropdown */}
+      <div className="relative">
         <button
           onClick={() => setShowSettings(!showSettings)}
-          title="Export Settings"
-          aria-label="Open export settings popover"
-          className="p-2 rounded-xl bg-[#1c1c1c] hover:bg-[#262626] text-neutral-300 hover:text-white border border-[#2b2b2b] transition-colors cursor-pointer"
-        >
-          <SlidersHorizontal className="w-3.5 h-3.5" />
-        </button>
-
-        {/* Main Export Button */}
-        <button
-          onClick={handleExport}
           disabled={isExporting}
-          aria-label="Export and download mockup image"
-          className="flex items-center space-x-2 px-3.5 py-1.5 rounded-xl bg-white text-black font-semibold text-xs hover:bg-neutral-200 transition-all shadow-md active:scale-98 disabled:opacity-50 cursor-pointer"
+          aria-label="Export options"
+          className="flex items-center space-x-2 px-4 py-2 rounded-xl bg-white text-black font-semibold text-xs hover:bg-neutral-200 transition-all shadow-md active:scale-98 disabled:opacity-50 cursor-pointer"
         >
-          <Download className="w-3.5 h-3.5" />
-          <div className="text-left leading-tight">
-            <div className="text-[11px] font-bold">Export</div>
-            <div className="text-[9px] text-neutral-600 font-mono">
-              {config.exportScale}x · {config.exportFormat}
-            </div>
-          </div>
+          {isExporting ? (
+            <div className="w-3.5 h-3.5 border-2 border-black border-t-transparent rounded-full animate-spin" />
+          ) : (
+            <Download className="w-3.5 h-3.5" />
+          )}
+          <span className="font-bold text-xs">Export</span>
+          <ChevronDown
+            className={`w-3.5 h-3.5 text-neutral-600 transition-transform ${
+              showSettings ? "rotate-180" : ""
+            }`}
+          />
         </button>
 
-        {/* Video WebM Export Button */}
-        <button
-          onClick={handleExportVideo}
-          disabled={isExporting}
-          title="Export 3D Animation as Video (.webm)"
-          aria-label="Export 3D Animation as Video"
-          className="p-2 rounded-xl bg-[#1c1c1c] hover:bg-[#262626] text-pink-400 hover:text-pink-300 border border-[#2b2b2b] transition-colors cursor-pointer"
-        >
-          <Film className="w-3.5 h-3.5" />
-        </button>
-
-        {/* Animated GIF Export Button */}
-        <button
-          onClick={handleExportGif}
-          disabled={isExporting}
-          title="Export as Animated GIF (.gif)"
-          aria-label="Export as Animated GIF"
-          className="px-2.5 py-1.5 rounded-xl bg-[#1c1c1c] hover:bg-[#262626] text-amber-400 hover:text-amber-300 border border-[#2b2b2b] text-xs font-bold transition-colors cursor-pointer flex items-center space-x-1"
-        >
-          <Sparkles className="w-3 h-3 text-amber-400" />
-          <span>GIF</span>
-        </button>
-
-        {/* Popover Settings de Exportação Oficial */}
         {showSettings && (
-          <div className="absolute right-0 top-12 w-64 p-3.5 rounded-2xl bg-[#1c1c1c] border border-[#2e2e2e] shadow-2xl space-y-3 z-50 animate-in fade-in zoom-in-95 duration-100">
-            <div className="flex items-center justify-between pb-2 border-b border-[#262626]">
-              <span className="text-[10px] font-bold text-neutral-400 uppercase tracking-wider">
-                Export Settings
-              </span>
+          <div className="absolute right-0 top-12 w-80 p-4 rounded-2xl bg-[#1c1c1c] border border-[#2e2e2e] shadow-2xl space-y-3.5 z-50 animate-in fade-in zoom-in-95 duration-100">
+            {/* Popover Header */}
+            <div className="flex items-center justify-between pb-2.5 border-b border-[#262626]">
+              <div className="flex items-center space-x-2">
+                <Download className="w-4 h-4 text-white" />
+                <span className="text-xs font-bold text-white tracking-wide">
+                  Export Studio
+                </span>
+              </div>
               <button
                 onClick={() => setShowSettings(false)}
-                className="text-neutral-400 hover:text-white"
+                className="text-neutral-400 hover:text-white p-1 rounded-lg hover:bg-white/5 transition-colors cursor-pointer"
               >
-                <X className="w-3.5 h-3.5" />
+                <X className="w-4 h-4" />
               </button>
             </div>
 
-            {/* FORMAT */}
+            {/* FORMAT SELECTOR */}
             <div>
-              <div className="text-[9px] font-bold text-neutral-400 uppercase mb-1.5">
+              <div className="text-[10px] font-bold text-neutral-400 uppercase mb-1.5 tracking-wider">
                 Format
               </div>
-              <div className="grid grid-cols-4 gap-1">
-                {(["PNG", "JPEG", "WEBP", "GIF"] as const).map((fmt) => (
+              <div className="grid grid-cols-5 gap-1">
+                {(["PNG", "JPEG", "WEBP", "GIF", "VIDEO"] as const).map((fmt) => (
                   <button
                     key={fmt}
                     onClick={() => updateConfig({ exportFormat: fmt })}
-                    className={`py-1 text-xs rounded-lg font-semibold transition-all cursor-pointer ${
+                    className={`py-1.5 text-[11px] rounded-lg font-semibold transition-all cursor-pointer text-center ${
                       config.exportFormat === fmt
-                        ? "bg-white text-black shadow-sm"
+                        ? "bg-white text-black shadow-sm font-bold"
                         : "bg-[#252525] text-neutral-400 hover:text-white"
                     }`}
                   >
-                    {fmt}
+                    {fmt === "VIDEO" ? "Video" : fmt}
                   </button>
                 ))}
               </div>
             </div>
 
-            {/* QUALITY / SCALE */}
-            <div>
-              <div className="text-[9px] font-bold text-neutral-400 uppercase mb-1.5">
-                Quality
+            {/* QUALITY / SCALE (Only for Image formats) */}
+            {config.exportFormat !== "GIF" && config.exportFormat !== "VIDEO" && (
+              <div>
+                <div className="text-[10px] font-bold text-neutral-400 uppercase mb-1.5 tracking-wider flex items-center justify-between">
+                  <span>Resolution Scale</span>
+                  <span className="text-[9px] font-mono text-neutral-400">
+                    {getOutputResolution()} px
+                  </span>
+                </div>
+                <div className="grid grid-cols-3 gap-1.5">
+                  {(
+                    [
+                      { scale: 1, label: "1x (FHD)" },
+                      { scale: 2, label: "2x (4K)" },
+                      { scale: 3, label: "3x (6K)" },
+                    ] as const
+                  ).map((q) => (
+                    <button
+                      key={q.scale}
+                      onClick={() => updateConfig({ exportScale: q.scale })}
+                      className={`py-1.5 text-[11px] rounded-lg font-semibold transition-all cursor-pointer ${
+                        config.exportScale === q.scale
+                          ? "bg-white text-black shadow-sm font-bold"
+                          : "bg-[#252525] text-neutral-400 hover:text-white"
+                      }`}
+                    >
+                      {q.label}
+                    </button>
+                  ))}
+                </div>
               </div>
-              <div className="grid grid-cols-3 gap-1">
-                {(
-                  [
-                    { scale: 1, label: "FHD" },
-                    { scale: 2, label: "4K" },
-                    { scale: 3, label: "6K" },
-                  ] as const
-                ).map((q) => (
-                  <button
-                    key={q.scale}
-                    onClick={() => updateConfig({ exportScale: q.scale })}
-                    className={`py-1 text-xs rounded-lg font-semibold transition-all cursor-pointer ${
-                      config.exportScale === q.scale
-                        ? "bg-white text-black shadow-sm"
-                        : "bg-[#252525] text-neutral-400 hover:text-white"
-                    }`}
-                  >
-                    {q.label}
-                  </button>
-                ))}
-              </div>
-            </div>
+            )}
 
-            {/* SOCIAL MEDIA QUICK SIZES */}
-            <div className="pt-2 border-t border-[#262626]">
-              <div className="text-[9px] font-bold text-neutral-400 uppercase mb-1.5 flex items-center justify-between">
-                <span>Social Media Presets</span>
-                <span className="text-[8px] text-cyan-400 font-normal">1-Click</span>
+            {/* Video duration notice if Video is chosen */}
+            {config.exportFormat === "VIDEO" && (
+              <div className="p-2.5 rounded-xl bg-pink-500/10 border border-pink-500/20 text-[11px] text-pink-300">
+                Gera vídeo .webm de 5 segundos com animação 3D orbital fluida e 60 FPS.
               </div>
-              <div className="grid grid-cols-2 gap-1 max-h-36 overflow-y-auto pr-0.5">
-                {SOCIAL_MEDIA_PRESETS.map((p) => (
-                  <button
-                    key={p.id}
-                    onClick={() => {
-                      updateConfig({
-                        aspectRatio: p.aspectRatio,
-                        customWidth: p.width,
-                        customHeight: p.height,
-                      });
-                      showToast(`${p.name} (${p.badge}) aplicado!`, "success");
-                    }}
-                    className={`p-1.5 rounded-lg border text-left transition-all cursor-pointer ${
-                      config.customWidth === p.width && config.customHeight === p.height
-                        ? "border-cyan-400 bg-cyan-400/10 text-white"
-                        : "border-transparent bg-[#252525] text-neutral-300 hover:text-white"
-                    }`}
-                  >
-                    <div className="text-[10px] font-semibold truncate">{p.name}</div>
-                    <div className="text-[8px] font-mono text-neutral-400">{p.badge}</div>
-                  </button>
-                ))}
-              </div>
-            </div>
+            )}
 
-            {/* Output resolution calculation */}
-            <div className="pt-2 border-t border-[#262626] flex justify-between text-[10px]">
-              <span className="text-neutral-400">Output Resolution</span>
-              <span className="text-neutral-200 font-mono font-semibold">
-                {getOutputResolution()} px
-              </span>
+            {/* GIF notice if GIF is chosen */}
+            {config.exportFormat === "GIF" && (
+              <div className="p-2.5 rounded-xl bg-amber-500/10 border border-amber-500/20 text-[11px] text-amber-300">
+                Gera GIF animado em loop com 25 frames e renderização client-side.
+              </div>
+            )}
+
+            {/* PRIMARY DOWNLOAD BUTTON */}
+            <div className="pt-2 border-t border-[#262626] space-y-2">
+              <button
+                disabled={isExporting}
+                onClick={async () => {
+                  if (config.exportFormat === "VIDEO") {
+                    await handleExportVideo();
+                  } else if (config.exportFormat === "GIF") {
+                    await handleExportGif();
+                  } else {
+                    await handleExport();
+                  }
+                  setShowSettings(false);
+                }}
+                className="w-full py-2.5 px-3 rounded-xl bg-white text-black font-bold text-xs hover:bg-neutral-200 transition-all flex items-center justify-center space-x-2 shadow-lg active:scale-98 disabled:opacity-50 cursor-pointer"
+              >
+                {isExporting ? (
+                  <div className="w-4 h-4 border-2 border-black border-t-transparent rounded-full animate-spin" />
+                ) : (
+                  <Download className="w-4 h-4" />
+                )}
+                <span>
+                  {isExporting
+                    ? "Exportando..."
+                    : config.exportFormat === "VIDEO"
+                    ? "Download Video (.webm)"
+                    : config.exportFormat === "GIF"
+                    ? "Download Animated GIF (.gif)"
+                    : `Download ${config.exportFormat} (${config.exportScale}x)`}
+                </span>
+              </button>
+
+              {/* SECONDARY COPY CLIPBOARD BUTTON */}
+              <button
+                disabled={isExporting}
+                onClick={async () => {
+                  await handleCopy();
+                  setShowSettings(false);
+                }}
+                className="w-full py-2 px-3 rounded-xl bg-[#252525] hover:bg-[#2e2e2e] text-white font-medium text-xs border border-[#333] transition-all flex items-center justify-center space-x-2 active:scale-98 disabled:opacity-50 cursor-pointer"
+              >
+                <Copy className="w-3.5 h-3.5 text-neutral-300" />
+                <span>Copiar para Área de Transferência</span>
+              </button>
             </div>
           </div>
         )}

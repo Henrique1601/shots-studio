@@ -613,7 +613,10 @@ export const MockupCanvas = () => {
         <div
           className="absolute inset-0 pointer-events-none transition-all duration-300"
           style={{
-            background: config.backgroundValue,
+            background:
+              config.backgroundType === "transparent"
+                ? "repeating-conic-gradient(#222222 0% 25%, #181818 0% 50%) 50% / 20px 20px"
+                : config.backgroundValue,
             filter: (config.backgroundBlur ?? 0) > 0 ? `blur(${config.backgroundBlur}px)` : undefined,
             transform: (config.backgroundBlur ?? 0) > 0 ? "scale(1.08)" : undefined,
             transformOrigin: "center",
@@ -629,6 +632,39 @@ export const MockupCanvas = () => {
               opacity: (config.grainIntensity ?? 0) > 0 ? config.grainIntensity / 100 : 0.25,
             }}
           />
+        )}
+
+        {/* Studio VFX Atmospheric Overlays */}
+        {config.vfxType && config.vfxType !== "none" && (
+          <div
+            className="absolute inset-0 pointer-events-none z-20 overflow-hidden mix-blend-screen transition-opacity duration-200"
+            style={{ opacity: (config.vfxIntensity ?? 50) / 100 }}
+          >
+            {config.vfxType === "vhs" && (
+              <div className="w-full h-full bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.4)_50%)] bg-[length:100%_4px]" />
+            )}
+            {config.vfxType === "tv" && (
+              <div className="w-full h-full bg-[radial-gradient(ellipse_at_center,transparent_0%,rgba(0,0,0,0.5)_100%),linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.6)_50%)] bg-[length:100%_100%,100%_3px]" />
+            )}
+            {config.vfxType === "vhs-glitch" && (
+              <div className="w-full h-full bg-[linear-gradient(90deg,rgba(255,0,0,0.2),rgba(0,255,255,0.2)),linear-gradient(rgba(0,0,0,0)_50%,rgba(0,0,0,0.4)_50%)] bg-[length:100%_100%,100%_6px]" />
+            )}
+            {config.vfxType === "tech-glitch" && (
+              <div className="w-full h-full bg-[linear-gradient(to_right,#00ffff20_1px,transparent_1px),linear-gradient(to_bottom,#ff00ff20_1px,transparent_1px)] bg-[size:28px_28px]" />
+            )}
+            {config.vfxType === "light-leak" && (
+              <div className="w-full h-full bg-[radial-gradient(circle_at_top_left,rgba(255,100,50,0.6)_0%,rgba(255,0,128,0.35)_40%,transparent_75%)] mix-blend-color-dodge" />
+            )}
+            {config.vfxType === "particles" && (
+              <div className="w-full h-full bg-[radial-gradient(circle_at_20%_30%,rgba(255,255,255,0.5)_1px,transparent_2px),radial-gradient(circle_at_70%_60%,rgba(255,255,255,0.5)_1.5px,transparent_3px),radial-gradient(circle_at_40%_80%,rgba(255,255,255,0.4)_2px,transparent_4px)] bg-[size:100px_100px]" />
+            )}
+            {config.vfxType === "glitter" && (
+              <div className="w-full h-full bg-[radial-gradient(circle_at_50%_50%,rgba(255,255,255,0.7)_1px,transparent_2px),radial-gradient(circle_at_25%_75%,rgba(255,220,100,0.6)_1px,transparent_2px)] bg-[size:60px_60px]" />
+            )}
+            {config.vfxType === "noise" && (
+              <div className="w-full h-full bg-[radial-gradient(rgba(255,255,255,0.2)_1px,transparent_1px)] bg-[size:3px_3px]" />
+            )}
+          </div>
         )}
 
         {/* Canvas Annotations (Floating Text & Badges Overlay) */}
@@ -666,12 +702,35 @@ export const MockupCanvas = () => {
         {/* Custom Watermark / Brand Signature Badge */}
         {config.watermark && (
           <div
+            style={{
+              transform: `scale(${(config.watermarkSize ?? 80) / 80})`,
+              transformOrigin:
+                config.watermarkPosition === "top-left"
+                  ? "top left"
+                  : config.watermarkPosition === "top-right"
+                  ? "top right"
+                  : config.watermarkPosition === "bottom-left"
+                  ? "bottom left"
+                  : "bottom right",
+              margin: `${(config.watermarkInset ?? 5) * 2}px`,
+            }}
             className={cn(
-              "absolute z-30 flex items-center space-x-1.5 px-2.5 py-1 rounded-full bg-black/40 backdrop-blur-md border border-white/10 text-white pointer-events-none shadow-md",
-              config.watermarkPosition === "top-left" && "top-4 left-4",
-              config.watermarkPosition === "top-right" && "top-4 right-4",
-              config.watermarkPosition === "bottom-left" && "bottom-4 left-4",
-              config.watermarkPosition === "bottom-right" && "bottom-4 right-4"
+              "absolute z-30 flex items-center space-x-1.5 px-3 py-1.5 rounded-full pointer-events-none transition-all shadow-md",
+              config.watermarkPosition === "top-left" && "top-3 left-3",
+              config.watermarkPosition === "top-right" && "top-3 right-3",
+              config.watermarkPosition === "bottom-left" && "bottom-3 left-3",
+              config.watermarkPosition === "bottom-right" && "bottom-3 right-3",
+              // Style variations
+              (!config.watermarkStyle || config.watermarkStyle === "default") &&
+                "bg-black/50 backdrop-blur-md border border-white/10 text-white",
+              config.watermarkStyle === "shadow" &&
+                "bg-transparent text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)] border-transparent",
+              config.watermarkStyle === "glass" &&
+                "bg-white/15 backdrop-blur-xl border border-white/30 text-white shadow-xl",
+              config.watermarkStyle === "badge" &&
+                (config.watermarkTheme === "light"
+                  ? "bg-white text-black font-bold shadow-xl border-0"
+                  : "bg-black text-white font-bold border border-white/20 shadow-xl")
             )}
           >
             {config.watermarkPlatform === "shots" && (
@@ -689,9 +748,9 @@ export const MockupCanvas = () => {
             )}
             <div className="text-[10px] font-medium leading-none">
               {config.watermarkPlatform === "shots" && (
-                <span className="text-white/60">Made with </span>
+                <span className="opacity-60">Made with </span>
               )}
-              <span className="font-bold text-white">
+              <span className="font-bold">
                 {config.watermarkText || "Shots.so"}
               </span>
             </div>
