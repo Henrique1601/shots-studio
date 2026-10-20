@@ -50,6 +50,7 @@ export const LeftSidebar = () => {
   const [bgTab, setBgTab] = useState<
     "gradients" | "glass" | "tahoe" | "solid" | "custom"
   >("gradients");
+  const [showAdjustLight, setShowAdjustLight] = useState(false);
 
   useEffect(() => {
     setInputW(config.customWidth.toString());
@@ -206,6 +207,38 @@ export const LeftSidebar = () => {
                 <button className="hover:text-white px-1">›</button>
               </div>
             </div>
+
+            {/* Device Color Finish (Titanium & Metal Finishes) */}
+            {deviceSpec.isDevice && (
+              <div className="mt-2.5">
+                <div className="text-[10px] font-bold text-neutral-400 tracking-wider mb-1">
+                  FINISH / ACABAMENTO
+                </div>
+                <div className="grid grid-cols-3 gap-1 text-[9px]">
+                  {(
+                    [
+                      { id: "default", label: "Default" },
+                      { id: "space-black", label: "Black" },
+                      { id: "silver", label: "Silver" },
+                      { id: "natural-titanium", label: "Natural" },
+                      { id: "desert-titanium", label: "Desert" },
+                    ] as const
+                  ).map((finish) => (
+                    <button
+                      key={finish.id}
+                      onClick={() => updateConfig({ deviceColor: finish.id })}
+                      className={`py-1 px-1 rounded-lg border text-center transition-all cursor-pointer truncate ${
+                        config.deviceColor === finish.id
+                          ? "border-white bg-[#333] text-white font-semibold"
+                          : "border-transparent bg-[#1e1e1e] text-neutral-400 hover:text-white"
+                      }`}
+                    >
+                      {finish.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Browser / Desktop Window Title or URL */}
@@ -287,6 +320,51 @@ export const LeftSidebar = () => {
               onChange={handleFileUpload}
             />
           </div>
+
+          {/* Image Fit & Pan Controls */}
+          {imageUrl && (
+            <div className="p-2 rounded-xl bg-[#222222] space-y-2 text-xs">
+              <div className="flex items-center justify-between">
+                <span className="text-[10px] font-bold text-neutral-400 uppercase">Enquadramento</span>
+                <div className="flex bg-[#181818] p-0.5 rounded-lg text-[10px]">
+                  <button
+                    onClick={() => updateConfig({ imageFit: "cover" })}
+                    className={`px-2 py-0.5 rounded transition-all cursor-pointer ${
+                      config.imageFit === "cover" ? "bg-[#333] text-white font-semibold" : "text-neutral-400 hover:text-white"
+                    }`}
+                  >
+                    Cover
+                  </button>
+                  <button
+                    onClick={() => updateConfig({ imageFit: "contain" })}
+                    className={`px-2 py-0.5 rounded transition-all cursor-pointer ${
+                      config.imageFit === "contain" ? "bg-[#333] text-white font-semibold" : "text-neutral-400 hover:text-white"
+                    }`}
+                  >
+                    Contain
+                  </button>
+                </div>
+              </div>
+
+              {/* Vertical Pan (Scroll) */}
+              <div className="flex items-center justify-between text-xs px-0.5">
+                <span className="text-neutral-400 text-[10px]">Posição Y</span>
+                <div className="flex items-center space-x-2 w-28">
+                  <input
+                    type="range"
+                    min="0"
+                    max="100"
+                    value={config.imagePositionY ?? 50}
+                    onChange={(e) => updateConfig({ imagePositionY: Number(e.target.value) })}
+                    className="w-full accent-white h-1 bg-[#3a3a3a] rounded-lg appearance-none cursor-pointer"
+                  />
+                  <span className="text-[10px] text-neutral-300 w-6 text-right font-mono">
+                    {config.imagePositionY ?? 50}%
+                  </span>
+                </div>
+              </div>
+            </div>
+          )}
 
           {/* SECONDARY MEDIA (Slot 2 for Duo or Trio) */}
           {(config.mockupMode === "duo" || config.mockupMode === "trio") && (
@@ -498,10 +576,65 @@ export const LeftSidebar = () => {
               </div>
             </div>
 
-            <button className="w-full mt-2.5 py-1.5 rounded-xl bg-[#242424] hover:bg-[#2a2a2a] text-[11px] text-neutral-300 flex items-center justify-center space-x-1.5 transition-colors cursor-pointer">
+            <button
+              onClick={() => setShowAdjustLight(!showAdjustLight)}
+              className="w-full mt-2.5 py-1.5 rounded-xl bg-[#242424] hover:bg-[#2a2a2a] text-[11px] text-neutral-300 flex items-center justify-center space-x-1.5 transition-colors cursor-pointer"
+            >
               <SunMedium className="w-3.5 h-3.5 text-neutral-400" />
-              <span>Adjust Light</span>
+              <span>{showAdjustLight ? "Fechar Luz" : "Adjust Light"}</span>
             </button>
+
+            {showAdjustLight && (
+              <div className="mt-2 p-2.5 rounded-xl bg-[#1e1e1e] space-y-2 border border-white/5 animate-in fade-in duration-150">
+                <div className="text-[9px] text-neutral-400 font-semibold uppercase">
+                  Reflexo & Luz da Tela
+                </div>
+                <div className="grid grid-cols-2 gap-1 text-[9px]">
+                  {(
+                    [
+                      { id: "none", label: "Sem Luz" },
+                      { id: "soft-studio", label: "Soft Studio" },
+                      { id: "top-left", label: "Top-Left" },
+                      { id: "top-right", label: "Top-Right" },
+                      { id: "dramatic", label: "Dramatic" },
+                    ] as const
+                  ).map((preset) => (
+                    <button
+                      key={preset.id}
+                      onClick={() => updateConfig({ lightPreset: preset.id })}
+                      className={`py-1 px-1.5 rounded-lg border text-center transition-all cursor-pointer truncate ${
+                        config.lightPreset === preset.id
+                          ? "border-cyan-400 bg-cyan-400/10 text-white font-medium"
+                          : "border-transparent bg-[#161616] text-neutral-400 hover:text-white"
+                      }`}
+                    >
+                      {preset.label}
+                    </button>
+                  ))}
+                </div>
+
+                {config.lightPreset !== "none" && (
+                  <div className="pt-1.5 border-t border-[#2a2a2a] flex items-center justify-between text-xs px-0.5">
+                    <span className="text-neutral-400 text-[10px]">Intensidade</span>
+                    <div className="flex items-center space-x-2 w-28">
+                      <input
+                        type="range"
+                        min="5"
+                        max="100"
+                        value={config.lightIntensity ?? 35}
+                        onChange={(e) =>
+                          updateConfig({ lightIntensity: Number(e.target.value) })
+                        }
+                        className="w-full accent-white h-1 bg-[#3a3a3a] rounded-lg appearance-none cursor-pointer"
+                      />
+                      <span className="text-[10px] text-neutral-300 w-6 text-right font-mono">
+                        {config.lightIntensity ?? 35}%
+                      </span>
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
 
           {/* VISIBILITY */}
@@ -768,7 +901,7 @@ export const LeftSidebar = () => {
             </div>
             <div className="space-y-1.5">
               <div className="flex items-center justify-between p-2 rounded-xl bg-[#222222] text-xs">
-                <span className="text-neutral-300 text-[11px]">Watermark</span>
+                <span className="text-neutral-300 text-[11px]">Watermark / Assinatura</span>
                 <input
                   type="checkbox"
                   checked={config.watermark}
@@ -776,6 +909,80 @@ export const LeftSidebar = () => {
                   className="w-3.5 h-3.5 accent-white cursor-pointer"
                 />
               </div>
+
+              {/* Watermark Customization Drawer */}
+              {config.watermark && (
+                <div className="p-2.5 rounded-xl bg-[#1e1e1e] space-y-2 border border-white/5 animate-in fade-in duration-150">
+                  <div>
+                    <div className="text-[9px] text-neutral-400 font-semibold mb-1">
+                      TEXTO / ARROBA DA MARCA
+                    </div>
+                    <input
+                      type="text"
+                      value={config.watermarkText || ""}
+                      onChange={(e) => updateConfig({ watermarkText: e.target.value })}
+                      placeholder="Ex: @seunome ou Shots.so"
+                      className="w-full px-2 py-1 rounded-lg bg-[#141414] border border-neutral-700 text-xs text-white placeholder-neutral-500 focus:outline-none"
+                    />
+                  </div>
+
+                  <div>
+                    <div className="text-[9px] text-neutral-400 font-semibold mb-1">
+                      ÍCONE / PLATAFORMA
+                    </div>
+                    <div className="flex bg-[#141414] p-0.5 rounded-lg text-[9px]">
+                      {(
+                        [
+                          { id: "shots", label: "Shots" },
+                          { id: "twitter", label: "𝕏" },
+                          { id: "instagram", label: "Insta" },
+                          { id: "none", label: "Texto" },
+                        ] as const
+                      ).map((plat) => (
+                        <button
+                          key={plat.id}
+                          onClick={() => updateConfig({ watermarkPlatform: plat.id })}
+                          className={`flex-1 py-1 rounded transition-colors cursor-pointer ${
+                            config.watermarkPlatform === plat.id
+                              ? "bg-[#333] text-white font-medium"
+                              : "text-neutral-400 hover:text-white"
+                          }`}
+                        >
+                          {plat.label}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div>
+                    <div className="text-[9px] text-neutral-400 font-semibold mb-1">
+                      CANTO DO CANVAS
+                    </div>
+                    <div className="grid grid-cols-4 gap-1 text-[9px]">
+                      {(
+                        [
+                          { id: "top-left", label: "TL" },
+                          { id: "top-right", label: "TR" },
+                          { id: "bottom-left", label: "BL" },
+                          { id: "bottom-right", label: "BR" },
+                        ] as const
+                      ).map((pos) => (
+                        <button
+                          key={pos.id}
+                          onClick={() => updateConfig({ watermarkPosition: pos.id })}
+                          className={`py-1 rounded text-center transition-colors cursor-pointer ${
+                            config.watermarkPosition === pos.id
+                              ? "bg-white text-black font-semibold"
+                              : "bg-[#141414] text-neutral-400 hover:text-white"
+                          }`}
+                        >
+                          {pos.label}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              )}
               <div className="flex items-center justify-between p-2 rounded-xl bg-[#222222] text-xs">
                 <span className="text-neutral-300 text-[11px]">Noise Texture</span>
                 <input

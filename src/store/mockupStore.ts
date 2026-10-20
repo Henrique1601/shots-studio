@@ -81,6 +81,14 @@ const defaultConfig: MockupConfig = {
   customColor1: "#6366f1",
   customColor2: "#ec4899",
   customGradientAngle: 135,
+  imageFit: "cover",
+  imagePositionY: 50,
+  lightPreset: "soft-studio",
+  lightIntensity: 35,
+  watermarkText: "Shots.so",
+  watermarkPlatform: "shots",
+  watermarkPosition: "top-left",
+  deviceColor: "default",
 };
 
 export const useMockupStore = create<MockupStore>((set, get) => ({

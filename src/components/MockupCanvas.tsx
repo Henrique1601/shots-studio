@@ -93,6 +93,40 @@ export const MockupCanvas = () => {
     }
   };
 
+  // Specular screen reflection glare gradient
+  const getGlareGradient = () => {
+    switch (config.lightPreset) {
+      case "soft-studio":
+        return "linear-gradient(135deg, rgba(255,255,255,0.7) 0%, rgba(255,255,255,0.1) 40%, rgba(255,255,255,0) 70%)";
+      case "top-left":
+        return "radial-gradient(ellipse at 15% 15%, rgba(255,255,255,0.85) 0%, rgba(255,255,255,0.18) 45%, rgba(255,255,255,0) 75%)";
+      case "top-right":
+        return "radial-gradient(ellipse at 85% 15%, rgba(255,255,255,0.85) 0%, rgba(255,255,255,0.18) 45%, rgba(255,255,255,0) 75%)";
+      case "dramatic":
+        return "linear-gradient(110deg, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.25) 25%, rgba(0,0,0,0.5) 50%, rgba(255,255,255,0.3) 75%, rgba(255,255,255,0) 100%)";
+      case "none":
+      default:
+        return "none";
+    }
+  };
+
+  // Physical device chassis finish tint filter
+  const getDeviceFinishFilter = () => {
+    switch (config.deviceColor) {
+      case "space-black":
+        return "brightness(0.7) contrast(1.15)";
+      case "silver":
+        return "brightness(1.22) contrast(1.05)";
+      case "natural-titanium":
+        return "sepia(0.25) hue-rotate(-20deg) brightness(1.08)";
+      case "desert-titanium":
+        return "sepia(0.4) hue-rotate(5deg) saturate(1.25) brightness(1.1)";
+      case "default":
+      default:
+        return undefined;
+    }
+  };
+
   const processUploadedFile = (file: File) => {
     const url = URL.createObjectURL(file);
     const img = new Image();
@@ -354,7 +388,11 @@ export const MockupCanvas = () => {
               <img
                 src={currentImg}
                 alt={isSecondary ? "Secondary device media" : "Uploaded media"}
-                className="w-full h-full object-cover block select-none pointer-events-none"
+                style={{
+                  objectFit: config.imageFit || "cover",
+                  objectPosition: `50% ${config.imagePositionY ?? 50}%`,
+                }}
+                className="w-full h-full block select-none pointer-events-none transition-all duration-150"
               />
             ) : (
               <div className="flex flex-col items-center justify-center p-6 text-center group">
@@ -369,14 +407,28 @@ export const MockupCanvas = () => {
                 </p>
               </div>
             )}
+
+            {/* Specular Screen Glare / Reflection Layer */}
+            {config.lightPreset !== "none" && (
+              <div
+                className="absolute inset-0 pointer-events-none z-15 mix-blend-screen transition-opacity duration-200"
+                style={{
+                  background: getGlareGradient(),
+                  opacity: (config.lightIntensity ?? 35) / 100,
+                }}
+              />
+            )}
           </div>
 
-          {/* 3. Device Bezel Overlay (PNG with transparent screen cutout) */}
+          {/* 3. Device Bezel Overlay (PNG with transparent screen cutout & Finish Tint) */}
           {deviceSpec.deviceImg && (
             <img
               src={deviceSpec.deviceImg}
               alt={deviceSpec.name}
-              className="absolute inset-0 w-full h-full object-fill block select-none pointer-events-none z-20"
+              style={{
+                filter: getDeviceFinishFilter(),
+              }}
+              className="absolute inset-0 w-full h-full object-fill block select-none pointer-events-none z-20 transition-all duration-300"
             />
           )}
         </div>
@@ -427,7 +479,11 @@ export const MockupCanvas = () => {
             <img
               src={currentImg}
               alt={isSecondary ? "Secondary mockup" : "Uploaded mockup"}
-              className="w-full h-full object-cover block select-none"
+              style={{
+                objectFit: config.imageFit || "cover",
+                objectPosition: `50% ${config.imagePositionY ?? 50}%`,
+              }}
+              className="w-full h-full block select-none transition-all duration-150"
             />
           ) : (
             <div className="flex flex-col items-center justify-center p-12 text-center group">
@@ -512,15 +568,37 @@ export const MockupCanvas = () => {
           </div>
         )}
 
-        {/* Made with Shots.so Watermark Badge */}
+        {/* Custom Watermark / Brand Signature Badge */}
         {config.watermark && (
-          <div className="absolute top-4 left-4 z-30 flex items-center space-x-1.5 px-2.5 py-1 rounded-full bg-black/30 backdrop-blur-md border border-white/10 text-white pointer-events-none">
-            <div className="w-3.5 h-3.5 rounded-md bg-white flex items-center justify-center">
-              <span className="w-1.5 h-1.5 bg-black rounded-sm" />
-            </div>
+          <div
+            className={cn(
+              "absolute z-30 flex items-center space-x-1.5 px-2.5 py-1 rounded-full bg-black/40 backdrop-blur-md border border-white/10 text-white pointer-events-none shadow-md",
+              config.watermarkPosition === "top-left" && "top-4 left-4",
+              config.watermarkPosition === "top-right" && "top-4 right-4",
+              config.watermarkPosition === "bottom-left" && "bottom-4 left-4",
+              config.watermarkPosition === "bottom-right" && "bottom-4 right-4"
+            )}
+          >
+            {config.watermarkPlatform === "shots" && (
+              <div className="w-3.5 h-3.5 rounded-md bg-white flex items-center justify-center">
+                <span className="w-1.5 h-1.5 bg-black rounded-sm" />
+              </div>
+            )}
+            {config.watermarkPlatform === "twitter" && (
+              <span className="font-bold text-[11px] leading-none text-white px-0.5">𝕏</span>
+            )}
+            {config.watermarkPlatform === "instagram" && (
+              <div className="w-3.5 h-3.5 rounded bg-gradient-to-tr from-amber-500 via-rose-500 to-purple-600 flex items-center justify-center text-[9px] font-bold text-white">
+                ◎
+              </div>
+            )}
             <div className="text-[10px] font-medium leading-none">
-              <span className="text-white/60">Made with </span>
-              <span className="font-bold text-white">Shots.so</span>
+              {config.watermarkPlatform === "shots" && (
+                <span className="text-white/60">Made with </span>
+              )}
+              <span className="font-bold text-white">
+                {config.watermarkText || "Shots.so"}
+              </span>
             </div>
           </div>
         )}

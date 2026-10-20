@@ -14,6 +14,7 @@
     "clsx": "^2.1.1",
     "dexie": "^4.4.6",
     "framer-motion": "^14.4.0",
+    "gifshot": "^0.4.5",
     "html-to-image": "^1.11.13",
     "lucide-react": "^1.59.0",
     "next": "16.4.2",

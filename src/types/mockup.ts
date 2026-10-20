@@ -57,6 +57,27 @@ export type AspectRatioType =
   | "16:10"
   | "custom";
 
+export type LightPreset =
+  | "none"
+  | "soft-studio"
+  | "top-left"
+  | "top-right"
+  | "dramatic";
+
+export type WatermarkPlatform = "shots" | "twitter" | "instagram" | "none";
+export type WatermarkPosition =
+  | "top-left"
+  | "top-right"
+  | "bottom-left"
+  | "bottom-right";
+
+export type DeviceColorFinish =
+  | "default"
+  | "space-black"
+  | "silver"
+  | "natural-titanium"
+  | "desert-titanium";
+
 export interface ShapeObject {
   scale: number;
   stick: string;
@@ -94,7 +115,7 @@ export interface MockupConfig {
   customHeight: number;
   layoutPreset: LayoutPreset;
   exportScale: 1 | 2 | 3; // 1x (FHD), 2x (4K), 3x (6K)
-  exportFormat: "PNG" | "JPEG" | "WEBP";
+  exportFormat: "PNG" | "JPEG" | "WEBP" | "GIF";
   browserUrl?: string;
   // Effects & Watermark
   watermark: boolean;
@@ -133,6 +154,18 @@ export interface MockupConfig {
   customColor1: string;
   customColor2: string;
   customGradientAngle: number;
+  // Image Fit & Pan
+  imageFit: "cover" | "contain";
+  imagePositionY: number; // 0% (top) to 100% (bottom)
+  // Lighting & Glare
+  lightPreset: LightPreset;
+  lightIntensity: number; // 0 to 100
+  // Custom Watermark
+  watermarkText: string;
+  watermarkPlatform: WatermarkPlatform;
+  watermarkPosition: WatermarkPosition;
+  // Device Color Finish
+  deviceColor: DeviceColorFinish;
 }
 
 export interface DeviceSpec {

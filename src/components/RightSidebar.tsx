@@ -1,8 +1,9 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { useMockupStore } from "@/store/mockupStore";
 import { LAYOUT_PRESETS_LIST } from "@/types/mockup";
+import { cn } from "@/lib/utils";
 import {
   Upload,
   Copy,
@@ -16,6 +17,49 @@ export const RightSidebar = () => {
   const { config, updateConfig, showToast } = useMockupStore();
   const [activeMode, setActiveMode] = useState<"zoom" | "tilt">("zoom");
   const [isExporting, setIsExporting] = useState(false);
+  const padRef = useRef<HTMLDivElement>(null);
+  const [isDraggingPad, setIsDraggingPad] = useState(false);
+
+  const updateTiltFromPointer = (e: React.PointerEvent<HTMLDivElement> | PointerEvent) => {
+    if (!padRef.current) return;
+    const rect = padRef.current.getBoundingClientRect();
+    const centerX = rect.left + rect.width / 2;
+    const centerY = rect.top + rect.height / 2;
+
+    const rawDeltaX = (e.clientX - centerX) / (rect.width / 2);
+    const rawDeltaY = (e.clientY - centerY) / (rect.height / 2);
+
+    const factor = e.shiftKey ? 0.35 : 1;
+    const newTiltY = Math.round(Math.min(45, Math.max(-45, rawDeltaX * 45 * factor)));
+    const newTiltX = Math.round(Math.min(45, Math.max(-45, -rawDeltaY * 45 * factor)));
+
+    updateConfig({ tiltX: newTiltX, tiltY: newTiltY });
+  };
+
+  const handlePadPointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
+    setIsDraggingPad(true);
+    e.currentTarget.setPointerCapture(e.pointerId);
+    updateTiltFromPointer(e);
+  };
+
+  const handlePadPointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (!isDraggingPad) return;
+    updateTiltFromPointer(e);
+  };
+
+  const handlePadPointerUp = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (isDraggingPad) {
+      setIsDraggingPad(false);
+      try {
+        e.currentTarget.releasePointerCapture(e.pointerId);
+      } catch {}
+    }
+  };
+
+  const handlePadDoubleClick = () => {
+    updateConfig({ tiltX: 0, tiltY: 0, tiltZ: 0 });
+    showToast("Ângulo 3D resetado para o centro! 🎯", "info");
+  };
 
   const exportOptions = {
     quality: 0.95,
@@ -205,21 +249,49 @@ export const RightSidebar = () => {
             </button>
           </div>
 
-          {/* Interactive Spatial Pad (3D orientation indicator) */}
-          <div className="w-full h-28 rounded-xl bg-[#141414] flex items-center justify-center relative overflow-hidden">
+          {/* Interactive Spatial Pad (3D orientation indicator with Drag & Drop) */}
+          <div
+            ref={padRef}
+            onPointerDown={handlePadPointerDown}
+            onPointerMove={handlePadPointerMove}
+            onPointerUp={handlePadPointerUp}
+            onDoubleClick={handlePadDoubleClick}
+            className={cn(
+              "w-full h-28 rounded-xl bg-[#141414] flex items-center justify-center relative overflow-hidden select-none border transition-colors",
+              isDraggingPad
+                ? "border-cyan-500/80 cursor-grabbing shadow-inner shadow-cyan-500/10"
+                : "border-white/5 hover:border-white/20 cursor-grab"
+            )}
+            title="Arraste para rotacionar 3D (Shift para precisão, clique duplo para resetar)"
+          >
+            {/* Subtle Crosshair grid lines */}
+            <div className="absolute inset-0 pointer-events-none opacity-20 flex items-center justify-center">
+              <div className="w-full h-[1px] bg-white/40" />
+              <div className="h-full w-[1px] bg-white/40 absolute" />
+            </div>
+
+            {/* 3D Wireframe / Plate that tilts in 3D */}
             <div
               style={{
                 transform: `perspective(300px) rotateX(${config.tiltX}deg) rotateY(${config.tiltY}deg) rotateZ(${config.tiltZ}deg) scale(${config.zoom / 180})`,
-                transition: "transform 0.125s linear",
+                transition: isDraggingPad ? "none" : "transform 0.125s ease-out",
               }}
-              className="w-20 h-14 rounded-lg bg-[#242424] border border-white/20 shadow-xl flex items-center justify-center"
+              className="w-20 h-14 rounded-lg bg-[#242424] border border-white/25 shadow-xl flex items-center justify-center relative pointer-events-none"
             >
-              <div className="w-5 h-5 rounded-full bg-white/20 border border-white/40 flex items-center justify-center">
-                <span className="w-1.5 h-1.5 rounded-full bg-white" />
+              {/* Dynamic illuminated indicator dot */}
+              <div className="w-5 h-5 rounded-full bg-cyan-400/20 border border-cyan-400/50 flex items-center justify-center shadow-lg shadow-cyan-500/20">
+                <span className="w-2 h-2 rounded-full bg-cyan-400 shadow-sm shadow-cyan-300" />
               </div>
             </div>
-            <div className="absolute bottom-1.5 left-2 text-[9px] text-neutral-500 font-mono">
-              Hold ⇧ for precision
+
+            {/* Helper Labels */}
+            <div className="absolute bottom-1.5 left-2 text-[9px] text-neutral-500 font-mono pointer-events-none">
+              {isDraggingPad
+                ? `X: ${config.tiltX}° · Y: ${config.tiltY}°`
+                : "Drag or hold ⇧ for precision"}
+            </div>
+            <div className="absolute bottom-1.5 right-2 text-[9px] text-neutral-500 font-mono pointer-events-none">
+              2x click: reset
             </div>
           </div>
 
