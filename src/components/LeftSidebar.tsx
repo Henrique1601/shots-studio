@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import { useMockupStore } from "@/store/mockupStore";
 import {
   STYLE_OPTIONS,
@@ -13,6 +13,7 @@ import {
   ASPECT_RATIOS_STANDARD,
   ASPECT_RATIOS_SOCIAL,
   AspectRatioType,
+  DEFAULT_RATIO_DIMENSIONS,
   DEVICE_SPECS,
 } from "@/types/mockup";
 import {
@@ -35,6 +36,7 @@ export const LeftSidebar = () => {
     setImageDimensions,
     updateConfig,
     setDeviceModalOpen,
+    showToast,
   } = useMockupStore();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
@@ -42,6 +44,43 @@ export const LeftSidebar = () => {
   const [inputW, setInputW] = useState(config.customWidth.toString());
   const [inputH, setInputH] = useState(config.customHeight.toString());
   const [bgTab, setBgTab] = useState<"gradients" | "glass" | "tahoe" | "solid">("gradients");
+
+  useEffect(() => {
+    setInputW(config.customWidth.toString());
+    setInputH(config.customHeight.toString());
+  }, [config.customWidth, config.customHeight]);
+
+  const handleSelectRatio = (ratioId: AspectRatioType) => {
+    const defaults = DEFAULT_RATIO_DIMENSIONS[ratioId];
+    if (defaults) {
+      updateConfig({
+        aspectRatio: ratioId,
+        customWidth: defaults.width,
+        customHeight: defaults.height,
+      });
+      setInputW(defaults.width.toString());
+      setInputH(defaults.height.toString());
+    } else {
+      updateConfig({ aspectRatio: ratioId });
+    }
+    showToast(`Proporção selecionada: ${ratioId}`, "info");
+  };
+
+  const handleSetDimensions = () => {
+    const parsedW = parseInt(inputW, 10);
+    const parsedH = parseInt(inputH, 10);
+    const w = Math.min(8192, Math.max(100, isNaN(parsedW) ? 1920 : parsedW));
+    const h = Math.min(8192, Math.max(100, isNaN(parsedH) ? 1080 : parsedH));
+
+    setInputW(w.toString());
+    setInputH(h.toString());
+    updateConfig({
+      customWidth: w,
+      customHeight: h,
+      aspectRatio: "custom",
+    });
+    showToast(`Dimensões aplicadas: ${w} × ${h}px`, "success");
+  };
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -354,36 +393,45 @@ export const LeftSidebar = () => {
         <div className="w-[228px] shrink-0 h-full overflow-y-auto p-3 space-y-4">
           {/* DIMENSIONS: Inputs W & H with Set button */}
           <div>
-            <div className="text-[10px] font-bold text-neutral-400 tracking-wider mb-1.5">
-              DIMENSIONS
+            <div className="flex items-center justify-between mb-1.5">
+              <span className="text-[10px] font-bold text-neutral-400 tracking-wider">
+                DIMENSIONS
+              </span>
+              {config.aspectRatio === "custom" && (
+                <span className="text-[9px] px-1.5 py-0.5 rounded bg-cyan-500/10 text-cyan-400 font-semibold border border-cyan-500/20">
+                  Custom
+                </span>
+              )}
             </div>
             <div className="flex items-center space-x-1.5 bg-[#222222] p-1 rounded-xl">
               <div className="flex-1 flex items-center px-2 py-1 bg-[#181818] rounded-lg text-xs">
                 <span className="text-neutral-500 mr-1 text-[10px]">W</span>
                 <input
-                  type="text"
+                  type="number"
+                  min={100}
+                  max={8192}
                   value={inputW}
                   onChange={(e) => setInputW(e.target.value)}
+                  onKeyDown={(e) => e.key === "Enter" && handleSetDimensions()}
                   className="w-full bg-transparent outline-none text-white text-[11px]"
+                  placeholder="1920"
                 />
               </div>
               <div className="flex-1 flex items-center px-2 py-1 bg-[#181818] rounded-lg text-xs">
                 <span className="text-neutral-500 mr-1 text-[10px]">H</span>
                 <input
-                  type="text"
+                  type="number"
+                  min={100}
+                  max={8192}
                   value={inputH}
                   onChange={(e) => setInputH(e.target.value)}
+                  onKeyDown={(e) => e.key === "Enter" && handleSetDimensions()}
                   className="w-full bg-transparent outline-none text-white text-[11px]"
+                  placeholder="1080"
                 />
               </div>
               <button
-                onClick={() =>
-                  updateConfig({
-                    customWidth: Number(inputW) || 1920,
-                    customHeight: Number(inputH) || 1080,
-                    aspectRatio: "custom",
-                  })
-                }
+                onClick={handleSetDimensions}
                 className="px-2.5 py-1 bg-white text-black text-[11px] font-semibold rounded-lg hover:bg-neutral-200 transition-colors cursor-pointer"
               >
                 Set
@@ -400,7 +448,7 @@ export const LeftSidebar = () => {
               {ASPECT_RATIOS_STANDARD.map((item) => (
                 <button
                   key={item.id}
-                  onClick={() => updateConfig({ aspectRatio: item.id })}
+                  onClick={() => handleSelectRatio(item.id)}
                   className={`py-1.5 text-center text-xs rounded-lg transition-all cursor-pointer ${
                     config.aspectRatio === item.id
                       ? "bg-white text-black font-semibold shadow-sm"
@@ -422,7 +470,7 @@ export const LeftSidebar = () => {
               {ASPECT_RATIOS_SOCIAL.map((item, idx) => (
                 <button
                   key={idx}
-                  onClick={() => updateConfig({ aspectRatio: item.id })}
+                  onClick={() => handleSelectRatio(item.id)}
                   className={`p-1.5 rounded-xl border text-left transition-all cursor-pointer ${
                     config.aspectRatio === item.id
                       ? "border-white bg-[#2e2e2e]"

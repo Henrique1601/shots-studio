@@ -315,6 +315,7 @@ export const LAYOUT_PRESETS_LIST: { id: LayoutPreset; label: string; tiltX: numb
 
 export const ASPECT_RATIOS_STANDARD: { id: AspectRatioType; label: string }[] = [
   { id: "16:9", label: "16:9" },
+  { id: "16:10", label: "16:10" },
   { id: "3:2", label: "3:2" },
   { id: "4:3", label: "4:3" },
   { id: "5:4", label: "5:4" },
@@ -323,7 +324,44 @@ export const ASPECT_RATIOS_STANDARD: { id: AspectRatioType; label: string }[] = 
   { id: "3:4", label: "3:4" },
   { id: "2:3", label: "2:3" },
   { id: "9:16", label: "9:16" },
+  { id: "10:21", label: "10:21" },
+  { id: "3:1", label: "3:1" },
 ];
+
+export const DEFAULT_RATIO_DIMENSIONS: Record<AspectRatioType, { width: number; height: number }> = {
+  "16:9": { width: 1920, height: 1080 },
+  "16:10": { width: 1920, height: 1200 },
+  "3:2": { width: 1800, height: 1200 },
+  "4:3": { width: 1600, height: 1200 },
+  "5:4": { width: 1500, height: 1200 },
+  "1:1": { width: 1080, height: 1080 },
+  "4:5": { width: 1080, height: 1350 },
+  "3:4": { width: 1080, height: 1440 },
+  "2:3": { width: 1200, height: 1800 },
+  "9:16": { width: 1080, height: 1920 },
+  "10:21": { width: 1080, height: 2268 },
+  "3:1": { width: 1500, height: 500 },
+  "custom": { width: 1920, height: 1080 },
+};
+
+export const parseAspectRatio = (
+  aspectRatio: AspectRatioType,
+  customWidth?: number,
+  customHeight?: number
+): { width: number; height: number; ratio: number } => {
+  if (aspectRatio === "custom") {
+    const parsedW = Number(customWidth);
+    const parsedH = Number(customHeight);
+    const w = !isNaN(parsedW) && parsedW > 0 ? parsedW : 1920;
+    const h = !isNaN(parsedH) && parsedH > 0 ? parsedH : 1080;
+    return { width: w, height: h, ratio: w / h };
+  }
+  const parts = aspectRatio.split(":").map(Number);
+  if (parts[0] && parts[1]) {
+    return { width: parts[0], height: parts[1], ratio: parts[0] / parts[1] };
+  }
+  return { width: 16, height: 9, ratio: 16 / 9 };
+};
 
 export const ASPECT_RATIOS_SOCIAL: { id: AspectRatioType; label: string; ratio: string }[] = [
   { id: "1:1", label: "Post", ratio: "1:1" },

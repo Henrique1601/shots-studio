@@ -1,8 +1,8 @@
 "use client";
 
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import { useMockupStore } from "@/store/mockupStore";
-import { SHAPES_LAYOUTS, DEVICE_SPECS } from "@/types/mockup";
+import { SHAPES_LAYOUTS, DEVICE_SPECS, parseAspectRatio } from "@/types/mockup";
 import { Plus, RotateCcw } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { motion, type Transition } from "framer-motion";
@@ -17,7 +17,44 @@ export const MockupCanvas = () => {
     updateConfig,
   } = useMockupStore();
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const canvasWrapperRef = useRef<HTMLDivElement>(null);
   const [isDragging, setIsDragging] = useState(false);
+  const [wrapperSize, setWrapperSize] = useState<{ width: number; height: number }>({
+    width: 0,
+    height: 0,
+  });
+
+  useEffect(() => {
+    const el = canvasWrapperRef.current;
+    if (!el) return;
+
+    const measure = () => {
+      const rect = el.getBoundingClientRect();
+      if (rect.width > 0 && rect.height > 0) {
+        setWrapperSize({ width: rect.width, height: rect.height });
+      }
+    };
+
+    measure();
+
+    const resizeObserver = new ResizeObserver((entries) => {
+      for (const entry of entries) {
+        if (entry.contentRect.width > 0 && entry.contentRect.height > 0) {
+          setWrapperSize({
+            width: entry.contentRect.width,
+            height: entry.contentRect.height,
+          });
+        }
+      }
+    });
+
+    resizeObserver.observe(el);
+    window.addEventListener("resize", measure);
+    return () => {
+      resizeObserver.disconnect();
+      window.removeEventListener("resize", measure);
+    };
+  }, []);
 
   const deviceSpec = DEVICE_SPECS[config.frameType] || DEVICE_SPECS.screenshot;
 
@@ -55,15 +92,12 @@ export const MockupCanvas = () => {
     }
   };
 
-  // Determine frame aspect ratio
-  const getFrameRatio = () => {
-    if (config.aspectRatio === "custom") {
-      return (config.customWidth || 1920) / (config.customHeight || 1080);
-    }
-    const [w, h] = config.aspectRatio.split(":").map(Number);
-    if (w && h) return w / h;
-    return 16 / 9;
-  };
+  // Determine frame aspect ratio via unified parser
+  const { ratio: frameRatio } = parseAspectRatio(
+    config.aspectRatio,
+    config.customWidth,
+    config.customHeight
+  );
 
   // Determine mockup natural aspect ratio
   const getMockupRatio = () => {
@@ -78,24 +112,48 @@ export const MockupCanvas = () => {
     return config.frameType === "browser" ? 16 / 10 : 4 / 3;
   };
 
-  const frameRatio = getFrameRatio();
   const mockupRatio = getMockupRatio();
 
   // Intelligent Auto-Contain:
   // If mockup is taller than frame, clamp height. If wider, clamp width.
   const isMockupTallerThanFrame = mockupRatio < frameRatio;
 
-  const getCanvasAspectStyle = () => {
-    if (config.aspectRatio === "custom") {
+  // Exact contained canvas dimensions bounded by available workspace
+  const getCanvasDimensions = () => {
+    if (!wrapperSize.width || !wrapperSize.height) {
       return {
-        aspectRatio: `${config.customWidth} / ${config.customHeight}`,
+        aspectRatio: `${frameRatio}`,
+        maxWidth: "92%",
+        maxHeight: "92%",
+        width: frameRatio >= 1 ? "100%" : "auto",
+        height: frameRatio < 1 ? "100%" : "auto",
       };
     }
-    const [w, h] = config.aspectRatio.split(":").map(Number);
-    if (w && h) {
-      return { aspectRatio: `${w} / ${h}` };
+
+    const availWidth = wrapperSize.width * 0.92;
+    const availHeight = wrapperSize.height * 0.92;
+    const availRatio = availWidth / availHeight;
+
+    let targetWidth: number;
+    let targetHeight: number;
+
+    if (frameRatio > availRatio) {
+      // Constrained by width
+      targetWidth = availWidth;
+      targetHeight = availWidth / frameRatio;
+    } else {
+      // Constrained by height
+      targetHeight = availHeight;
+      targetWidth = availHeight * frameRatio;
     }
-    return { aspectRatio: "16 / 9" };
+
+    return {
+      width: `${Math.round(targetWidth)}px`,
+      height: `${Math.round(targetHeight)}px`,
+      aspectRatio: `${frameRatio}`,
+      maxWidth: "96%",
+      maxHeight: "96%",
+    };
   };
 
   const currentShapesLayout =
@@ -203,7 +261,10 @@ export const MockupCanvas = () => {
   };
 
   return (
-    <div className="flex-1 flex items-center justify-center p-3 sm:p-4 lg:p-6 overflow-hidden bg-black relative select-none w-full h-full">
+    <div
+      ref={canvasWrapperRef}
+      className="flex-1 flex items-center justify-center p-3 sm:p-4 lg:p-6 overflow-hidden bg-black relative select-none w-full h-full"
+    >
       {/* Outer Remotion Canvas Frame */}
       <div
         id="mockup-export-container"
@@ -216,11 +277,7 @@ export const MockupCanvas = () => {
         style={{
           background: config.backgroundValue,
           padding: `${config.padding}px`,
-          ...getCanvasAspectStyle(),
-          maxHeight: "92%",
-          maxWidth: "92%",
-          width: "100%",
-          height: "100%",
+          ...getCanvasDimensions(),
           boxSizing: "border-box",
         }}
         className={cn(

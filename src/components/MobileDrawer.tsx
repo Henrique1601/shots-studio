@@ -12,6 +12,7 @@ import {
   PRESET_GRADIENTS,
   ASPECT_RATIOS_STANDARD,
   ASPECT_RATIOS_SOCIAL,
+  DEFAULT_RATIO_DIMENSIONS,
   LAYOUT_PRESETS_LIST,
 } from "@/types/mockup";
 import {
@@ -272,10 +273,21 @@ export const MobileDrawer = () => {
                       Proporção do Frame
                     </label>
                     <div className="grid grid-cols-4 gap-1.5">
-                      {[...ASPECT_RATIOS_STANDARD, ...ASPECT_RATIOS_SOCIAL.slice(0, 4)].map((ar) => (
+                      {[...ASPECT_RATIOS_STANDARD, ...ASPECT_RATIOS_SOCIAL.slice(0, 4)].map((ar, idx) => (
                         <button
-                          key={ar.id}
-                          onClick={() => updateConfig({ aspectRatio: ar.id })}
+                          key={`${ar.id}-${idx}`}
+                          onClick={() => {
+                            const defaults = DEFAULT_RATIO_DIMENSIONS[ar.id as keyof typeof DEFAULT_RATIO_DIMENSIONS];
+                            if (defaults) {
+                              updateConfig({
+                                aspectRatio: ar.id,
+                                customWidth: defaults.width,
+                                customHeight: defaults.height,
+                              });
+                            } else {
+                              updateConfig({ aspectRatio: ar.id });
+                            }
+                          }}
                           className={`py-2 px-1.5 rounded-xl border text-[11px] font-medium transition-all text-center ${
                             config.aspectRatio === ar.id
                               ? "bg-white text-black border-white"
