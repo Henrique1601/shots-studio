@@ -5,7 +5,7 @@ import { useMockupStore } from "@/store/mockupStore";
 import { SHAPES_LAYOUTS, DEVICE_SPECS } from "@/types/mockup";
 import { Plus, RotateCcw } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { motion } from "framer-motion";
+import { motion, type Transition } from "framer-motion";
 
 export const MockupCanvas = () => {
   const {
@@ -102,6 +102,106 @@ export const MockupCanvas = () => {
     SHAPES_LAYOUTS.find((l) => l.name === config.shapesLayoutName) ||
     SHAPES_LAYOUTS[0];
 
+  // Dynamic motion presets for live playback (Float, Turntable, Breathe, Orbit)
+  const getMotionAnimation = (): {
+    animate: Record<string, any>;
+    transition?: Transition;
+  } => {
+    if (!config.isAnimationPlaying || config.animationPreset === "none") {
+      return {
+        animate: {
+          x: 0,
+          y: 0,
+          rotateX: config.tiltX,
+          rotateY: config.tiltY,
+          rotateZ: config.tiltZ,
+          scale: config.zoom / 100,
+        },
+        transition: { type: "spring", stiffness: 320, damping: 28 },
+      };
+    }
+
+    const dur = config.animationDuration || 5;
+
+    switch (config.animationPreset) {
+      case "float":
+        return {
+          animate: {
+            y: [-12, 12, -12],
+            rotateZ: [config.tiltZ - 2, config.tiltZ + 2, config.tiltZ - 2],
+            rotateX: config.tiltX,
+            rotateY: config.tiltY,
+            scale: config.zoom / 100,
+          },
+          transition: {
+            repeat: Infinity,
+            duration: dur,
+            ease: "easeInOut",
+          },
+        };
+      case "turntable":
+        return {
+          animate: {
+            rotateY: [config.tiltY - 24, config.tiltY + 24, config.tiltY - 24],
+            rotateX: config.tiltX,
+            rotateZ: config.tiltZ,
+            scale: config.zoom / 100,
+            y: 0,
+          },
+          transition: {
+            repeat: Infinity,
+            duration: dur,
+            ease: "easeInOut",
+          },
+        };
+      case "pulse":
+        return {
+          animate: {
+            scale: [
+              config.zoom / 100,
+              (config.zoom / 100) * 1.08,
+              config.zoom / 100,
+            ],
+            rotateX: config.tiltX,
+            rotateY: config.tiltY,
+            rotateZ: config.tiltZ,
+            y: 0,
+          },
+          transition: {
+            repeat: Infinity,
+            duration: dur,
+            ease: "easeInOut",
+          },
+        };
+      case "orbit":
+        return {
+          animate: {
+            rotateX: [config.tiltX - 8, config.tiltX + 8, config.tiltX - 8],
+            rotateY: [config.tiltY - 14, config.tiltY + 14, config.tiltY - 14],
+            y: [-8, 8, -8],
+            rotateZ: config.tiltZ,
+            scale: config.zoom / 100,
+          },
+          transition: {
+            repeat: Infinity,
+            duration: dur,
+            ease: "easeInOut",
+          },
+        };
+      default:
+        return {
+          animate: {
+            x: 0,
+            y: 0,
+            rotateX: config.tiltX,
+            rotateY: config.tiltY,
+            rotateZ: config.tiltZ,
+            scale: config.zoom / 100,
+          },
+        };
+    }
+  };
+
   return (
     <div className="flex-1 flex items-center justify-center p-3 sm:p-4 lg:p-6 overflow-hidden bg-black relative select-none w-full h-full">
       {/* Outer Remotion Canvas Frame */}
@@ -184,7 +284,7 @@ export const MockupCanvas = () => {
         {config.showMockup && (
           <motion.div
             layout
-            transition={{ type: "spring", stiffness: 320, damping: 28 }}
+            {...getMotionAnimation()}
             style={{
               width: isMockupTallerThanFrame ? "auto" : "78%",
               height: isMockupTallerThanFrame ? "78%" : "auto",
@@ -196,8 +296,7 @@ export const MockupCanvas = () => {
               alignItems: "center",
               position: "relative",
               zIndex: 10,
-              transform: `perspective(150em) rotateX(${config.tiltX}deg) rotateY(${config.tiltY}deg) rotateZ(${config.tiltZ}deg) scale(${config.zoom / 100})`,
-              transition: "transform 0.125s linear",
+              perspective: "150em",
               transformOrigin: "center",
             }}
           >

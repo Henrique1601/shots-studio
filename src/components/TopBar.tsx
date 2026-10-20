@@ -132,16 +132,18 @@ export const TopBar = () => {
       <div className="flex items-center space-x-2">
         <button
           onClick={() => setDeviceModalOpen(true)}
+          aria-label="Select device mockup or template"
           className="w-8 h-8 rounded-full overflow-hidden border border-[#333] flex items-center justify-center bg-neutral-800 hover:border-neutral-500 transition-colors cursor-pointer"
         >
           <img
             src="/shots-assets/apple-touch-icon-192.png"
-            alt="Profile"
+            alt="Profile avatar"
             className="w-full h-full object-cover"
           />
         </button>
         <button
           onClick={() => setDeviceModalOpen(true)}
+          aria-label="Open mockup templates catalog"
           className="flex items-center space-x-2 px-3 py-1.5 rounded-xl bg-[#1c1c1c] hover:bg-[#252525] border border-[#2b2b2b] text-xs font-semibold transition-colors cursor-pointer"
         >
           <div className="w-4 h-4 rounded bg-gradient-to-tr from-pink-500 to-indigo-500 flex items-center justify-center">
@@ -159,6 +161,7 @@ export const TopBar = () => {
           onClick={undo}
           disabled={historyIndex <= 0}
           title="Undo (Ctrl+Z)"
+          aria-label="Undo last modification"
           className="p-1.5 rounded-xl hover:bg-[#252525] text-neutral-400 hover:text-white transition-colors disabled:opacity-30 cursor-pointer"
         >
           <Undo2 className="w-4 h-4" />
@@ -169,6 +172,7 @@ export const TopBar = () => {
           onClick={redo}
           disabled={historyIndex >= history.length - 1}
           title="Redo (Ctrl+Y)"
+          aria-label="Redo previous modification"
           className="p-1.5 rounded-xl hover:bg-[#252525] text-neutral-400 hover:text-white transition-colors disabled:opacity-30 cursor-pointer"
         >
           <Redo2 className="w-4 h-4" />
@@ -178,6 +182,7 @@ export const TopBar = () => {
         <button
           onClick={randomize}
           title="Randomize style & background"
+          aria-label="Randomize style and background"
           className="p-1.5 rounded-xl hover:bg-[#252525] text-neutral-400 hover:text-white transition-colors cursor-pointer"
         >
           <Shuffle className="w-4 h-4" />
@@ -186,6 +191,7 @@ export const TopBar = () => {
         {/* Start Over (Pílula Central) */}
         <button
           onClick={resetConfig}
+          aria-label="Reset mockup configuration to default"
           className="flex items-center space-x-1.5 px-3 py-1 rounded-full bg-[#242424] hover:bg-[#2e2e2e] text-xs font-semibold text-neutral-200 transition-colors border border-white/5 cursor-pointer"
         >
           <RotateCcw className="w-3 h-3 text-neutral-400" />
@@ -196,6 +202,7 @@ export const TopBar = () => {
         <button
           onClick={toggleFullScreen}
           title="Toggle Fullscreen"
+          aria-label="Toggle Fullscreen mode"
           className="p-1.5 rounded-xl hover:bg-[#252525] text-neutral-400 hover:text-white transition-colors cursor-pointer"
         >
           <Maximize2 className="w-4 h-4" />
@@ -205,6 +212,7 @@ export const TopBar = () => {
         <button
           onClick={() => showToast("Obrigado pelo seu feedback! 💬", "info")}
           title="Feedback"
+          aria-label="Send feedback"
           className="p-1.5 rounded-xl hover:bg-[#252525] text-neutral-400 hover:text-white transition-colors cursor-pointer"
         >
           <MessageSquare className="w-4 h-4" />
@@ -219,6 +227,7 @@ export const TopBar = () => {
             )
           }
           title="Performance Mode"
+          aria-label="Toggle High Performance Mode"
           className="p-1.5 rounded-xl hover:bg-[#252525] text-neutral-400 hover:text-white transition-colors cursor-pointer"
         >
           <Gauge className="w-4 h-4" />
@@ -230,6 +239,7 @@ export const TopBar = () => {
         <button
           onClick={handleCopy}
           title="Copy Image"
+          aria-label="Copy mockup image to clipboard"
           className="p-2 rounded-xl bg-[#1c1c1c] hover:bg-[#262626] text-neutral-300 hover:text-white border border-[#2b2b2b] transition-colors cursor-pointer"
         >
           <Copy className="w-3.5 h-3.5" />
@@ -238,6 +248,7 @@ export const TopBar = () => {
         <button
           onClick={() => setShowSettings(!showSettings)}
           title="Export Settings"
+          aria-label="Open export settings popover"
           className="p-2 rounded-xl bg-[#1c1c1c] hover:bg-[#262626] text-neutral-300 hover:text-white border border-[#2b2b2b] transition-colors cursor-pointer"
         >
           <SlidersHorizontal className="w-3.5 h-3.5" />
@@ -247,6 +258,7 @@ export const TopBar = () => {
         <button
           onClick={handleExport}
           disabled={isExporting}
+          aria-label="Export and download mockup image"
           className="flex items-center space-x-2 px-3.5 py-1.5 rounded-xl bg-white text-black font-semibold text-xs hover:bg-neutral-200 transition-all shadow-md active:scale-98 disabled:opacity-50 cursor-pointer"
         >
           <Download className="w-3.5 h-3.5" />

@@ -60,6 +60,9 @@ const defaultConfig: MockupConfig = {
   shapesPack: "glass-blue",
   shapesLayoutName: "layout-7",
   shapesItems: [1, 2, 3, 4, 5, 6],
+  animationPreset: "none",
+  isAnimationPlaying: false,
+  animationDuration: 5,
 };
 
 export const useMockupStore = create<MockupStore>((set, get) => ({

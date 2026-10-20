@@ -35,6 +35,13 @@ export type LayoutPreset =
   | "bottom-cut"
   | "side-angle";
 
+export type AnimationPreset =
+  | "none"
+  | "float"
+  | "turntable"
+  | "pulse"
+  | "orbit";
+
 export type AspectRatioType =
   | "16:9"
   | "3:2"
@@ -98,6 +105,10 @@ export interface MockupConfig {
   shapesPack: "glass-blue" | "glass-pink" | "plushy";
   shapesLayoutName: string;
   shapesItems: number[];
+  // Animation & Motion
+  animationPreset: AnimationPreset;
+  isAnimationPlaying: boolean;
+  animationDuration: number;
 }
 
 export interface DeviceSpec {

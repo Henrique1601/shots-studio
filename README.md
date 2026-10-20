@@ -3,7 +3,8 @@
 [![Next.js](https://img.shields.io/badge/Next.js-16.4.2-black?style=for-the-badge&logo=next.js)](https://nextjs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue?style=for-the-badge&logo=typescript)](https://www.typescriptlang.org/)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind-CSS-38B2AC?style=for-the-badge&logo=tailwind-css)](https://tailwindcss.com/)
-[![Tests](https://img.shields.io/badge/Tests-13%20Passing-brightgreen?style=for-the-badge)](package.json)
+[![Tests](https://img.shields.io/badge/Tests-16%20Passing-brightgreen?style=for-the-badge)](package.json)
+[![SEO](https://img.shields.io/badge/SEO-Lighthouse%2090%2B-orange?style=for-the-badge)](src/app/sitemap.ts)
 [![Security](https://img.shields.io/badge/OWASP-Secured-darkgreen?style=for-the-badge)](next.config.ts)
 [![Vercel](https://img.shields.io/badge/Vercel-Deployed-000000?style=for-the-badge&logo=vercel)](https://shots-app.vercel.app)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](LICENSE)
@@ -51,6 +52,18 @@ O **Shots Studio** reproduz a experiência completa de desktop app do Shots.so d
 - **Zoom Pad:** De 70% a 200% de escala fluida.
 - **Tilt X, Y & Z:** Rotação tridimensional em tempo real com perspectiva física de `150em`.
 - **Presets de Ângulo:** *Flat Center, Isometric Left, Isometric Right, Perspective Tilt, Rear Elevation, Bottom Focus, Side Angle*.
+- **Quick 1-Click Reset:** Botão flutuante para restaurar a rotação e o zoom imediatamente.
+
+### 🎬 Presets de Animação 3D & Video Timeline
+- **Presets Cinematográficos em Tempo Real:**
+  - *Float:* Oscilação suave com efeito flutuante gravitacional no eixo Y e Z.
+  - *Spin 3D (Turntable):* Rotação horizontal panorâmica contínua em 360°.
+  - *Breathe (Pulse):* Respiração e zoom sutil de alta elegância.
+  - *Orbit:* Movimento orbital tridimensional combinando eixos X, Y e Z.
+- **Linha do Tempo Interativa:**
+  - Play/Pause com timer em décimos de segundo (`0:00.0 / 0:05.0`).
+  - Barra de progresso deslizável (*scrubber*) interativa com arraste.
+  - Controle de duração ajustável (`3s`, `5s`, `10s`) e modo Loop contínuo.
 
 ### ⚡ Exportação Client-Side de Alta Resolução
 - Formatos: **PNG**, **JPEG**, **WebP**.
