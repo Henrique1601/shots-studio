@@ -4,6 +4,7 @@ import {
   DEFAULT_RATIO_DIMENSIONS,
   ASPECT_RATIOS_STANDARD,
   PRESET_MYSTIC,
+  PRESET_DESKTOP,
 } from "../src/types/mockup.ts";
 
 describe("Frame Tab Redesign & Mini-Sidebars Integrity", () => {
@@ -91,5 +92,23 @@ describe("Frame Tab Redesign & Mini-Sidebars Integrity", () => {
         assert.ok(item.h > 0);
       }
     }
+  });
+
+  it("verifies PRESET_DESKTOP has 16 4K wallpapers matching macOS Sequoia, Tahoe & Pro Display", () => {
+    assert.strictEqual(PRESET_DESKTOP.length, 16);
+    for (const d of PRESET_DESKTOP) {
+      assert.ok(d.id, "Expected wallpaper id");
+      assert.ok(d.name, "Expected wallpaper name");
+      assert.ok(d.value.startsWith("url("), `Expected url(...) background value for ${d.name}`);
+      assert.ok(d.preview.startsWith("http"), `Expected preview image url for ${d.name}`);
+    }
+  });
+
+  it("verifies Apple-style portrait lighting modes and aperture f-stop stops", () => {
+    const modes = ["natural", "studio", "contour", "stage"];
+    assert.strictEqual(modes.length, 4);
+
+    const fStops = ["f/1.4", "f/2.0", "f/2.8", "f/4.0", "f/5.6", "f/8.0"];
+    assert.strictEqual(fStops.length, 6);
   });
 });

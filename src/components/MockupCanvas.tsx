@@ -445,6 +445,27 @@ export const MockupCanvas = () => {
           }}
           className="w-full h-full relative flex items-center justify-center transition-all duration-300"
         >
+          {/* Opaque black backing plate to prevent canvas background bleeding through bezel subpixel seams */}
+          <div
+            className="absolute bg-[#020202] pointer-events-none"
+            style={{
+              left: deviceSpec.screenBounds?.left ?? "0%",
+              top: deviceSpec.screenBounds?.top ?? "0%",
+              width: deviceSpec.screenBounds?.width ?? "100%",
+              height: deviceSpec.screenBounds?.height ?? "100%",
+              borderRadius: deviceSpec.containerClass?.includes("iphone")
+                ? "48px"
+                : deviceSpec.containerClass?.includes("ipad")
+                ? "24px"
+                : deviceSpec.containerClass?.includes("watch")
+                ? "36px"
+                : "4px",
+              transform: "scale(1.02)",
+              transformOrigin: "center",
+              zIndex: 5,
+            }}
+          />
+
           {/* Calibrated Screen Mask & Media Container (under bezel cutout) */}
           <div
             style={{
@@ -580,6 +601,44 @@ export const MockupCanvas = () => {
     );
   };
 
+  const getCanvasBackgroundStyle = (): React.CSSProperties => {
+    if (config.backgroundType === "transparent") {
+      return {
+        backgroundImage:
+          "repeating-conic-gradient(#222222 0% 25%, #181818 0% 50%)",
+        backgroundSize: "20px 20px",
+        backgroundPosition: "50%",
+      };
+    }
+    const bg = config.backgroundValue || "#000000";
+    if (bg.includes("gradient(")) {
+      return {
+        background: bg,
+      };
+    }
+    if (
+      config.backgroundType === "image" ||
+      bg.startsWith("url(") ||
+      bg.startsWith("http://") ||
+      bg.startsWith("https://") ||
+      bg.startsWith("/") ||
+      bg.startsWith("data:")
+    ) {
+      const cleanUrl = bg.startsWith("url(")
+        ? bg.replace(/^url\(['"]?/, "").replace(/['"]?\).*$/, "")
+        : bg;
+      return {
+        backgroundImage: `url('${cleanUrl}')`,
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        backgroundRepeat: "no-repeat",
+      };
+    }
+    return {
+      backgroundColor: bg,
+    };
+  };
+
   return (
     <div
       ref={canvasWrapperRef}
@@ -613,10 +672,7 @@ export const MockupCanvas = () => {
         <div
           className="absolute inset-0 pointer-events-none transition-all duration-300"
           style={{
-            background:
-              config.backgroundType === "transparent"
-                ? "repeating-conic-gradient(#222222 0% 25%, #181818 0% 50%) 50% / 20px 20px"
-                : config.backgroundValue,
+            ...getCanvasBackgroundStyle(),
             filter: (config.backgroundBlur ?? 0) > 0 ? `blur(${config.backgroundBlur}px)` : undefined,
             transform: (config.backgroundBlur ?? 0) > 0 ? "scale(1.08)" : undefined,
             transformOrigin: "center",
@@ -663,6 +719,39 @@ export const MockupCanvas = () => {
             )}
             {config.vfxType === "noise" && (
               <div className="w-full h-full bg-[radial-gradient(rgba(255,255,255,0.2)_1px,transparent_1px)] bg-[size:3px_3px]" />
+            )}
+          </div>
+        )}
+
+        {/* Apple-Style Studio Portrait Lighting Overlays */}
+        {config.portraitLighting && config.portraitLighting !== "natural" && (
+          <div className="absolute inset-0 pointer-events-none z-15 transition-all duration-300">
+            {config.portraitLighting === "studio" && (
+              <div
+                className="w-full h-full mix-blend-overlay"
+                style={{
+                  background:
+                    "radial-gradient(circle at 50% 35%, rgba(255,255,255,0.25) 0%, rgba(255,255,255,0.05) 50%, rgba(0,0,0,0.3) 100%)",
+                }}
+              />
+            )}
+            {config.portraitLighting === "contour" && (
+              <div
+                className="w-full h-full mix-blend-hard-light"
+                style={{
+                  background:
+                    "linear-gradient(135deg, rgba(255,255,255,0.2) 0%, transparent 40%, rgba(0,0,0,0.5) 100%)",
+                }}
+              />
+            )}
+            {config.portraitLighting === "stage" && (
+              <div
+                className="w-full h-full mix-blend-multiply"
+                style={{
+                  background:
+                    "radial-gradient(ellipse at 50% 25%, transparent 30%, rgba(0,0,0,0.7) 75%, rgba(0,0,0,0.92) 100%)",
+                }}
+              />
             )}
           </div>
         )}
@@ -760,11 +849,13 @@ export const MockupCanvas = () => {
         {/* 3D Shapes Scene (Flutuantes Volumétricas) */}
         {config.shapesSceneEnabled &&
           currentShapesLayout.layout.map((shape, idx) => {
-            const itemNumber = config.shapesItems[idx % config.shapesItems.length] || 1;
+            const shapesItems = config.shapesItems?.length ? config.shapesItems : [1, 2, 3, 4, 5, 6];
+            const itemNumber = shapesItems[idx % shapesItems.length] || 1;
+            const pack = config.shapesPack || "glass-blue";
             const imgSrc =
-              config.shapesPack === "metal"
+              pack === "metal"
                 ? `/shots-assets/3d-shapes/metal/${itemNumber}.avif`
-                : `/shots-assets/3d-shapes/${config.shapesPack}/full/${itemNumber}.avif`;
+                : `/shots-assets/3d-shapes/${pack}/full/${itemNumber}.avif`;
             return (
               <motion.img
                 key={idx}
@@ -785,7 +876,12 @@ export const MockupCanvas = () => {
                   maxWidth: "300px",
                 }}
                 onError={(e) => {
-                  (e.target as HTMLElement).style.display = "none";
+                  const target = e.currentTarget;
+                  if (target.src.includes("/full/")) {
+                    target.src = target.src.replace("/full/", "/");
+                  } else {
+                    target.style.display = "none";
+                  }
                 }}
               />
             );

@@ -93,6 +93,19 @@ export type WatermarkPosition =
 export type WatermarkStyle = "default" | "shadow" | "glass" | "badge";
 export type WatermarkTheme = "light" | "dark";
 
+export type PortraitLightingMode = "natural" | "studio" | "contour" | "stage";
+
+export interface WatermarkProfile {
+  enabled: boolean;
+  text: string;
+  platform: WatermarkPlatform;
+  style: WatermarkStyle;
+  theme: WatermarkTheme;
+  size: number;
+  inset: number;
+  position: WatermarkPosition;
+}
+
 export type VfxType =
   | "none"
   | "noise"
@@ -154,10 +167,14 @@ export interface MockupConfig {
   watermark: boolean;
   noiseOverlay: boolean;
   portraitEffect: boolean;
+  portraitLighting?: PortraitLightingMode;
+  portraitAperture?: string;
   watermarkStyle?: WatermarkStyle;
   watermarkTheme?: WatermarkTheme;
   watermarkSize?: number;
   watermarkInset?: number;
+  watermarkProfileIndex?: number;
+  watermarkProfiles?: WatermarkProfile[];
   vfxType?: VfxType;
   vfxIntensity?: number;
   // 3D Shapes Scene
@@ -288,7 +305,7 @@ export const DEVICE_SPECS: Record<FrameType, DeviceSpec> = {
       left: "16.70%",
       top: "18.65%",
       width: "66.65%",
-      height: "64.67%",
+      height: "64.70%",
     },
     containerClass: "macbook-pro-16",
   },
@@ -492,18 +509,25 @@ export const parseAspectRatio = (
   customWidth?: number,
   customHeight?: number
 ): { width: number; height: number; ratio: number } => {
-  if (aspectRatio === "custom") {
+  if (aspectRatio === "custom" || (!aspectRatio.includes(":") && !aspectRatio.includes("/"))) {
     const parsedW = Number(customWidth);
     const parsedH = Number(customHeight);
     const w = !isNaN(parsedW) && parsedW > 0 ? parsedW : 1920;
     const h = !isNaN(parsedH) && parsedH > 0 ? parsedH : 1080;
     return { width: w, height: h, ratio: w / h };
   }
-  const parts = aspectRatio.split(":").map(Number);
-  if (parts[0] && parts[1]) {
-    return { width: parts[0], height: parts[1], ratio: parts[0] / parts[1] };
-  }
-  return { width: 16, height: 9, ratio: 16 / 9 };
+  const defaults = DEFAULT_RATIO_DIMENSIONS[aspectRatio];
+  const parts = aspectRatio.split("/").join(":").split(":").map(Number);
+  const ratio = parts[0] && parts[1] ? parts[0] / parts[1] : 16 / 9;
+  const width =
+    customWidth && customWidth > 0
+      ? customWidth
+      : defaults?.width ?? (parts[0] ? parts[0] * 120 : 1920);
+  const height =
+    customHeight && customHeight > 0
+      ? customHeight
+      : defaults?.height ?? (parts[1] ? parts[1] * 120 : 1080);
+  return { width, height, ratio };
 };
 
 export const ASPECT_RATIOS_SOCIAL: { id: AspectRatioType; label: string; ratio: string }[] = [
@@ -534,6 +558,105 @@ export const PRESET_MYSTIC = [
   { id: "mystic-14", name: "Dawn Mint", value: "radial-gradient(circle at 50% 110%, #2dd4bf 0%, #38bdf8 50%, #f0fdfa 100%)" },
   { id: "mystic-15", name: "Amber Beam", value: "radial-gradient(circle at 20% 100%, #eab308 0%, #ca8a04 40%, #1c1917 100%)" },
   { id: "mystic-16", name: "Tahoe Mist", value: "radial-gradient(circle at 50% 120%, #0284c7 0%, #0f172a 70%, #020617 100%)" },
+];
+
+export const PRESET_DESKTOP = [
+  {
+    id: "desktop-sequoia-dawn",
+    name: "Sequoia Dawn",
+    value: "url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=3840&q=95')",
+    preview: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=300&q=80",
+  },
+  {
+    id: "desktop-sequoia-dark",
+    name: "Sequoia Night",
+    value: "url('https://images.unsplash.com/photo-1519681393784-d120267933ba?auto=format&fit=crop&w=3840&q=95')",
+    preview: "https://images.unsplash.com/photo-1519681393784-d120267933ba?auto=format&fit=crop&w=300&q=80",
+  },
+  {
+    id: "desktop-sonoma-horizon",
+    name: "Sonoma Horizon",
+    value: "url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=3840&q=95')",
+    preview: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=300&q=80",
+  },
+  {
+    id: "desktop-sonoma-hills",
+    name: "Sonoma Hills",
+    value: "url('https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?auto=format&fit=crop&w=3840&q=95')",
+    preview: "https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?auto=format&fit=crop&w=300&q=80",
+  },
+  {
+    id: "desktop-tahoe-aerial",
+    name: "Lake Tahoe 4K",
+    value: "url('https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=3840&q=95')",
+    preview: "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=300&q=80",
+  },
+  {
+    id: "desktop-monterey-glow",
+    name: "Monterey Canyon",
+    value: "url('https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&w=3840&q=95')",
+    preview: "https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&w=300&q=80",
+  },
+  {
+    id: "desktop-ventura-amber",
+    name: "Ventura Waves",
+    value: "url('https://images.unsplash.com/photo-1505118380757-91f5f5632de0?auto=format&fit=crop&w=3840&q=95')",
+    preview: "https://images.unsplash.com/photo-1505118380757-91f5f5632de0?auto=format&fit=crop&w=300&q=80",
+  },
+  {
+    id: "desktop-bigsur-dusk",
+    name: "Big Sur Dusk",
+    value: "url('https://images.unsplash.com/photo-1426604966848-d7adac402bff?auto=format&fit=crop&w=3840&q=95')",
+    preview: "https://images.unsplash.com/photo-1426604966848-d7adac402bff?auto=format&fit=crop&w=300&q=80",
+  },
+  {
+    id: "desktop-pro-display-abstract",
+    name: "Pro Display XDR",
+    value: "url('https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=3840&q=95')",
+    preview: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=300&q=80",
+  },
+  {
+    id: "desktop-studio-minimal",
+    name: "Minimal Concrete",
+    value: "url('https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=3840&q=95')",
+    preview: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=300&q=80",
+  },
+  {
+    id: "desktop-aurora-fjord",
+    name: "Nordic Aurora",
+    value: "url('https://images.unsplash.com/photo-1531366936337-7c912a4589a7?auto=format&fit=crop&w=3840&q=95')",
+    preview: "https://images.unsplash.com/photo-1531366936337-7c912a4589a7?auto=format&fit=crop&w=300&q=80",
+  },
+  {
+    id: "desktop-tokyo-night",
+    name: "Tokyo Cyber",
+    value: "url('https://images.unsplash.com/photo-1503899036084-c55cdd92da26?auto=format&fit=crop&w=3840&q=95')",
+    preview: "https://images.unsplash.com/photo-1503899036084-c55cdd92da26?auto=format&fit=crop&w=300&q=80",
+  },
+  {
+    id: "desktop-alps-snow",
+    name: "Alps Summit",
+    value: "url('https://images.unsplash.com/photo-1491555103944-7c647fd857e6?auto=format&fit=crop&w=3840&q=95')",
+    preview: "https://images.unsplash.com/photo-1491555103944-7c647fd857e6?auto=format&fit=crop&w=300&q=80",
+  },
+  {
+    id: "desktop-desert-dunes",
+    name: "Sahara Sunset",
+    value: "url('https://images.unsplash.com/photo-1509316975850-ff9c5deb0cd9?auto=format&fit=crop&w=3840&q=95')",
+    preview: "https://images.unsplash.com/photo-1509316975850-ff9c5deb0cd9?auto=format&fit=crop&w=300&q=80",
+  },
+  {
+    id: "desktop-fluid-chroma",
+    name: "Fluid Chroma",
+    value: "url('https://images.unsplash.com/photo-1550684848-fac1c5b4e853?auto=format&fit=crop&w=3840&q=95')",
+    preview: "https://images.unsplash.com/photo-1550684848-fac1c5b4e853?auto=format&fit=crop&w=300&q=80",
+  },
+  {
+    id: "desktop-iceland-moss",
+    name: "Iceland Canyon",
+    value: "url('https://images.unsplash.com/photo-1504893524553-b855bce32c67?auto=format&fit=crop&w=3840&q=95')",
+    preview: "https://images.unsplash.com/photo-1504893524553-b855bce32c67?auto=format&fit=crop&w=300&q=80",
+  },
 ];
 
 export const PRESET_GRADIENTS = [

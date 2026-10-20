@@ -8,7 +8,9 @@ import {
   BorderRoundness,
   PRESET_GRADIENTS,
   PRESET_MYSTIC,
+  PRESET_DESKTOP,
   PRESET_PAPER_GLASS,
+  PortraitLightingMode,
   PRESET_TAHOE,
   PRESET_SOLIDS,
   ASPECT_RATIOS_STANDARD,
@@ -35,6 +37,7 @@ import {
   Code2,
   Aperture,
   Droplet,
+  Ban,
   Contrast,
   X,
   Image as ImageIcon,
@@ -86,7 +89,7 @@ export const LeftSidebar = () => {
       : "color"
   );
   const [expandedSection, setExpandedSection] = useState<
-    "none" | "solid" | "mystic" | "gradients"
+    "none" | "solid" | "mystic" | "desktop" | "gradients"
   >("solid");
 
   const getRatioTitle = (ratio: AspectRatioType) => {
@@ -149,6 +152,53 @@ export const LeftSidebar = () => {
     showToast(`Proporção selecionada: ${ratioId}`, "info");
   };
 
+  const handleSwitchWatermarkProfile = (targetIdx: number) => {
+    const profiles = config.watermarkProfiles || [];
+    const targetProfile = profiles[targetIdx];
+    if (!targetProfile) return;
+    updateConfig({
+      watermarkProfileIndex: targetIdx,
+      watermark: targetProfile.enabled,
+      watermarkText: targetProfile.text,
+      watermarkPlatform: targetProfile.platform,
+      watermarkStyle: targetProfile.style,
+      watermarkTheme: targetProfile.theme,
+      watermarkSize: targetProfile.size,
+      watermarkInset: targetProfile.inset,
+      watermarkPosition: targetProfile.position,
+    });
+  };
+
+  const handleUpdateActiveWatermark = (updates: Partial<any>) => {
+    const activeIdx = config.watermarkProfileIndex ?? 0;
+    const profiles = [...(config.watermarkProfiles || [])];
+    const currentProfile = profiles[activeIdx] || {
+      enabled: activeIdx > 0,
+      text: "",
+      platform: "none",
+      style: "default",
+      theme: "dark",
+      size: 80,
+      inset: 5,
+      position: "top-left",
+    };
+    const updatedProfile = { ...currentProfile, ...updates };
+    profiles[activeIdx] = updatedProfile;
+
+    updateConfig({
+      ...updates,
+      ...(updates.enabled !== undefined ? { watermark: updates.enabled } : {}),
+      ...(updates.text !== undefined ? { watermarkText: updates.text } : {}),
+      ...(updates.platform !== undefined ? { watermarkPlatform: updates.platform } : {}),
+      ...(updates.style !== undefined ? { watermarkStyle: updates.style } : {}),
+      ...(updates.theme !== undefined ? { watermarkTheme: updates.theme } : {}),
+      ...(updates.size !== undefined ? { watermarkSize: updates.size } : {}),
+      ...(updates.inset !== undefined ? { watermarkInset: updates.inset } : {}),
+      ...(updates.position !== undefined ? { watermarkPosition: updates.position } : {}),
+      watermarkProfiles: profiles,
+    });
+  };
+
   const handleSetDimensions = () => {
     const parsedW = parseInt(inputW, 10);
     const parsedH = parseInt(inputH, 10);
@@ -157,10 +207,20 @@ export const LeftSidebar = () => {
 
     setInputW(w.toString());
     setInputH(h.toString());
+
+    // Auto-detect matching standard ratio
+    let matchedRatio: AspectRatioType = "custom";
+    for (const [rId, dim] of Object.entries(DEFAULT_RATIO_DIMENSIONS)) {
+      if (rId !== "custom" && dim.width === w && dim.height === h) {
+        matchedRatio = rId as AspectRatioType;
+        break;
+      }
+    }
+
     updateConfig({
       customWidth: w,
       customHeight: h,
-      aspectRatio: "custom",
+      aspectRatio: matchedRatio,
     });
     showToast(`Dimensões aplicadas: ${w} × ${h}px`, "success");
   };
@@ -1558,6 +1618,84 @@ export const LeftSidebar = () => {
                 )}
               </div>
 
+              {/* 8.5 Desktop 4K Wallpapers Collection (Sequoia, Sonoma, Tahoe, Monterey, Pro Display XDR) */}
+              <div>
+                <div className="flex items-center justify-between mb-1.5">
+                  <span className="text-[10px] font-bold text-neutral-300">Desktop 4K</span>
+                  <button
+                    onClick={() =>
+                      setExpandedSection(
+                        expandedSection === "desktop" ? "none" : "desktop"
+                      )
+                    }
+                    className="text-neutral-400 hover:text-white p-0.5 rounded hover:bg-white/5 transition-colors cursor-pointer"
+                  >
+                    <ChevronDown
+                      className={`w-3.5 h-3.5 transition-transform ${
+                        expandedSection === "desktop" ? "rotate-180" : ""
+                      }`}
+                    />
+                  </button>
+                </div>
+                {expandedSection === "desktop" ? (
+                  <div className="grid grid-cols-4 gap-1.5 p-2 rounded-xl bg-[#222222] border border-white/5 animate-in fade-in duration-100">
+                    {PRESET_DESKTOP.map((d) => (
+                      <button
+                        key={d.id}
+                        onClick={() =>
+                          updateConfig({
+                            backgroundType: "image",
+                            backgroundValue: d.value,
+                          })
+                        }
+                        style={{
+                          backgroundImage: d.value,
+                          backgroundSize: "cover",
+                          backgroundPosition: "center",
+                        }}
+                        className={`h-9 rounded-xl border transition-all cursor-pointer relative overflow-hidden ${
+                          config.backgroundValue === d.value
+                            ? "ring-2 ring-white border-transparent scale-105"
+                            : "border-white/10 hover:scale-105"
+                        }`}
+                        title={d.name}
+                      />
+                    ))}
+                  </div>
+                ) : (
+                  <div className="flex items-center space-x-1.5">
+                    {PRESET_DESKTOP.slice(0, 4).map((d) => (
+                      <button
+                        key={d.id}
+                        onClick={() =>
+                          updateConfig({
+                            backgroundType: "image",
+                            backgroundValue: d.value,
+                          })
+                        }
+                        style={{
+                          backgroundImage: d.value,
+                          backgroundSize: "cover",
+                          backgroundPosition: "center",
+                        }}
+                        className={`flex-1 h-7 rounded-lg border transition-all cursor-pointer ${
+                          config.backgroundValue === d.value
+                            ? "ring-2 ring-white border-transparent"
+                            : "border-white/10 hover:scale-105"
+                        }`}
+                        title={d.name}
+                      />
+                    ))}
+                    <button
+                      onClick={() => setExpandedSection("desktop")}
+                      className="w-7 h-7 rounded-lg bg-[#242424] hover:bg-[#2c2c2c] border border-white/10 flex items-center justify-center text-neutral-400 hover:text-white cursor-pointer"
+                    >
+                      <ChevronDown className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
+                )}
+              </div>
+
               {/* 9. Gradients Row */}
               <div>
                 <div className="flex items-center justify-between mb-1.5">
@@ -1883,193 +2021,266 @@ export const LeftSidebar = () => {
             </div>
           )}
 
-          {/* C. Watermark Mini-Sidebar (media_1792516766485_2167325f.png) */}
-          {activeMiniSidebar === "watermark" && (
-            <div className="space-y-3.5">
-              {/* Header */}
-              <div className="flex items-center justify-between pb-2 border-b border-white/10">
-                <button
-                  onClick={() => updateConfig({ watermark: !config.watermark })}
-                  className="flex items-center space-x-1.5 text-xs font-bold text-white cursor-pointer"
-                >
-                  <Droplet className="w-4 h-4 text-white" />
-                  <span>{config.watermark ? "Watermark" : "No watermark"}</span>
-                </button>
-                <button
-                  onClick={() => setActiveMiniSidebar("none")}
-                  className="text-neutral-400 hover:text-white p-1 rounded-lg hover:bg-white/5 cursor-pointer"
-                >
-                  <X className="w-3.5 h-3.5" />
-                </button>
-              </div>
+          {/* C. Watermark Mini-Sidebar Carousel Profile System (media_1792516766485_2167325f.png) */}
+          {activeMiniSidebar === "watermark" && (() => {
+            const activeIdx = config.watermarkProfileIndex ?? 0;
+            const isNoWatermark = activeIdx === 0 || !config.watermark;
 
-              {/* Watermark Text Input & Upload */}
-              <div className="flex items-center space-x-1.5 bg-[#242424] p-1.5 rounded-xl border border-white/5">
-                <button
-                  onClick={() => {
-                    const nextPlatform =
-                      config.watermarkPlatform === "shots"
-                        ? "twitter"
-                        : config.watermarkPlatform === "twitter"
-                        ? "instagram"
-                        : "shots";
-                    updateConfig({ watermarkPlatform: nextPlatform });
-                  }}
-                  className="p-1.5 rounded-lg bg-[#181818] text-white hover:bg-[#333] transition-colors cursor-pointer"
-                  title="Mudar Ícone da Marca"
-                >
-                  <ImageIcon className="w-3.5 h-3.5" />
-                </button>
-                <input
-                  type="text"
-                  value={config.watermarkText || ""}
-                  onChange={(e) =>
-                    updateConfig({ watermarkText: e.target.value })
-                  }
-                  placeholder="Watermark / Marca"
-                  className="flex-1 bg-transparent outline-none text-xs text-white placeholder-neutral-500"
-                />
-              </div>
-
-              {/* STYLE */}
-              <div className="space-y-1.5">
-                <div className="text-[9px] font-bold text-neutral-400 uppercase tracking-wider">
-                  STYLE
-                </div>
-                <div className="grid grid-cols-4 gap-1 text-[9px]">
-                  {(
-                    [
-                      { id: "default", label: "Default" },
-                      { id: "shadow", label: "Shadow" },
-                      { id: "glass", label: "Glass" },
-                      { id: "badge", label: "Badge" },
-                    ] as const
-                  ).map((st) => (
+            return (
+              <div className="space-y-3.5">
+                {/* 1. Carousel Header with Navigation Arrows */}
+                <div className="flex items-center justify-between pb-2 border-b border-white/10">
+                  <div className="flex items-center space-x-1.5">
                     <button
-                      key={st.id}
                       onClick={() =>
-                        updateConfig({
-                          watermarkStyle: st.id,
-                          watermark: true,
-                        })
+                        handleSwitchWatermarkProfile((activeIdx - 1 + 4) % 4)
                       }
-                      className={`py-1.5 rounded-lg border text-center transition-all cursor-pointer truncate ${
-                        (config.watermarkStyle || "default") === st.id
-                          ? "border-white bg-[#282828] text-white font-bold"
-                          : "border-transparent bg-[#222222] text-neutral-400 hover:text-white"
+                      className="p-1 rounded-lg hover:bg-white/10 text-neutral-400 hover:text-white transition-colors cursor-pointer"
+                      title="Perfil Anterior"
+                    >
+                      <ChevronLeft className="w-4 h-4" />
+                    </button>
+                    <button
+                      onClick={() =>
+                        handleUpdateActiveWatermark({ enabled: !config.watermark })
+                      }
+                      className="flex items-center space-x-1.5 text-xs font-bold text-white cursor-pointer px-1 py-0.5 rounded hover:bg-white/5"
+                    >
+                      {activeIdx === 0 ? (
+                        <>
+                          <Ban className="w-3.5 h-3.5 text-neutral-400" />
+                          <span>No watermark</span>
+                        </>
+                      ) : (
+                        <>
+                          <Droplet className="w-3.5 h-3.5 text-cyan-400" />
+                          <span>
+                            {config.watermarkText ? config.watermarkText : `Watermark #${activeIdx}`}
+                          </span>
+                        </>
+                      )}
+                    </button>
+                    <button
+                      onClick={() =>
+                        handleSwitchWatermarkProfile((activeIdx + 1) % 4)
+                      }
+                      className="p-1 rounded-lg hover:bg-white/10 text-neutral-400 hover:text-white transition-colors cursor-pointer"
+                      title="Próximo Perfil"
+                    >
+                      <ChevronRight className="w-4 h-4" />
+                    </button>
+                  </div>
+                  <button
+                    onClick={() => setActiveMiniSidebar("none")}
+                    className="text-neutral-400 hover:text-white p-1 rounded-lg hover:bg-white/5 cursor-pointer"
+                  >
+                    <X className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+
+                {/* 2. 4-Dot Carousel Pager (• • • •) */}
+                <div className="flex items-center justify-center space-x-2 py-0.5">
+                  {[0, 1, 2, 3].map((slotIdx) => {
+                    const isActive = activeIdx === slotIdx;
+                    return (
+                      <button
+                        key={slotIdx}
+                        onClick={() => handleSwitchWatermarkProfile(slotIdx)}
+                        className={`transition-all rounded-full cursor-pointer ${
+                          isActive
+                            ? "w-2.5 h-2.5 bg-white shadow-sm ring-2 ring-white/20"
+                            : "w-1.5 h-1.5 bg-neutral-600 hover:bg-neutral-400"
+                        }`}
+                        title={
+                          slotIdx === 0
+                            ? "Slot 0: Sem marca d'água"
+                            : `Slot ${slotIdx}: Perfil personalizado`
+                        }
+                      />
+                    );
+                  })}
+                </div>
+
+                {/* Watermark Text Input & Upload */}
+                <div className="flex items-center space-x-1.5 bg-[#242424] p-1.5 rounded-xl border border-white/5">
+                  <button
+                    onClick={() => {
+                      const nextPlatform =
+                        config.watermarkPlatform === "shots"
+                          ? "twitter"
+                          : config.watermarkPlatform === "twitter"
+                          ? "instagram"
+                          : "shots";
+                      handleUpdateActiveWatermark({ platform: nextPlatform });
+                    }}
+                    className="p-1.5 rounded-lg bg-[#181818] text-white hover:bg-[#333] transition-colors cursor-pointer"
+                    title="Mudar Ícone da Marca"
+                  >
+                    <ImageIcon className="w-3.5 h-3.5" />
+                  </button>
+                  <input
+                    type="text"
+                    value={config.watermarkText || ""}
+                    onChange={(e) =>
+                      handleUpdateActiveWatermark({
+                        text: e.target.value,
+                        enabled: true,
+                      })
+                    }
+                    placeholder="Watermark / Marca"
+                    className="flex-1 bg-transparent outline-none text-xs text-white placeholder-neutral-500"
+                  />
+                </div>
+
+                {/* STYLE */}
+                <div className="space-y-1.5">
+                  <div className="text-[9px] font-bold text-neutral-400 uppercase tracking-wider">
+                    STYLE
+                  </div>
+                  <div className="grid grid-cols-4 gap-1 text-[9px]">
+                    {(
+                      [
+                        { id: "default", label: "Default" },
+                        { id: "shadow", label: "Shadow" },
+                        { id: "glass", label: "Glass" },
+                        { id: "badge", label: "Badge" },
+                      ] as const
+                    ).map((st) => (
+                      <button
+                        key={st.id}
+                        onClick={() =>
+                          handleUpdateActiveWatermark({
+                            style: st.id,
+                            enabled: true,
+                          })
+                        }
+                        className={`py-1.5 rounded-lg border text-center transition-all cursor-pointer truncate ${
+                          (config.watermarkStyle || "default") === st.id
+                            ? "border-white bg-[#282828] text-white font-bold"
+                            : "border-transparent bg-[#222222] text-neutral-400 hover:text-white"
+                        }`}
+                      >
+                        {st.label}
+                      </button>
+                    ))}
+                  </div>
+
+                  {/* Theme Light / Dark */}
+                  <div className="flex bg-[#222222] p-0.5 rounded-xl text-xs font-semibold mt-1">
+                    <button
+                      onClick={() => handleUpdateActiveWatermark({ theme: "light" })}
+                      className={`flex-1 py-1 rounded-lg transition-all cursor-pointer ${
+                        config.watermarkTheme === "light"
+                          ? "bg-white text-black shadow-sm"
+                          : "text-neutral-400 hover:text-white"
                       }`}
                     >
-                      {st.label}
+                      Light
                     </button>
-                  ))}
+                    <button
+                      onClick={() => handleUpdateActiveWatermark({ theme: "dark" })}
+                      className={`flex-1 py-1 rounded-lg transition-all cursor-pointer ${
+                        config.watermarkTheme !== "light"
+                          ? "bg-[#333] text-white shadow-sm"
+                          : "text-neutral-400 hover:text-white"
+                      }`}
+                    >
+                      Dark
+                    </button>
+                  </div>
                 </div>
 
-                {/* Theme Light / Dark */}
-                <div className="flex bg-[#222222] p-0.5 rounded-xl text-xs font-semibold mt-1">
-                  <button
-                    onClick={() => updateConfig({ watermarkTheme: "light" })}
-                    className={`flex-1 py-1 rounded-lg transition-all cursor-pointer ${
-                      config.watermarkTheme === "light"
-                        ? "bg-white text-black shadow-sm"
-                        : "text-neutral-400 hover:text-white"
-                    }`}
-                  >
-                    Light
-                  </button>
-                  <button
-                    onClick={() => updateConfig({ watermarkTheme: "dark" })}
-                    className={`flex-1 py-1 rounded-lg transition-all cursor-pointer ${
-                      config.watermarkTheme !== "light"
-                        ? "bg-[#333] text-white shadow-sm"
-                        : "text-neutral-400 hover:text-white"
-                    }`}
-                  >
-                    Dark
-                  </button>
-                </div>
-              </div>
-
-              {/* SIZE & POSITION */}
-              <div className="pt-2 border-t border-white/10 space-y-2">
-                <div className="text-[9px] font-bold text-neutral-400 uppercase tracking-wider">
-                  SIZE & POSITION
-                </div>
-                <div className="grid grid-cols-3 gap-1.5">
-                  {/* Position 4-corners selector */}
-                  <div className="p-2 rounded-xl bg-[#222222] flex flex-col items-center justify-between">
-                    <div className="w-8 h-8 grid grid-cols-2 gap-1 p-0.5 bg-[#181818] rounded-md">
-                      {(
-                        [
-                          { id: "top-left", pos: "TL" },
-                          { id: "top-right", pos: "TR" },
-                          { id: "bottom-left", pos: "BL" },
-                          { id: "bottom-right", pos: "BR" },
-                        ] as const
-                      ).map((p) => (
-                        <button
-                          key={p.id}
-                          onClick={() =>
-                            updateConfig({ watermarkPosition: p.id })
-                          }
-                          className={`rounded-xs transition-colors cursor-pointer ${
-                            config.watermarkPosition === p.id
-                              ? "bg-white"
-                              : "bg-[#333] hover:bg-[#555]"
-                          }`}
-                        />
-                      ))}
+                {/* SIZE & POSITION */}
+                <div className="pt-2 border-t border-white/10 space-y-2">
+                  <div className="text-[9px] font-bold text-neutral-400 uppercase tracking-wider">
+                    SIZE & POSITION
+                  </div>
+                  <div className="grid grid-cols-3 gap-1.5">
+                    {/* Position 4-corners selector */}
+                    <div className="p-2 rounded-xl bg-[#222222] flex flex-col items-center justify-between">
+                      <div className="w-8 h-8 grid grid-cols-2 gap-1 p-0.5 bg-[#181818] rounded-md">
+                        {(
+                          [
+                            { id: "top-left", pos: "TL" },
+                            { id: "top-right", pos: "TR" },
+                            { id: "bottom-left", pos: "BL" },
+                            { id: "bottom-right", pos: "BR" },
+                          ] as const
+                        ).map((p) => (
+                          <button
+                            key={p.id}
+                            onClick={() =>
+                              handleUpdateActiveWatermark({
+                                position: p.id,
+                                enabled: true,
+                              })
+                            }
+                            className={`rounded-xs transition-colors cursor-pointer ${
+                              config.watermarkPosition === p.id
+                                ? "bg-white"
+                                : "bg-[#333] hover:bg-[#555]"
+                            }`}
+                          />
+                        ))}
+                      </div>
+                      <span className="text-[9px] text-neutral-400 mt-1 font-semibold">
+                        Position
+                      </span>
                     </div>
-                    <span className="text-[9px] text-neutral-400 mt-1 font-semibold">
-                      Position
-                    </span>
-                  </div>
 
-                  {/* Size */}
-                  <div className="p-2 rounded-xl bg-[#222222] flex flex-col items-center justify-between">
-                    <input
-                      type="number"
-                      min={40}
-                      max={160}
-                      value={config.watermarkSize ?? 80}
-                      onChange={(e) =>
-                        updateConfig({ watermarkSize: Number(e.target.value) })
-                      }
-                      className="w-full bg-[#181818] text-center font-bold text-xs py-1 rounded text-white outline-none"
-                    />
-                    <span className="text-[9px] text-neutral-400 mt-1 font-semibold">
-                      Size
-                    </span>
-                  </div>
+                    {/* Size */}
+                    <div className="p-2 rounded-xl bg-[#222222] flex flex-col items-center justify-between">
+                      <input
+                        type="number"
+                        min={40}
+                        max={160}
+                        value={config.watermarkSize ?? 80}
+                        onChange={(e) =>
+                          handleUpdateActiveWatermark({
+                            size: Number(e.target.value),
+                            enabled: true,
+                          })
+                        }
+                        className="w-full bg-[#181818] text-center font-bold text-xs py-1 rounded text-white outline-none"
+                      />
+                      <span className="text-[9px] text-neutral-400 mt-1 font-semibold">
+                        Size
+                      </span>
+                    </div>
 
-                  {/* Inset */}
-                  <div className="p-2 rounded-xl bg-[#222222] flex flex-col items-center justify-between">
-                    <input
-                      type="number"
-                      min={0}
-                      max={30}
-                      value={config.watermarkInset ?? 5}
-                      onChange={(e) =>
-                        updateConfig({ watermarkInset: Number(e.target.value) })
-                      }
-                      className="w-full bg-[#181818] text-center font-bold text-xs py-1 rounded text-white outline-none"
-                    />
-                    <span className="text-[9px] text-neutral-400 mt-1 font-semibold">
-                      Inset
-                    </span>
+                    {/* Inset */}
+                    <div className="p-2 rounded-xl bg-[#222222] flex flex-col items-center justify-between">
+                      <input
+                        type="number"
+                        min={0}
+                        max={30}
+                        value={config.watermarkInset ?? 5}
+                        onChange={(e) =>
+                          handleUpdateActiveWatermark({
+                            inset: Number(e.target.value),
+                            enabled: true,
+                          })
+                        }
+                        className="w-full bg-[#181818] text-center font-bold text-xs py-1 rounded text-white outline-none"
+                      />
+                      <span className="text-[9px] text-neutral-400 mt-1 font-semibold">
+                        Inset
+                      </span>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-          )}
+            );
+          })()}
 
-          {/* D. Portrait Depth-of-Field Mini-Sidebar */}
+          {/* D. Portrait Depth-of-Field & Studio Lighting Mini-Sidebar */}
           {activeMiniSidebar === "portrait" && (
             <div className="space-y-3.5">
               <div className="flex items-center justify-between pb-2 border-b border-white/10">
                 <div className="flex items-center space-x-2">
-                  <Aperture className="w-4 h-4 text-white" />
+                  <Aperture className="w-4 h-4 text-cyan-400" />
                   <span className="text-xs font-bold text-white tracking-wide">
-                    Portrait Depth of Field
+                    Portrait & Depth of Field
                   </span>
                 </div>
                 <button
@@ -2080,10 +2291,50 @@ export const LeftSidebar = () => {
                 </button>
               </div>
 
-              {/* Bokeh Blur Slider */}
+              {/* 1. Aperture F-Stop Presets */}
               <div className="space-y-1.5">
                 <div className="flex items-center justify-between text-xs">
-                  <span className="text-neutral-300 font-medium">Bokeh Blur</span>
+                  <span className="text-[10px] font-bold text-neutral-400 uppercase tracking-wider">
+                    APERTURE (F-STOP)
+                  </span>
+                  <span className="font-mono text-cyan-400 text-[11px]">
+                    {config.portraitAperture || "f/2.8"}
+                  </span>
+                </div>
+                <div className="grid grid-cols-6 gap-1 text-[9px]">
+                  {[
+                    { f: "f/1.4", blur: 32 },
+                    { f: "f/2.0", blur: 24 },
+                    { f: "f/2.8", blur: 16 },
+                    { f: "f/4.0", blur: 10 },
+                    { f: "f/5.6", blur: 6 },
+                    { f: "f/8.0", blur: 2 },
+                  ].map((item) => (
+                    <button
+                      key={item.f}
+                      onClick={() =>
+                        updateConfig({
+                          portraitAperture: item.f,
+                          backgroundBlur: item.blur,
+                          portraitEffect: true,
+                        })
+                      }
+                      className={`py-1 rounded-lg border text-center font-mono transition-all cursor-pointer ${
+                        (config.portraitAperture || "f/2.8") === item.f
+                          ? "border-cyan-400 bg-cyan-400/20 text-white font-bold shadow-sm"
+                          : "border-transparent bg-[#222222] text-neutral-400 hover:text-white"
+                      }`}
+                    >
+                      {item.f}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* 2. Bokeh Blur Slider */}
+              <div className="space-y-1.5">
+                <div className="flex items-center justify-between text-xs">
+                  <span className="text-neutral-300 font-medium text-[11px]">Bokeh Blur</span>
                   <span className="font-mono text-cyan-400 text-[11px]">
                     {config.backgroundBlur ?? 0}px
                   </span>
@@ -2094,32 +2345,61 @@ export const LeftSidebar = () => {
                   max="40"
                   value={config.backgroundBlur ?? 0}
                   onChange={(e) =>
-                    updateConfig({ backgroundBlur: Number(e.target.value) })
+                    updateConfig({
+                      backgroundBlur: Number(e.target.value),
+                      portraitEffect: Number(e.target.value) > 0,
+                    })
                   }
                   className="w-full accent-cyan-400 h-1.5 bg-[#333] rounded-lg appearance-none cursor-pointer"
                 />
               </div>
 
-              {/* Quick Presets */}
-              <div className="grid grid-cols-4 gap-1 text-[9px]">
-                {[
-                  { label: "None", val: 0 },
-                  { label: "Subtle", val: 8 },
-                  { label: "Studio", val: 18 },
-                  { label: "Bokeh", val: 32 },
-                ].map((preset) => (
-                  <button
-                    key={preset.label}
-                    onClick={() => updateConfig({ backgroundBlur: preset.val })}
-                    className={`py-1 rounded border text-center transition-all cursor-pointer ${
-                      (config.backgroundBlur ?? 0) === preset.val
-                        ? "border-cyan-400 bg-cyan-400/10 text-white font-bold"
-                        : "border-transparent bg-[#222222] text-neutral-400 hover:text-white"
-                    }`}
-                  >
-                    {preset.label}
-                  </button>
-                ))}
+              {/* 3. Apple-Style Portrait Lighting Modes */}
+              <div className="pt-2 border-t border-white/10 space-y-1.5">
+                <div className="text-[9px] font-bold text-neutral-400 uppercase tracking-wider">
+                  PORTRAIT LIGHTING
+                </div>
+                <div className="grid grid-cols-2 gap-1.5">
+                  {(
+                    [
+                      { id: "natural", label: "Natural Light", desc: "Default studio", icon: SunMedium },
+                      { id: "studio", label: "Studio Light", desc: "Soft face glow", icon: Sparkles },
+                      { id: "contour", label: "Contour Light", desc: "Dramatic rim", icon: Contrast },
+                      { id: "stage", label: "Stage Light", desc: "Dark backdrop", icon: Aperture },
+                    ] as const
+                  ).map((mode) => {
+                    const IconComp = mode.icon;
+                    const isSelected = (config.portraitLighting || "natural") === mode.id;
+                    return (
+                      <button
+                        key={mode.id}
+                        onClick={() =>
+                          updateConfig({
+                            portraitLighting: mode.id as PortraitLightingMode,
+                            portraitEffect: true,
+                          })
+                        }
+                        className={`p-2 rounded-xl flex items-center space-x-2 border text-left transition-all cursor-pointer ${
+                          isSelected
+                            ? "border-cyan-400 bg-cyan-400/10 text-white shadow-sm"
+                            : "border-transparent bg-[#222222] hover:bg-[#282828] text-neutral-400 hover:text-white"
+                        }`}
+                      >
+                        <div className={`p-1.5 rounded-lg ${isSelected ? "bg-cyan-400/20 text-cyan-300" : "bg-[#181818] text-neutral-400"}`}>
+                          <IconComp className="w-3.5 h-3.5" />
+                        </div>
+                        <div className="overflow-hidden">
+                          <div className="text-[10px] font-bold truncate leading-tight">
+                            {mode.label}
+                          </div>
+                          <div className="text-[8px] text-neutral-400 truncate">
+                            {mode.desc}
+                          </div>
+                        </div>
+                      </button>
+                    );
+                  })}
+                </div>
               </div>
             </div>
           )}
