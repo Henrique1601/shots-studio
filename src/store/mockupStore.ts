@@ -4,7 +4,7 @@ import { MockupConfig, PRESET_GRADIENTS, STYLE_OPTIONS } from "@/types/mockup";
 export interface ToastItem {
   id: string;
   message: string;
-  type?: "success" | "info" | "warning";
+  type?: "success" | "info" | "warning" | "error";
 }
 
 interface MockupStore {
@@ -17,7 +17,7 @@ interface MockupStore {
   history: MockupConfig[];
   historyIndex: number;
   toasts: ToastItem[];
-  showToast: (message: string, type?: "success" | "info" | "warning") => void;
+  showToast: (message: string, type?: "success" | "info" | "warning" | "error") => void;
   removeToast: (id: string) => void;
   setImageUrl: (url: string | null) => void;
   setSecondaryImageUrl: (url: string | null) => void;
@@ -89,6 +89,16 @@ const defaultConfig: MockupConfig = {
   watermarkPlatform: "shots",
   watermarkPosition: "top-left",
   deviceColor: "default",
+  backgroundBlur: 0,
+  grainIntensity: 0,
+  codeSnippet: `function calculateMetrics(data: Dataset): Result {
+  const normalized = normalize(data);
+  return analyze(normalized);
+}`,
+  codeLanguage: "typescript",
+  codeTheme: "one-dark",
+  codeShowLineNumbers: true,
+  codeTitle: "metrics.ts",
 };
 
 export const useMockupStore = create<MockupStore>((set, get) => ({

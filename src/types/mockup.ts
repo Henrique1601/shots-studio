@@ -6,7 +6,26 @@ export type FrameType =
   | "iphone-16-pro"
   | "macbook"
   | "ipad-pro"
-  | "watch";
+  | "watch"
+  | "code";
+
+export type CodeLanguage =
+  | "typescript"
+  | "javascript"
+  | "python"
+  | "html"
+  | "css"
+  | "json"
+  | "rust"
+  | "go"
+  | "sql";
+
+export type CodeTheme =
+  | "one-dark"
+  | "dracula"
+  | "tokyo-night"
+  | "github-dark"
+  | "monokai";
 
 export type FrameStyle =
   | "default"
@@ -166,6 +185,16 @@ export interface MockupConfig {
   watermarkPosition: WatermarkPosition;
   // Device Color Finish
   deviceColor: DeviceColorFinish;
+  // Depth of Field (Background Bokeh Blur)
+  backgroundBlur: number; // 0 to 40 (px)
+  // Film Grain & Texture
+  grainIntensity: number; // 0 to 100 (%)
+  // Code Snippet Studio
+  codeSnippet?: string;
+  codeLanguage?: CodeLanguage;
+  codeTheme?: CodeTheme;
+  codeShowLineNumbers?: boolean;
+  codeTitle?: string;
 }
 
 export interface DeviceSpec {
@@ -271,37 +300,42 @@ export const DEVICE_SPECS: Record<FrameType, DeviceSpec> = {
     },
     containerClass: "watch-ultra",
   },
+  code: {
+    name: "Code Snippet",
+    aspectRatio: "16 / 10",
+    isDevice: false,
+  },
 };
 
 export const SHAPES_LAYOUTS: ShapesLayout[] = [
   {
     name: "layout-1",
     layout: [
-      { scale: 1.2, stick: "top left", x: -50, y: -50, rotate: 0, blur: 1, zIndex: -1 },
-      { scale: 0.8, stick: "top right", x: 70, y: -50, rotate: 0, blur: 0.5, zIndex: -1 },
-      { scale: 0.7, stick: "bottom right", x: 100, y: 20, rotate: -15, blur: 3, zIndex: -2 },
-      { scale: 1.6, stick: "bottom left", x: -60, y: 20, rotate: 0, blur: 1.5, zIndex: 1 },
+      { scale: 1.2, stick: "top left", x: -50, y: -50, rotate: 0, blur: 0, zIndex: -1 },
+      { scale: 0.8, stick: "top right", x: 70, y: -50, rotate: 0, blur: 0, zIndex: -1 },
+      { scale: 0.7, stick: "bottom right", x: 100, y: 20, rotate: -15, blur: 0, zIndex: -2 },
+      { scale: 1.6, stick: "bottom left", x: -60, y: 20, rotate: 0, blur: 0, zIndex: 1 },
     ],
   },
   {
     name: "layout-7",
     layout: [
-      { scale: 1.0, stick: "top left", x: -60, y: -50, rotate: 0, blur: 0.5, zIndex: -1 },
-      { scale: 0.5, stick: "top left", x: 80, y: -120, rotate: 0, blur: 1.5, zIndex: -1 },
-      { scale: 1.2, stick: "top right", x: 40, y: -20, rotate: 0, blur: 0.5, zIndex: -1 },
+      { scale: 1.0, stick: "top left", x: -60, y: -50, rotate: 0, blur: 0, zIndex: -1 },
+      { scale: 0.5, stick: "top left", x: 80, y: -120, rotate: 0, blur: 0, zIndex: -1 },
+      { scale: 1.2, stick: "top right", x: 40, y: -20, rotate: 0, blur: 0, zIndex: -1 },
       { scale: 0.7, stick: "bottom right", x: 80, y: 80, rotate: 0, blur: 0, zIndex: 2 },
       { scale: 0.8, stick: "bottom left", x: -20, y: 80, rotate: 0, blur: 0, zIndex: 1 },
-      { scale: 0.6, stick: "bottom left", x: -100, y: 10, rotate: 0, blur: 1.5, zIndex: -1 },
+      { scale: 0.6, stick: "bottom left", x: -100, y: 10, rotate: 0, blur: 0, zIndex: -1 },
     ],
   },
   {
     name: "layout-3",
     layout: [
-      { scale: 0.8, stick: "top left", x: -60, y: -60, rotate: 0, blur: 0.5, zIndex: -1 },
-      { scale: 1.0, stick: "top left", x: 100, y: -60, rotate: 0, blur: 0.5, zIndex: -1 },
+      { scale: 0.8, stick: "top left", x: -60, y: -60, rotate: 0, blur: 0, zIndex: -1 },
+      { scale: 1.0, stick: "top left", x: 100, y: -60, rotate: 0, blur: 0, zIndex: -1 },
       { scale: 0.7, stick: "top right", x: 100, y: 15, rotate: 0, blur: 0, zIndex: 1 },
-      { scale: 1.2, stick: "bottom right", x: 40, y: 40, rotate: 0, blur: 0.5, zIndex: -1 },
-      { scale: 1.1, stick: "bottom left", x: -50, y: 50, rotate: 0, blur: 0.5, zIndex: 1 },
+      { scale: 1.2, stick: "bottom right", x: 40, y: 40, rotate: 0, blur: 0, zIndex: -1 },
+      { scale: 1.1, stick: "bottom left", x: -50, y: 50, rotate: 0, blur: 0, zIndex: 1 },
       { scale: 0.5, stick: "bottom left", x: -130, y: -50, rotate: 0, blur: 0, zIndex: 1 },
     ],
   },
@@ -309,28 +343,67 @@ export const SHAPES_LAYOUTS: ShapesLayout[] = [
     name: "layout-orbit",
     layout: [
       { scale: 1.3, stick: "top left", x: -40, y: -40, rotate: 15, blur: 0, zIndex: 1 },
-      { scale: 0.9, stick: "top right", x: 50, y: -30, rotate: -20, blur: 0.5, zIndex: -1 },
+      { scale: 0.9, stick: "top right", x: 50, y: -30, rotate: -20, blur: 0, zIndex: -1 },
       { scale: 1.4, stick: "bottom right", x: 60, y: 50, rotate: 30, blur: 0, zIndex: 2 },
-      { scale: 0.8, stick: "bottom left", x: -50, y: 40, rotate: -10, blur: 1, zIndex: -1 },
-      { scale: 0.6, stick: "top left", x: 60, y: -80, rotate: 45, blur: 2, zIndex: -2 },
+      { scale: 0.8, stick: "bottom left", x: -50, y: 40, rotate: -10, blur: 0, zIndex: -1 },
+      { scale: 0.6, stick: "top left", x: 60, y: -80, rotate: 45, blur: 0, zIndex: -2 },
     ],
   },
   {
     name: "layout-cascade",
     layout: [
       { scale: 1.5, stick: "top right", x: 80, y: -40, rotate: -15, blur: 0, zIndex: 2 },
-      { scale: 1.1, stick: "top right", x: 20, y: 30, rotate: 25, blur: 0.5, zIndex: 1 },
-      { scale: 0.8, stick: "bottom left", x: -60, y: 60, rotate: 10, blur: 1, zIndex: -1 },
-      { scale: 0.5, stick: "bottom left", x: 30, y: 90, rotate: -30, blur: 2, zIndex: -2 },
+      { scale: 1.1, stick: "top right", x: 20, y: 30, rotate: 25, blur: 0, zIndex: 1 },
+      { scale: 0.8, stick: "bottom left", x: -60, y: 60, rotate: 10, blur: 0, zIndex: -1 },
+      { scale: 0.5, stick: "bottom left", x: 30, y: 90, rotate: -30, blur: 0, zIndex: -2 },
     ],
   },
   {
     name: "layout-framing",
     layout: [
       { scale: 1.1, stick: "top left", x: -50, y: 0, rotate: -20, blur: 0, zIndex: 1 },
-      { scale: 0.9, stick: "bottom left", x: -50, y: 0, rotate: 20, blur: 0.5, zIndex: 1 },
+      { scale: 0.9, stick: "bottom left", x: -50, y: 0, rotate: 20, blur: 0, zIndex: 1 },
       { scale: 1.1, stick: "top right", x: 50, y: 0, rotate: 20, blur: 0, zIndex: 1 },
-      { scale: 0.9, stick: "bottom right", x: 50, y: 0, rotate: -20, blur: 0.5, zIndex: 1 },
+      { scale: 0.9, stick: "bottom right", x: 50, y: 0, rotate: -20, blur: 0, zIndex: 1 },
+    ],
+  },
+  {
+    name: "layout-constellation",
+    layout: [
+      { scale: 1.15, stick: "top left", x: -35, y: -45, rotate: 12, blur: 0, zIndex: 1 },
+      { scale: 0.75, stick: "top right", x: 30, y: -55, rotate: -18, blur: 0, zIndex: -1 },
+      { scale: 1.35, stick: "bottom right", x: 45, y: 40, rotate: 25, blur: 0, zIndex: 2 },
+      { scale: 0.85, stick: "bottom left", x: -40, y: 35, rotate: -12, blur: 0, zIndex: 1 },
+      { scale: 0.65, stick: "top left", x: 90, y: -70, rotate: 30, blur: 0, zIndex: -1 },
+    ],
+  },
+  {
+    name: "layout-vortex",
+    layout: [
+      { scale: 1.4, stick: "top left", x: -50, y: -20, rotate: -25, blur: 0, zIndex: 2 },
+      { scale: 1.0, stick: "top right", x: 60, y: -40, rotate: 35, blur: 0, zIndex: -1 },
+      { scale: 1.25, stick: "bottom right", x: 50, y: 30, rotate: -15, blur: 0, zIndex: 2 },
+      { scale: 0.9, stick: "bottom left", x: -30, y: 60, rotate: 20, blur: 0, zIndex: -1 },
+      { scale: 0.7, stick: "top left", x: 20, y: -80, rotate: -40, blur: 0, zIndex: -2 },
+      { scale: 0.8, stick: "bottom right", x: -60, y: 80, rotate: 45, blur: 0, zIndex: 1 },
+    ],
+  },
+  {
+    name: "layout-diagonal",
+    layout: [
+      { scale: 1.5, stick: "top left", x: -40, y: -50, rotate: 15, blur: 0, zIndex: 2 },
+      { scale: 1.1, stick: "top left", x: 50, y: -20, rotate: -10, blur: 0, zIndex: 1 },
+      { scale: 1.2, stick: "bottom right", x: -20, y: 40, rotate: 20, blur: 0, zIndex: 1 },
+      { scale: 1.6, stick: "bottom right", x: 60, y: 55, rotate: -25, blur: 0, zIndex: 2 },
+    ],
+  },
+  {
+    name: "layout-hero-duo",
+    layout: [
+      { scale: 1.85, stick: "top left", x: -55, y: -40, rotate: -15, blur: 0, zIndex: 2 },
+      { scale: 1.75, stick: "bottom right", x: 55, y: 45, rotate: 25, blur: 0, zIndex: 2 },
+      { scale: 0.65, stick: "top right", x: 45, y: -60, rotate: -10, blur: 0, zIndex: -1 },
+      { scale: 0.75, stick: "bottom left", x: -35, y: 50, rotate: 15, blur: 0, zIndex: -1 },
     ],
   },
 ];
@@ -490,32 +563,32 @@ export const PRESET_GRADIENTS = [
 export const PRESET_PAPER_GLASS = [
   {
     id: "glass-1",
-    name: "Prism Glass (HD)",
-    value: "radial-gradient(circle at 15% 15%, rgba(255, 255, 255, 0.45) 0%, transparent 40%), linear-gradient(135deg, #e0e7ff 0%, #fae8ff 50%, #f1f5f9 100%)",
+    name: "Prism Crystal 4K",
+    value: "radial-gradient(circle at 18% 18%, rgba(255, 255, 255, 0.75) 0%, transparent 45%), radial-gradient(circle at 82% 82%, rgba(147, 197, 253, 0.5) 0%, transparent 50%), linear-gradient(135deg, #e0e7ff 0%, #fae8ff 45%, #c7d2fe 100%)",
     preview: "/shots-assets/display-assets_backgrounds_paper-glass_preview_glass-1.jpg",
   },
   {
     id: "glass-2",
-    name: "Frosted Silk (HD)",
-    value: "radial-gradient(circle at 85% 15%, rgba(255, 255, 255, 0.6) 0%, transparent 45%), linear-gradient(135deg, #fdfbf7 0%, #ebedee 100%)",
+    name: "Frosted Silk 4K",
+    value: "radial-gradient(circle at 85% 15%, rgba(255, 255, 255, 0.85) 0%, transparent 50%), radial-gradient(circle at 15% 85%, rgba(243, 232, 255, 0.65) 0%, transparent 45%), linear-gradient(135deg, #fdfbf7 0%, #f3f4f6 50%, #e2e8f0 100%)",
     preview: "/shots-assets/display-assets_backgrounds_paper-glass_preview_glass-2.jpg",
   },
   {
     id: "glass-3",
-    name: "Obsidian Glass (HD)",
-    value: "radial-gradient(circle at 50% 10%, rgba(129, 140, 248, 0.25) 0%, transparent 50%), linear-gradient(135deg, #090d16 0%, #1e1b4b 50%, #030712 100%)",
+    name: "Obsidian Mirror 4K",
+    value: "radial-gradient(circle at 50% 10%, rgba(129, 140, 248, 0.4) 0%, transparent 55%), radial-gradient(circle at 85% 90%, rgba(168, 85, 247, 0.3) 0%, transparent 50%), linear-gradient(135deg, #090d16 0%, #1e1b4b 55%, #030712 100%)",
     preview: "/shots-assets/display-assets_backgrounds_paper-glass_preview_glass-3.jpg",
   },
   {
     id: "glass-4",
-    name: "Liquid Cyber (HD)",
-    value: "radial-gradient(circle at 90% 90%, rgba(244, 63, 94, 0.3) 0%, transparent 45%), radial-gradient(circle at 10% 10%, rgba(99, 102, 241, 0.35) 0%, transparent 50%), linear-gradient(135deg, #09090b 0%, #18181b 100%)",
+    name: "Liquid Cyber 4K",
+    value: "radial-gradient(circle at 90% 90%, rgba(244, 63, 94, 0.45) 0%, transparent 50%), radial-gradient(circle at 10% 10%, rgba(99, 102, 241, 0.5) 0%, transparent 55%), linear-gradient(135deg, #09090b 0%, #18181b 50%, #030712 100%)",
     preview: "/shots-assets/display-assets_backgrounds_paper-glass_preview_glass-4.jpg",
   },
   {
     id: "glass-5",
-    name: "Aurora Glass (HD)",
-    value: "radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.4) 0%, transparent 60%), linear-gradient(135deg, #052e16 0%, #064e3b 50%, #022c22 100%)",
+    name: "Aurora Caustic 4K",
+    value: "radial-gradient(circle at 50% 50%, rgba(52, 211, 153, 0.45) 0%, transparent 60%), radial-gradient(circle at 80% 20%, rgba(16, 185, 129, 0.4) 0%, transparent 50%), linear-gradient(135deg, #022c22 0%, #064e3b 50%, #011612 100%)",
     preview: "/shots-assets/display-assets_backgrounds_paper-glass_preview_glass-5.jpg",
   },
 ];
@@ -544,6 +617,91 @@ export const PRESET_TAHOE = [
     name: "Pacific Horizon 4K",
     value: "url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=2560&q=85') center/cover no-repeat",
     preview: "/shots-assets/display-assets_backgrounds_desktop_preview_tahoe-dark.jpg",
+  },
+];
+
+export interface SocialMediaPreset {
+  id: string;
+  name: string;
+  platform: "twitter" | "instagram" | "linkedin" | "dribbble" | "youtube" | "producthunt";
+  width: number;
+  height: number;
+  aspectRatio: AspectRatioType;
+  badge: string;
+}
+
+export const SOCIAL_MEDIA_PRESETS: SocialMediaPreset[] = [
+  {
+    id: "twitter-post",
+    name: "X / Twitter Post",
+    platform: "twitter",
+    width: 1200,
+    height: 675,
+    aspectRatio: "16:9",
+    badge: "1200×675",
+  },
+  {
+    id: "twitter-header",
+    name: "X / Twitter Header",
+    platform: "twitter",
+    width: 1500,
+    height: 500,
+    aspectRatio: "3:1",
+    badge: "1500×500",
+  },
+  {
+    id: "instagram-square",
+    name: "Instagram Square",
+    platform: "instagram",
+    width: 1080,
+    height: 1080,
+    aspectRatio: "1:1",
+    badge: "1080×1080",
+  },
+  {
+    id: "instagram-story",
+    name: "Instagram Story / Reel",
+    platform: "instagram",
+    width: 1080,
+    height: 1920,
+    aspectRatio: "9:16",
+    badge: "1080×1920",
+  },
+  {
+    id: "linkedin-post",
+    name: "LinkedIn Post",
+    platform: "linkedin",
+    width: 1200,
+    height: 627,
+    aspectRatio: "16:9",
+    badge: "1200×627",
+  },
+  {
+    id: "dribbble-shot",
+    name: "Dribbble Shot",
+    platform: "dribbble",
+    width: 1600,
+    height: 1200,
+    aspectRatio: "4:3",
+    badge: "1600×1200",
+  },
+  {
+    id: "youtube-thumb",
+    name: "YouTube Thumbnail",
+    platform: "youtube",
+    width: 1280,
+    height: 720,
+    aspectRatio: "16:9",
+    badge: "1280×720",
+  },
+  {
+    id: "producthunt-gallery",
+    name: "Product Hunt Gallery",
+    platform: "producthunt",
+    width: 1270,
+    height: 760,
+    aspectRatio: "16:10",
+    badge: "1270×760",
   },
 ];
 

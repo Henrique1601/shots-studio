@@ -13,6 +13,7 @@ describe("Device Specs and Preset Integrity", () => {
       "macbook",
       "ipad-pro",
       "watch",
+      "code",
     ];
 
     for (const frame of requiredFrames) {

@@ -44,6 +44,14 @@ export const DeviceModal = () => {
       thumb: "/shots-assets/devices/safari_light.png",
     },
     {
+      id: "code",
+      category: "essentials",
+      name: "Code Snippet",
+      sub: "Ray.so / Carbon IDE",
+      badge: "New",
+      thumb: "/shots-assets/mockups_Screenshot_styles_glass-dark.png",
+    },
+    {
       id: "minimal-desktop",
       category: "mac",
       name: "Minimal Desktop",

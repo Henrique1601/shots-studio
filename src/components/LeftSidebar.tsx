@@ -26,7 +26,10 @@ import {
   Box,
   Sliders,
   Check,
+  Wand2,
+  Code2,
 } from "lucide-react";
+import { extractPaletteFromImage, GeneratedGradient } from "@/utils/magicPalette";
 
 export const LeftSidebar = () => {
   const {
@@ -48,9 +51,28 @@ export const LeftSidebar = () => {
   const [inputW, setInputW] = useState(config.customWidth.toString());
   const [inputH, setInputH] = useState(config.customHeight.toString());
   const [bgTab, setBgTab] = useState<
-    "gradients" | "glass" | "tahoe" | "solid" | "custom"
+    "gradients" | "glass" | "tahoe" | "solid" | "magic" | "custom"
   >("gradients");
   const [showAdjustLight, setShowAdjustLight] = useState(false);
+  const [magicGradients, setMagicGradients] = useState<GeneratedGradient[]>([]);
+  const [isExtracting, setIsExtracting] = useState(false);
+
+  const handleExtractMagicPalette = async () => {
+    if (!imageUrl) {
+      showToast("Envie uma imagem para extrair a paleta mágica!", "error");
+      return;
+    }
+    setIsExtracting(true);
+    try {
+      const grads = await extractPaletteFromImage(imageUrl);
+      setMagicGradients(grads);
+      showToast("Paleta de estúdio extraída! ✨", "success");
+    } catch {
+      showToast("Não foi possível extrair cores da imagem", "error");
+    } finally {
+      setIsExtracting(false);
+    }
+  };
 
   useEffect(() => {
     setInputW(config.customWidth.toString());
@@ -254,6 +276,118 @@ export const LeftSidebar = () => {
                 placeholder={config.frameType === "minimal-desktop" ? "Studio Workspace" : "shots.so/editor"}
                 className="w-full px-2.5 py-1.5 rounded-xl bg-[#222222] border border-neutral-700 hover:border-neutral-500 focus:border-indigo-500 text-xs text-white placeholder-neutral-500 focus:outline-none transition-colors"
               />
+            </div>
+          )}
+
+          {/* Ray.so / Carbon Code Snippet Studio Settings */}
+          {config.frameType === "code" && (
+            <div className="space-y-3 p-2.5 rounded-xl bg-[#242424] border border-white/10">
+              <div className="flex items-center justify-between">
+                <span className="text-[10px] font-bold text-neutral-300 tracking-wider flex items-center space-x-1.5">
+                  <Code2 className="w-3.5 h-3.5 text-cyan-400" />
+                  <span>CODE STUDIO</span>
+                </span>
+                <span className="text-[9px] px-1.5 py-0.5 rounded bg-cyan-500/20 text-cyan-300 font-mono font-bold">
+                  IDE
+                </span>
+              </div>
+
+              {/* Title / Filename */}
+              <div>
+                <label className="text-[9px] text-neutral-400 uppercase font-semibold block mb-1">
+                  File Name / Window Title
+                </label>
+                <input
+                  type="text"
+                  value={config.codeTitle ?? "metrics.ts"}
+                  onChange={(e) => updateConfig({ codeTitle: e.target.value })}
+                  placeholder="index.ts"
+                  className="w-full px-2 py-1 rounded bg-[#181818] border border-neutral-700 text-xs text-white font-mono"
+                />
+              </div>
+
+              {/* Language Selector */}
+              <div>
+                <label className="text-[9px] text-neutral-400 uppercase font-semibold block mb-1">
+                  Language / Sintaxe
+                </label>
+                <select
+                  value={config.codeLanguage ?? "typescript"}
+                  onChange={(e) =>
+                    updateConfig({
+                      codeLanguage: e.target.value as any,
+                    })
+                  }
+                  className="w-full px-2 py-1.5 rounded bg-[#181818] border border-neutral-700 text-xs text-white capitalize cursor-pointer"
+                >
+                  <option value="typescript">TypeScript</option>
+                  <option value="javascript">JavaScript</option>
+                  <option value="python">Python</option>
+                  <option value="rust">Rust</option>
+                  <option value="go">Go</option>
+                  <option value="html">HTML</option>
+                  <option value="css">CSS</option>
+                  <option value="json">JSON</option>
+                  <option value="sql">SQL</option>
+                </select>
+              </div>
+
+              {/* Theme Selector */}
+              <div>
+                <label className="text-[9px] text-neutral-400 uppercase font-semibold block mb-1">
+                  Theme / Paleta Visual
+                </label>
+                <div className="grid grid-cols-2 gap-1 text-[10px]">
+                  {(
+                    [
+                      { id: "one-dark", label: "One Dark" },
+                      { id: "dracula", label: "Dracula" },
+                      { id: "tokyo-night", label: "Tokyo Night" },
+                      { id: "github-dark", label: "GitHub Dark" },
+                      { id: "monokai", label: "Monokai" },
+                    ] as const
+                  ).map((th) => (
+                    <button
+                      key={th.id}
+                      onClick={() => updateConfig({ codeTheme: th.id })}
+                      className={`py-1 px-1.5 rounded border text-center transition-all cursor-pointer truncate ${
+                        config.codeTheme === th.id
+                          ? "border-cyan-400 bg-cyan-400/10 text-white font-semibold"
+                          : "border-transparent bg-[#1e1e1e] text-neutral-400 hover:text-white"
+                      }`}
+                    >
+                      {th.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Line Numbers Toggle */}
+              <div className="flex items-center justify-between text-xs pt-1">
+                <span className="text-[11px] text-neutral-300">Show Line Numbers</span>
+                <input
+                  type="checkbox"
+                  checked={config.codeShowLineNumbers ?? true}
+                  onChange={(e) =>
+                    updateConfig({ codeShowLineNumbers: e.target.checked })
+                  }
+                  className="accent-cyan-400 cursor-pointer"
+                />
+              </div>
+
+              {/* Code Snippet Textarea */}
+              <div>
+                <label className="text-[9px] text-neutral-400 uppercase font-semibold block mb-1">
+                  Code Snippet
+                </label>
+                <textarea
+                  rows={5}
+                  value={config.codeSnippet ?? ""}
+                  onChange={(e) => updateConfig({ codeSnippet: e.target.value })}
+                  placeholder="// Paste your code here..."
+                  className="w-full px-2 py-1.5 rounded bg-[#181818] border border-neutral-700 text-xs text-neutral-200 font-mono resize-y focus:outline-none focus:border-cyan-400"
+                />
+              </div>
             </div>
           )}
 
@@ -1052,9 +1186,9 @@ export const LeftSidebar = () => {
                   </div>
 
                   <div className="text-[9px] text-neutral-400 uppercase font-semibold">
-                    Layout Pattern (6 Layouts)
+                    Layout Pattern (10 Layouts)
                   </div>
-                  <div className="grid grid-cols-3 gap-1">
+                  <div className="grid grid-cols-2 gap-1">
                     {(
                       [
                         { id: "layout-1", label: "Corners" },
@@ -1063,6 +1197,10 @@ export const LeftSidebar = () => {
                         { id: "layout-orbit", label: "Orbit" },
                         { id: "layout-cascade", label: "Cascade" },
                         { id: "layout-framing", label: "Framing" },
+                        { id: "layout-constellation", label: "Constellation" },
+                        { id: "layout-vortex", label: "Vortex" },
+                        { id: "layout-diagonal", label: "Dynamic" },
+                        { id: "layout-hero-duo", label: "Hero Duo" },
                       ] as const
                     ).map((lay) => (
                       <button
@@ -1070,7 +1208,7 @@ export const LeftSidebar = () => {
                         onClick={() => updateConfig({ shapesLayoutName: lay.id })}
                         className={`py-1 rounded text-[9px] font-medium border text-center transition-all cursor-pointer ${
                           config.shapesLayoutName === lay.id
-                            ? "border-white bg-[#333] text-white"
+                            ? "border-cyan-400 bg-cyan-400/10 text-white font-semibold"
                             : "border-transparent bg-[#1c1c1c] text-neutral-400 hover:text-white"
                         }`}
                       >
@@ -1095,10 +1233,11 @@ export const LeftSidebar = () => {
             <div className="flex bg-[#141414] p-0.5 rounded-lg mb-2 text-[10px] font-medium">
               {(
                 [
-                  { id: "gradients", label: "Gradient" },
+                  { id: "gradients", label: "Grad" },
                   { id: "glass", label: "Glass" },
                   { id: "tahoe", label: "Tahoe" },
                   { id: "solid", label: "Solid" },
+                  { id: "magic", label: "Magic ✨" },
                   { id: "custom", label: "Custom" },
                 ] as const
               ).map((t) => (
@@ -1222,7 +1361,66 @@ export const LeftSidebar = () => {
               </div>
             )}
 
-            {/* 5. Custom Solid & Gradient Builder */}
+            {/* 5. Magic Palette Extractor */}
+            {bgTab === "magic" && (
+              <div className="space-y-3 p-2.5 rounded-xl bg-[#242424] border border-white/5">
+                <div className="flex items-center justify-between">
+                  <span className="text-[10px] font-bold text-neutral-300 tracking-wider">
+                    MAGIC PALETTE
+                  </span>
+                  <span className="text-[9px] px-1.5 py-0.5 rounded bg-pink-500/20 text-pink-300 font-bold">
+                    AI Auto
+                  </span>
+                </div>
+                <p className="text-[10px] text-neutral-400 leading-normal">
+                  Extrai cores dominantes da sua screenshot e gera gradientes harmônicos automaticamente.
+                </p>
+
+                <button
+                  disabled={isExtracting}
+                  onClick={handleExtractMagicPalette}
+                  className="w-full py-2 px-3 rounded-lg bg-gradient-to-r from-pink-500 to-indigo-600 hover:from-pink-400 hover:to-indigo-500 text-white text-xs font-semibold flex items-center justify-center space-x-1.5 shadow-lg transition-all cursor-pointer disabled:opacity-50"
+                >
+                  <Wand2 className={`w-3.5 h-3.5 ${isExtracting ? "animate-spin" : ""}`} />
+                  <span>{isExtracting ? "Analisando Cores..." : "Extrair Cores da Imagem"}</span>
+                </button>
+
+                {magicGradients.length > 0 && (
+                  <div className="space-y-1.5 pt-2 border-t border-[#333]">
+                    <div className="text-[9px] text-neutral-400 uppercase font-semibold mb-1">
+                      Gradientes Harmônicos Gerados
+                    </div>
+                    <div className="grid grid-cols-2 gap-1.5">
+                      {magicGradients.map((g) => (
+                        <button
+                          key={g.id}
+                          onClick={() => {
+                            updateConfig({
+                              backgroundType: "gradient",
+                              backgroundValue: g.css,
+                            });
+                            showToast(`${g.name} aplicado!`, "success");
+                          }}
+                          style={{ background: g.preview }}
+                          className={`h-11 rounded-lg border transition-all cursor-pointer flex items-end p-1 text-[9px] text-white font-medium shadow-md ${
+                            config.backgroundValue === g.css
+                              ? "ring-2 ring-white border-transparent"
+                              : "border-white/10 opacity-90 hover:opacity-100"
+                          }`}
+                          title={g.name}
+                        >
+                          <span className="bg-black/60 px-1 py-0.5 rounded text-[8px] truncate max-w-full backdrop-blur-xs">
+                            {g.name}
+                          </span>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* 6. Custom Solid & Gradient Builder */}
             {bgTab === "custom" && (
               <div className="space-y-3 p-2.5 rounded-xl bg-[#242424]">
                 {/* Solid Color Picker */}
@@ -1333,6 +1531,86 @@ export const LeftSidebar = () => {
                 </div>
               </div>
             )}
+
+            {/* Depth of Field (Background Bokeh Blur) Slider */}
+            <div className="mt-4 pt-3 border-t border-[#2a2a2a] space-y-2">
+              <div className="flex items-center justify-between text-xs">
+                <span className="text-[10px] font-bold text-neutral-400 uppercase tracking-wider">
+                  Depth of Field (Bokeh)
+                </span>
+                <span className="text-[10px] font-mono text-cyan-400">
+                  {config.backgroundBlur ?? 0}px
+                </span>
+              </div>
+              <input
+                type="range"
+                min="0"
+                max="40"
+                value={config.backgroundBlur ?? 0}
+                onChange={(e) => updateConfig({ backgroundBlur: Number(e.target.value) })}
+                className="w-full accent-cyan-400 h-1 bg-[#3a3a3a] rounded-lg appearance-none cursor-pointer"
+              />
+              <div className="grid grid-cols-4 gap-1 text-[8px]">
+                {[
+                  { label: "None", val: 0 },
+                  { label: "Subtle", val: 8 },
+                  { label: "Studio", val: 18 },
+                  { label: "Bokeh", val: 32 },
+                ].map((preset) => (
+                  <button
+                    key={preset.label}
+                    onClick={() => updateConfig({ backgroundBlur: preset.val })}
+                    className={`py-0.5 rounded border text-center transition-all cursor-pointer ${
+                      (config.backgroundBlur ?? 0) === preset.val
+                        ? "border-cyan-400 bg-cyan-400/10 text-white font-bold"
+                        : "border-transparent bg-[#1c1c1c] text-neutral-400 hover:text-white"
+                    }`}
+                  >
+                    {preset.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Film Grain & Analogue Texture Overlay Slider */}
+            <div className="mt-3 pt-3 border-t border-[#2a2a2a] space-y-2">
+              <div className="flex items-center justify-between text-xs">
+                <span className="text-[10px] font-bold text-neutral-400 uppercase tracking-wider">
+                  Film Grain & Noise
+                </span>
+                <span className="text-[10px] font-mono text-cyan-400">
+                  {config.grainIntensity ?? 0}%
+                </span>
+              </div>
+              <input
+                type="range"
+                min="0"
+                max="100"
+                value={config.grainIntensity ?? 0}
+                onChange={(e) => updateConfig({ grainIntensity: Number(e.target.value) })}
+                className="w-full accent-cyan-400 h-1 bg-[#3a3a3a] rounded-lg appearance-none cursor-pointer"
+              />
+              <div className="grid grid-cols-4 gap-1 text-[8px]">
+                {[
+                  { label: "0% Off", val: 0 },
+                  { label: "15% Fine", val: 15 },
+                  { label: "35% Film", val: 35 },
+                  { label: "60% Retro", val: 60 },
+                ].map((preset) => (
+                  <button
+                    key={preset.label}
+                    onClick={() => updateConfig({ grainIntensity: preset.val })}
+                    className={`py-0.5 rounded border text-center transition-all cursor-pointer ${
+                      (config.grainIntensity ?? 0) === preset.val
+                        ? "border-cyan-400 bg-cyan-400/10 text-white font-bold"
+                        : "border-transparent bg-[#1c1c1c] text-neutral-400 hover:text-white"
+                    }`}
+                  >
+                    {preset.label}
+                  </button>
+                ))}
+              </div>
+            </div>
           </div>
         </div>
       </div>

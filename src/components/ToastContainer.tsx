@@ -21,7 +21,9 @@ export const ToastContainer = () => {
             className="pointer-events-auto flex items-center justify-between space-x-2.5 px-3.5 py-2 rounded-2xl bg-[#1c1c1c]/95 backdrop-blur-xl border border-white/15 text-white shadow-2xl select-none"
           >
             <div className="flex items-center space-x-2">
-              {toast.type === "warning" ? (
+              {toast.type === "error" ? (
+                <AlertCircle className="w-4 h-4 text-rose-400 shrink-0" />
+              ) : toast.type === "warning" ? (
                 <AlertCircle className="w-4 h-4 text-amber-400 shrink-0" />
               ) : toast.type === "info" ? (
                 <Info className="w-4 h-4 text-blue-400 shrink-0" />

@@ -23,6 +23,7 @@ import {
 import * as htmlToImage from "html-to-image";
 import confetti from "canvas-confetti";
 import { SavedShotsModal } from "./SavedShotsModal";
+import { SOCIAL_MEDIA_PRESETS } from "@/types/mockup";
 
 export const TopBar = () => {
   const {
@@ -504,6 +505,37 @@ export const TopBar = () => {
                     }`}
                   >
                     {q.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* SOCIAL MEDIA QUICK SIZES */}
+            <div className="pt-2 border-t border-[#262626]">
+              <div className="text-[9px] font-bold text-neutral-400 uppercase mb-1.5 flex items-center justify-between">
+                <span>Social Media Presets</span>
+                <span className="text-[8px] text-cyan-400 font-normal">1-Click</span>
+              </div>
+              <div className="grid grid-cols-2 gap-1 max-h-36 overflow-y-auto pr-0.5">
+                {SOCIAL_MEDIA_PRESETS.map((p) => (
+                  <button
+                    key={p.id}
+                    onClick={() => {
+                      updateConfig({
+                        aspectRatio: p.aspectRatio,
+                        customWidth: p.width,
+                        customHeight: p.height,
+                      });
+                      showToast(`${p.name} (${p.badge}) aplicado!`, "success");
+                    }}
+                    className={`p-1.5 rounded-lg border text-left transition-all cursor-pointer ${
+                      config.customWidth === p.width && config.customHeight === p.height
+                        ? "border-cyan-400 bg-cyan-400/10 text-white"
+                        : "border-transparent bg-[#252525] text-neutral-300 hover:text-white"
+                    }`}
+                  >
+                    <div className="text-[10px] font-semibold truncate">{p.name}</div>
+                    <div className="text-[8px] font-mono text-neutral-400">{p.badge}</div>
                   </button>
                 ))}
               </div>

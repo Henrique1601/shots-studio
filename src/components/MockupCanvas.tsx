@@ -3,9 +3,10 @@
 import React, { useRef, useState, useEffect } from "react";
 import { useMockupStore } from "@/store/mockupStore";
 import { SHAPES_LAYOUTS, DEVICE_SPECS, parseAspectRatio } from "@/types/mockup";
-import { Plus, RotateCcw } from "lucide-react";
+import { Plus, RotateCcw, Compass } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { motion, type Transition } from "framer-motion";
+import { CodeSnippetFrame } from "./CodeSnippetFrame";
 
 export const MockupCanvas = () => {
   const {
@@ -24,10 +25,82 @@ export const MockupCanvas = () => {
   const tertiaryFileInputRef = useRef<HTMLInputElement>(null);
   const canvasWrapperRef = useRef<HTMLDivElement>(null);
   const [isDragging, setIsDragging] = useState(false);
+  const [isOrbiting, setIsOrbiting] = useState(false);
+  const orbitStartRef = useRef<{ x: number; y: number; tiltX: number; tiltY: number } | null>(null);
   const [wrapperSize, setWrapperSize] = useState<{ width: number; height: number }>({
     width: 0,
     height: 0,
   });
+
+  // Direct Canvas 3D Orbit & Tilt Dragging Handlers
+  const handlePointerDownOrbit = (e: React.PointerEvent) => {
+    const target = e.target as HTMLElement;
+    if (
+      target.closest("button") ||
+      target.closest("input") ||
+      target.closest("textarea") ||
+      target.closest(".cursor-pointer")
+    ) {
+      return;
+    }
+
+    try {
+      (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
+    } catch {}
+
+    setIsOrbiting(true);
+    orbitStartRef.current = {
+      x: e.clientX,
+      y: e.clientY,
+      tiltX: config.tiltX,
+      tiltY: config.tiltY,
+    };
+  };
+
+  const handlePointerMoveOrbit = (e: React.PointerEvent) => {
+    if (!isOrbiting || !orbitStartRef.current) return;
+
+    const deltaX = e.clientX - orbitStartRef.current.x;
+    const deltaY = e.clientY - orbitStartRef.current.y;
+
+    // Shift key enables precision micro-adjustments
+    const factor = e.shiftKey ? 0.08 : 0.22;
+    const newTiltY = Math.round(
+      Math.max(-45, Math.min(45, orbitStartRef.current.tiltY + deltaX * factor))
+    );
+    const newTiltX = Math.round(
+      Math.max(-45, Math.min(45, orbitStartRef.current.tiltX - deltaY * factor))
+    );
+
+    updateConfig({
+      tiltX: newTiltX,
+      tiltY: newTiltY,
+    });
+  };
+
+  const handlePointerUpOrbit = (e: React.PointerEvent) => {
+    if (isOrbiting) {
+      setIsOrbiting(false);
+      try {
+        (e.currentTarget as HTMLElement).releasePointerCapture(e.pointerId);
+      } catch {}
+      orbitStartRef.current = null;
+    }
+  };
+
+  const handleDoubleClickCanvas = (e: React.MouseEvent) => {
+    const target = e.target as HTMLElement;
+    if (
+      target.closest("button") ||
+      target.closest("input") ||
+      target.closest("textarea") ||
+      target.closest(".cursor-pointer")
+    ) {
+      return;
+    }
+    updateConfig({ tiltX: 0, tiltY: 0, tiltZ: 0 });
+    showToast("3D tilt reset to 0°", "info");
+  };
 
   useEffect(() => {
     const el = canvasWrapperRef.current;
@@ -333,12 +406,36 @@ export const MockupCanvas = () => {
     }
   };
 
-  // Reusable renderer for physical devices or browser/screenshot frames
+  // Reusable renderer for physical devices, code snippet or browser/screenshot frames
   const renderMockupItem = (
     currentImg: string | null,
     onSlotClick: () => void,
     isSecondary = false
   ) => {
+    // 1. Ray.so / Carbon Code Snippet Studio
+    if (config.frameType === "code") {
+      return (
+        <div
+          style={{
+            boxShadow: getShotsShadow(),
+            borderRadius: `${config.borderRadius}px`,
+            aspectRatio: `${mockupRatio}`,
+          }}
+          className="w-full h-full relative flex items-center justify-center transition-all duration-300"
+        >
+          <CodeSnippetFrame
+            code={config.codeSnippet || ""}
+            language={config.codeLanguage}
+            theme={config.codeTheme}
+            showLineNumbers={config.codeShowLineNumbers}
+            title={config.codeTitle}
+            borderRadius={config.borderRadius}
+          />
+        </div>
+      );
+    }
+
+    // 2. Physical Device Mockups (iPhone, MacBook, iPad, Watch)
     if (deviceSpec.isDevice) {
       return (
         <div
@@ -348,27 +445,7 @@ export const MockupCanvas = () => {
           }}
           className="w-full h-full relative flex items-center justify-center transition-all duration-300"
         >
-          {/* 1. Black underlay plate (extends slightly under bezel to eliminate canvas bleed) */}
-          <div
-            style={{
-              position: "absolute",
-              left: deviceSpec.screenBounds?.left ?? "0%",
-              top: deviceSpec.screenBounds?.top ?? "0%",
-              width: deviceSpec.screenBounds?.width ?? "100%",
-              height: deviceSpec.screenBounds?.height ?? "100%",
-              transform: "scale(1.025)",
-              transformOrigin: "center",
-              backgroundColor: "#000000",
-              borderRadius: deviceSpec.name.includes("iPhone")
-                ? "54px"
-                : deviceSpec.name.includes("Watch")
-                ? "42px"
-                : "16px",
-            }}
-            className="pointer-events-none z-5"
-          />
-
-          {/* 2. Screen Mask & Media Container (under bezel cutout) */}
+          {/* Calibrated Screen Mask & Media Container (under bezel cutout) */}
           <div
             style={{
               position: "absolute",
@@ -517,22 +594,40 @@ export const MockupCanvas = () => {
         }}
         onDragLeave={() => setIsDragging(false)}
         onDrop={handleDrop}
+        onPointerDown={handlePointerDownOrbit}
+        onPointerMove={handlePointerMoveOrbit}
+        onPointerUp={handlePointerUpOrbit}
+        onDoubleClick={handleDoubleClickCanvas}
         style={{
-          background: config.backgroundValue,
           padding: `${config.padding}px`,
           ...getCanvasDimensions(),
           boxSizing: "border-box",
         }}
         className={cn(
-          "rounded-2xl transition-all duration-300 flex items-center justify-center shadow-2xl relative overflow-hidden",
+          "rounded-2xl transition-all duration-300 flex items-center justify-center shadow-2xl relative overflow-hidden bg-black",
+          isOrbiting ? "cursor-grabbing select-none" : "cursor-grab",
           isDragging && "ring-2 ring-indigo-500 ring-offset-2 ring-offset-black"
         )}
       >
-        {/* Noise Overlay */}
-        {config.noiseOverlay && (
+        {/* Studio Background Layer with Depth-of-Field Bokeh Blur */}
+        <div
+          className="absolute inset-0 pointer-events-none transition-all duration-300"
+          style={{
+            background: config.backgroundValue,
+            filter: (config.backgroundBlur ?? 0) > 0 ? `blur(${config.backgroundBlur}px)` : undefined,
+            transform: (config.backgroundBlur ?? 0) > 0 ? "scale(1.08)" : undefined,
+            transformOrigin: "center",
+          }}
+        />
+
+        {/* Film Grain & Analogue Texture Overlay */}
+        {(config.noiseOverlay || (config.grainIntensity ?? 0) > 0) && (
           <div
-            className="absolute inset-0 pointer-events-none opacity-25 mix-blend-overlay"
-            style={{ backgroundImage: `url('/shots-assets/noise.svg')` }}
+            className="absolute inset-0 pointer-events-none mix-blend-overlay z-10 transition-opacity duration-200"
+            style={{
+              backgroundImage: `url('/shots-assets/noise.svg')`,
+              opacity: (config.grainIntensity ?? 0) > 0 ? config.grainIntensity / 100 : 0.25,
+            }}
           />
         )}
 
@@ -607,7 +702,10 @@ export const MockupCanvas = () => {
         {config.shapesSceneEnabled &&
           currentShapesLayout.layout.map((shape, idx) => {
             const itemNumber = config.shapesItems[idx % config.shapesItems.length] || 1;
-            const imgSrc = `/shots-assets/3d-shapes/${config.shapesPack}/full/${itemNumber}.avif`;
+            const imgSrc =
+              config.shapesPack === "metal"
+                ? `/shots-assets/3d-shapes/metal/${itemNumber}.avif`
+                : `/shots-assets/3d-shapes/${config.shapesPack}/full/${itemNumber}.avif`;
             return (
               <motion.img
                 key={idx}
@@ -616,16 +714,16 @@ export const MockupCanvas = () => {
                 transition={{ duration: 0.35, ease: "easeOut" }}
                 src={imgSrc}
                 alt="3D Shape"
-                className="absolute pointer-events-none"
+                className="absolute pointer-events-none drop-shadow-2xl"
                 style={{
                   top: shape.stick.includes("top") ? 0 : undefined,
                   bottom: shape.stick.includes("bottom") ? 0 : undefined,
                   left: shape.stick.includes("left") ? 0 : undefined,
                   right: shape.stick.includes("right") ? 0 : undefined,
                   transform: `translateX(${shape.x}%) translateY(${shape.y}%) rotate(${shape.rotate}deg)`,
-                  filter: `blur(${shape.blur}px)`,
+                  filter: shape.blur > 0 ? `blur(${shape.blur}px)` : undefined,
                   zIndex: shape.zIndex < 0 ? 0 : 25,
-                  maxWidth: "230px",
+                  maxWidth: "300px",
                 }}
                 onError={(e) => {
                   (e.target as HTMLElement).style.display = "none";
@@ -797,6 +895,14 @@ export const MockupCanvas = () => {
             if (f) processTertiaryFile(f);
           }}
         />
+      </div>
+
+      {/* Floating 3D Orbit Helper / Instructions */}
+      <div className="absolute bottom-5 left-5 z-40 hidden md:flex items-center space-x-2 px-3 py-1.5 rounded-full bg-neutral-900/85 border border-white/10 text-[11px] text-neutral-300 backdrop-blur-md shadow-lg pointer-events-none select-none">
+        <Compass className={cn("w-3.5 h-3.5 text-cyan-400", isOrbiting && "animate-spin")} />
+        <span>
+          {isOrbiting ? "Rotating 3D Scene..." : "Drag canvas to orbit 3D • Shift for precision • 2x click reset"}
+        </span>
       </div>
 
       {/* Floating Quick Reset for 3D Angle */}
