@@ -2,9 +2,10 @@
 
 import React, { useRef, useState } from "react";
 import { useMockupStore } from "@/store/mockupStore";
-import { SHAPES_LAYOUTS } from "@/types/mockup";
+import { SHAPES_LAYOUTS, DEVICE_SPECS } from "@/types/mockup";
 import { Plus } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { motion, AnimatePresence } from "framer-motion";
 
 export const MockupCanvas = () => {
   const {
@@ -16,6 +17,8 @@ export const MockupCanvas = () => {
   } = useMockupStore();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isDragging, setIsDragging] = useState(false);
+
+  const deviceSpec = DEVICE_SPECS[config.frameType] || DEVICE_SPECS.screenshot;
 
   // Exact 4-layer box-shadow formula from Shots.so
   const getShotsShadow = () => {
@@ -87,7 +90,7 @@ export const MockupCanvas = () => {
           maxWidth: "92%",
         }}
         className={cn(
-          "rounded-2xl transition-all duration-200 flex items-center justify-center shadow-2xl relative overflow-hidden"
+          "rounded-2xl transition-all duration-300 flex items-center justify-center shadow-2xl relative overflow-hidden"
         )}
       >
         {/* Noise Overlay */}
@@ -98,7 +101,7 @@ export const MockupCanvas = () => {
           />
         )}
 
-        {/* Made with Shots.so Watermark Badge (Toggleable) */}
+        {/* Made with Shots.so Watermark Badge */}
         {config.watermark && (
           <div className="absolute top-4 left-4 z-30 flex items-center space-x-1.5 px-2.5 py-1 rounded-full bg-black/30 backdrop-blur-md border border-white/10 text-white pointer-events-none">
             <div className="w-3.5 h-3.5 rounded-md bg-white flex items-center justify-center">
@@ -111,23 +114,26 @@ export const MockupCanvas = () => {
           </div>
         )}
 
-        {/* 3D Shapes Scene */}
+        {/* 3D Shapes Scene (Flutuantes Volumétricas) */}
         {config.shapesSceneEnabled &&
           currentShapesLayout.layout.map((shape, idx) => {
             const itemNumber = config.shapesItems[idx % config.shapesItems.length] || 1;
             const imgSrc = `/shots-assets/3d-shapes/${config.shapesPack}/${itemNumber}.avif`;
             return (
-              <img
+              <motion.img
                 key={idx}
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: shape.scale }}
+                transition={{ duration: 0.35, ease: "easeOut" }}
                 src={imgSrc}
                 alt="3D Shape"
-                className="absolute pointer-events-none transition-transform duration-200"
+                className="absolute pointer-events-none"
                 style={{
                   top: shape.stick.includes("top") ? 0 : undefined,
                   bottom: shape.stick.includes("bottom") ? 0 : undefined,
                   left: shape.stick.includes("left") ? 0 : undefined,
                   right: shape.stick.includes("right") ? 0 : undefined,
-                  transform: `scale(${shape.scale}) translateX(${shape.x}%) translateY(${shape.y}%) rotate(${shape.rotate}deg)`,
+                  transform: `translateX(${shape.x}%) translateY(${shape.y}%) rotate(${shape.rotate}deg)`,
                   filter: `blur(${shape.blur}px)`,
                   zIndex: shape.zIndex < 0 ? 0 : 25,
                   maxWidth: "230px",
@@ -139,11 +145,13 @@ export const MockupCanvas = () => {
             );
           })}
 
-        {/* 3D Perspective Container (Shots.so 75% width & perspective 150em) */}
+        {/* 3D Spatial Container with Smooth Spring Physics */}
         {config.showMockup && (
-          <div
+          <motion.div
+            layout
+            transition={{ type: "spring", stiffness: 300, damping: 28 }}
             style={{
-              width: "75%",
+              width: deviceSpec.isDevice ? "65%" : "75%",
               display: "flex",
               justifyContent: "center",
               alignItems: "center",
@@ -154,70 +162,129 @@ export const MockupCanvas = () => {
               transformOrigin: "center",
             }}
           >
-            {/* Mockup Card */}
-            <div
-              style={{
-                boxShadow: getShotsShadow(),
-                borderRadius: `${config.borderRadius}px`,
-                aspectRatio: imageDimensions
-                  ? `${imageDimensions.width} / ${imageDimensions.height}`
-                  : "4 / 3",
-                maxHeight: "85%",
-              }}
-              className={cn(
-                "w-full overflow-hidden relative flex flex-col items-center justify-center transition-all duration-200",
-                config.frameStyle === "glass-dark" && "bg-neutral-900/60 backdrop-blur-xl border border-white/20",
-                config.frameStyle === "glass-light" && "bg-white/40 backdrop-blur-xl border border-white/40",
-                config.frameStyle === "liquid-glass" && "bg-gradient-to-br from-white/25 via-white/5 to-white/10 border border-white/30 backdrop-blur-2xl",
-                config.frameStyle === "inset-light" && "bg-white border border-neutral-300 shadow-inner",
-                config.frameStyle === "inset-dark" && "bg-[#111111] border border-neutral-800 shadow-inner",
-                config.frameStyle === "outline" && "border-2 border-white/80 bg-black/40",
-                config.frameStyle === "border" && "border-4 border-black bg-[#161616]",
-                config.frameStyle === "default" && "bg-[#0d0d0d]"
-              )}
-            >
-              {/* Browser Header */}
-              {config.frameType === "browser" && (
-                <div className="w-full flex items-center justify-between px-3 py-2 bg-neutral-900/80 border-b border-white/10">
-                  <div className="flex items-center space-x-1.5">
-                    <span className="w-2.5 h-2.5 rounded-full bg-[#FF5F56]" />
-                    <span className="w-2.5 h-2.5 rounded-full bg-[#FFBD2E]" />
-                    <span className="w-2.5 h-2.5 rounded-full bg-[#27C93F]" />
-                  </div>
-                  <div className="h-4 px-3 rounded bg-white/5 text-[9px] text-neutral-400 flex items-center justify-center">
-                    shots.so/editor
-                  </div>
-                  <div className="w-8" />
-                </div>
-              )}
-
-              {/* Media Content - Exact Aspect Ratio */}
+            {/* DEVICE MOCKUP RENDERER (iPhone 17, Macbook Pro, iPad Pro, Apple Watch) */}
+            {deviceSpec.isDevice ? (
               <div
-                className="relative w-full h-full flex items-center justify-center cursor-pointer bg-[#0d0d0d]"
-                onClick={() => !imageUrl && fileInputRef.current?.click()}
+                style={{
+                  aspectRatio: deviceSpec.aspectRatio,
+                  boxShadow: getShotsShadow(),
+                }}
+                className="w-full relative flex items-center justify-center transition-all duration-300"
               >
-                {imageUrl ? (
+                {/* 1. Device Bezel Asset Frame (Overlay) */}
+                <div
+                  className="absolute inset-0 pointer-events-none z-20 flex items-center justify-center"
+                  style={{
+                    transform: `scale(${deviceSpec.scaleMultiplier || 1})`,
+                    transformOrigin: "center",
+                  }}
+                >
                   <img
-                    src={imageUrl}
-                    alt="Uploaded mockup"
-                    className="w-full h-full object-contain block select-none"
+                    src={deviceSpec.deviceImg}
+                    alt={deviceSpec.name}
+                    className="w-full h-full object-contain block select-none pointer-events-none"
                   />
-                ) : (
-                  <div className="flex flex-col items-center justify-center p-12 text-center group">
-                    <div className="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center mb-3 group-hover:scale-110 transition-transform border border-white/20 shadow-md">
-                      <Plus className="w-6 h-6 text-white" />
+                </div>
+
+                {/* 2. Screen Mask & Media Container */}
+                <div
+                  style={{
+                    aspectRatio: deviceSpec.aspectRatio,
+                    maskImage: `url("${deviceSpec.maskSvg}")`,
+                    WebkitMaskImage: `url("${deviceSpec.maskSvg}")`,
+                    maskSize: "100% 100%",
+                    WebkitMaskSize: "100% 100%",
+                  }}
+                  className="w-full h-full relative z-10 overflow-hidden bg-[#0d0d0d] flex items-center justify-center cursor-pointer"
+                  onClick={() => !imageUrl && fileInputRef.current?.click()}
+                >
+                  {imageUrl ? (
+                    <img
+                      src={imageUrl}
+                      alt="Uploaded media"
+                      className="w-full h-full object-cover block select-none"
+                    />
+                  ) : (
+                    <div className="flex flex-col items-center justify-center p-8 text-center group">
+                      <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center mb-2 group-hover:scale-110 transition-transform border border-white/20 shadow-md">
+                        <Plus className="w-5 h-5 text-white" />
+                      </div>
+                      <h3 className="text-xs font-semibold text-white tracking-tight mb-0.5">
+                        Drop or Paste
+                      </h3>
+                      <p className="text-[10px] text-neutral-400">
+                        Images & Videos
+                      </p>
                     </div>
-                    <h3 className="text-sm font-semibold text-white tracking-tight mb-1">
-                      Drop or Paste
-                    </h3>
-                    <p className="text-[11px] text-neutral-400">
-                      Images & Videos
-                    </p>
+                  )}
+                </div>
+              </div>
+            ) : (
+              /* SCREENSHOT / BROWSER MOCKUP RENDERER */
+              <div
+                style={{
+                  boxShadow: getShotsShadow(),
+                  borderRadius: `${config.borderRadius}px`,
+                  aspectRatio: imageDimensions
+                    ? `${imageDimensions.width} / ${imageDimensions.height}`
+                    : "4 / 3",
+                  maxHeight: "85%",
+                }}
+                className={cn(
+                  "w-full overflow-hidden relative flex flex-col items-center justify-center transition-all duration-300",
+                  config.frameStyle === "glass-dark" && "bg-neutral-900/60 backdrop-blur-xl border border-white/20",
+                  config.frameStyle === "glass-light" && "bg-white/40 backdrop-blur-xl border border-white/40",
+                  config.frameStyle === "liquid-glass" && "bg-gradient-to-br from-white/25 via-white/5 to-white/10 border border-white/30 backdrop-blur-2xl",
+                  config.frameStyle === "inset-light" && "bg-white border border-neutral-300 shadow-inner",
+                  config.frameStyle === "inset-dark" && "bg-[#111111] border border-neutral-800 shadow-inner",
+                  config.frameStyle === "outline" && "border-2 border-white/80 bg-black/40",
+                  config.frameStyle === "border" && "border-4 border-black bg-[#161616]",
+                  config.frameStyle === "default" && "bg-[#0d0d0d]"
+                )}
+              >
+                {/* Browser Header */}
+                {config.frameType === "browser" && (
+                  <div className="w-full flex items-center justify-between px-3 py-2 bg-neutral-900/80 border-b border-white/10">
+                    <div className="flex items-center space-x-1.5">
+                      <span className="w-2.5 h-2.5 rounded-full bg-[#FF5F56]" />
+                      <span className="w-2.5 h-2.5 rounded-full bg-[#FFBD2E]" />
+                      <span className="w-2.5 h-2.5 rounded-full bg-[#27C93F]" />
+                    </div>
+                    <div className="h-4 px-3 rounded bg-white/5 text-[9px] text-neutral-400 flex items-center justify-center">
+                      shots.so/editor
+                    </div>
+                    <div className="w-8" />
                   </div>
                 )}
+
+                {/* Media Content */}
+                <div
+                  className="relative w-full h-full flex items-center justify-center cursor-pointer bg-[#0d0d0d]"
+                  onClick={() => !imageUrl && fileInputRef.current?.click()}
+                >
+                  {imageUrl ? (
+                    <img
+                      src={imageUrl}
+                      alt="Uploaded mockup"
+                      className="w-full h-full object-contain block select-none"
+                    />
+                  ) : (
+                    <div className="flex flex-col items-center justify-center p-12 text-center group">
+                      <div className="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center mb-3 group-hover:scale-110 transition-transform border border-white/20 shadow-md">
+                        <Plus className="w-6 h-6 text-white" />
+                      </div>
+                      <h3 className="text-sm font-semibold text-white tracking-tight mb-1">
+                        Drop or Paste
+                      </h3>
+                      <p className="text-[11px] text-neutral-400">
+                        Images & Videos
+                      </p>
+                    </div>
+                  )}
+                </div>
               </div>
-            </div>
-          </div>
+            )}
+          </motion.div>
         )}
 
         <input

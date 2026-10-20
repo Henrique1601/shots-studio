@@ -2,8 +2,9 @@ export type FrameType =
   | "screenshot"
   | "browser"
   | "iphone-17"
-  | "iphone-17-air"
+  | "iphone-16-pro"
   | "macbook"
+  | "ipad-pro"
   | "watch";
 
 export type FrameStyle =
@@ -96,6 +97,75 @@ export interface MockupConfig {
   shapesLayoutName: string;
   shapesItems: number[];
 }
+
+export const DEVICE_SPECS: Record<
+  FrameType,
+  {
+    name: string;
+    aspectRatio: string;
+    isDevice: boolean;
+    deviceImg?: string;
+    maskSvg?: string;
+    scaleMultiplier?: number;
+    containerClass?: string;
+  }
+> = {
+  screenshot: {
+    name: "Screenshot",
+    aspectRatio: "4 / 3",
+    isDevice: false,
+  },
+  browser: {
+    name: "Browser",
+    aspectRatio: "16 / 10",
+    isDevice: false,
+  },
+  "iphone-17": {
+    name: "iPhone 17",
+    aspectRatio: "402 / 874",
+    isDevice: true,
+    deviceImg: "/shots-assets/devices/iphone17_black.png",
+    maskSvg: "/shots-assets/devices/iphone17_display.svg",
+    scaleMultiplier: 1.248,
+    containerClass: "iphone-17",
+  },
+  "iphone-16-pro": {
+    name: "iPhone 16 Pro",
+    aspectRatio: "402 / 874",
+    isDevice: true,
+    deviceImg: "/shots-assets/devices/iphone16pro_portrait.png",
+    maskSvg: "/shots-assets/devices/iphone16pro_display.svg",
+    scaleMultiplier: 1.248,
+    containerClass: "iphone-16-pro",
+  },
+  macbook: {
+    name: "MacBook Pro 16",
+    aspectRatio: "3456 / 2234",
+    isDevice: true,
+    deviceImg: "/shots-assets/devices/macbook_portrait_silver.png",
+    maskSvg: "/shots-assets/devices/macbook_portrait_display.svg",
+    scaleMultiplier: 1.49,
+    containerClass: "macbook-pro-16",
+  },
+  "ipad-pro": {
+    name: "iPad Pro 13",
+    aspectRatio: "2048 / 2732",
+    isDevice: true,
+    deviceImg: "/shots-assets/devices/ipad_portrait_spacegray.png",
+    maskSvg: "/shots-assets/devices/ipad_portrait_display.svg",
+    scaleMultiplier: 1.18,
+    containerClass: "ipad-pro-13",
+  },
+  watch: {
+    name: "Apple Watch Ultra",
+    aspectRatio: "410 / 502",
+    isDevice: true,
+    deviceImg: "/shots-assets/devices/watch_portrait_ultra.png",
+    maskSvg: "/shots-assets/devices/watch_portrait_display.svg",
+    scaleMultiplier: 1.85,
+    containerClass: "watch-ultra",
+  },
+};
 
 export const SHAPES_LAYOUTS: ShapesLayout[] = [
   {
