@@ -1,36 +1,46 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 📸 Shots Studio (Clone Oficial Shots.so)
 
-## Getting Started
+Aplicativo web completo de criação e customização de mockups 3D de alta fidelidade para capturas de tela, dispositivos móveis e redes sociais, inspirado e engenheirado a partir do [Shots.so](https://shots.so/).
 
-First, run the development server:
+---
+
+## ✨ Funcionalidades Principais
+
+- **Dual Sidebars Flutuantes (228px):** Design system exato do Shots.so com carrossel suave entre os modos `Mockup` e `Frame`.
+- **Zero Scrollbars:** Visual 100% desktop app com rolagem nativa invisível.
+- **Cenários 3D (3D Shapes Scene):** Elementos geométricos tridimensionais volumétricos com profundidade de campo (*depth-of-field blur*) e reflexos iridescentes.
+- **Fórmula Quádrupla de Sombras:** Difusão suave idêntica à do Shots.so (`Spread`, `Hug`, `Adaptive`).
+- **Command Bar com 7 Ações:** Suporte a Undo (`Ctrl + Z`), Redo (`Ctrl + Y`), Randomize/Shuffle, Start Over, Fullscreen, Feedback e Performance Mode.
+- **Formatos e Resoluções Pro:** Exportação client-side com suporte a `PNG`, `JPEG`, `WebP` em resoluções `FHD (1x)`, `4K (2x)` e `6K (3x)`.
+- **Presets de Redes Sociais:** `Post (1:1)`, `Portrait (4:5)`, `Story (9:16)`, `Tweet (16:9)`, `Cover (3:1)`, `Banner (16:9)`, `Shot (4:3)`.
+
+---
+
+## 🛠️ Stack Tecnológica
+
+- **Framework:** Next.js 15 (App Router, Turbopack)
+- **Linguagem:** TypeScript
+- **Estilização:** Tailwind CSS + Lucide Icons
+- **Estado Global:** Zustand
+- **Renderização de Canvas:** html-to-image + Canvas Confetti
+- **Deploy:** Vercel
+
+---
+
+## 🚀 Como Executar Localmente
 
 ```bash
+# Clone o repositório
+git clone https://github.com/Henrique1601/shots-studio.git
+
+# Acesse o diretório
+cd shots-studio
+
+# Instale as dependências
+npm install
+
+# Inicie o servidor de desenvolvimento
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Abra [http://localhost:3000](http://localhost:3000) no seu navegador.

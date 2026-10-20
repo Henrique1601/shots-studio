@@ -1,0 +1,116 @@
+import { create } from "zustand";
+import { MockupConfig, PRESET_GRADIENTS, STYLE_OPTIONS } from "@/types/mockup";
+
+interface MockupStore {
+  config: MockupConfig;
+  imageUrl: string | null;
+  imageDimensions: { width: number; height: number } | null;
+  isDeviceModalOpen: boolean;
+  isExportSettingsOpen: boolean;
+  history: MockupConfig[];
+  historyIndex: number;
+  setImageUrl: (url: string | null) => void;
+  setImageDimensions: (dims: { width: number; height: number } | null) => void;
+  setDeviceModalOpen: (open: boolean) => void;
+  setExportSettingsOpen: (open: boolean) => void;
+  updateConfig: (partial: Partial<MockupConfig>) => void;
+  undo: () => void;
+  redo: () => void;
+  randomize: () => void;
+  resetConfig: () => void;
+}
+
+const defaultConfig: MockupConfig = {
+  activeTab: "mockup",
+  frameType: "screenshot",
+  frameStyle: "default",
+  borderRoundness: "curved",
+  borderRadius: 20,
+  shadowMode: "adaptive",
+  shadowOpacity: 40,
+  showMockup: true,
+  padding: 48,
+  scale: 1,
+  zoom: 100,
+  tiltX: 0,
+  tiltY: 0,
+  tiltZ: 0,
+  backgroundType: "gradient",
+  backgroundValue: PRESET_GRADIENTS[0].value,
+  aspectRatio: "16:9",
+  customWidth: 1920,
+  customHeight: 1080,
+  layoutPreset: "center",
+  exportScale: 1,
+  exportFormat: "PNG",
+  watermark: true,
+  noiseOverlay: false,
+  portraitEffect: false,
+  shapesSceneEnabled: false,
+  shapesPack: "glass-blue",
+  shapesLayoutName: "layout-7",
+  shapesItems: [1, 2, 3, 4, 5, 6],
+};
+
+export const useMockupStore = create<MockupStore>((set, get) => ({
+  config: defaultConfig,
+  imageUrl: null,
+  imageDimensions: null,
+  isDeviceModalOpen: false,
+  isExportSettingsOpen: false,
+  history: [defaultConfig],
+  historyIndex: 0,
+  setImageUrl: (url) => set({ imageUrl: url }),
+  setImageDimensions: (dims) => set({ imageDimensions: dims }),
+  setDeviceModalOpen: (open) => set({ isDeviceModalOpen: open }),
+  setExportSettingsOpen: (open) => set({ isExportSettingsOpen: open }),
+  updateConfig: (partial) => {
+    const current = get().config;
+    const nextConfig = { ...current, ...partial };
+    const newHistory = get().history.slice(0, get().historyIndex + 1);
+    newHistory.push(nextConfig);
+    set({
+      config: nextConfig,
+      history: newHistory,
+      historyIndex: newHistory.length - 1,
+    });
+  },
+  undo: () => {
+    const { historyIndex, history } = get();
+    if (historyIndex > 0) {
+      set({
+        historyIndex: historyIndex - 1,
+        config: history[historyIndex - 1],
+      });
+    }
+  },
+  redo: () => {
+    const { historyIndex, history } = get();
+    if (historyIndex < history.length - 1) {
+      set({
+        historyIndex: historyIndex + 1,
+        config: history[historyIndex + 1],
+      });
+    }
+  },
+  randomize: () => {
+    const randGradient = PRESET_GRADIENTS[Math.floor(Math.random() * PRESET_GRADIENTS.length)];
+    const randStyle = STYLE_OPTIONS[Math.floor(Math.random() * STYLE_OPTIONS.length)];
+    const rounds: ("sharp" | "curved" | "round")[] = ["sharp", "curved", "round"];
+    const randRound = rounds[Math.floor(Math.random() * rounds.length)];
+    get().updateConfig({
+      backgroundValue: randGradient.value,
+      frameStyle: randStyle.id as any,
+      borderRoundness: randRound,
+      borderRadius: randRound === "sharp" ? 0 : randRound === "curved" ? 20 : 36,
+    });
+  },
+  resetConfig: () =>
+    set({
+      config: defaultConfig,
+      imageUrl: null,
+      imageDimensions: null,
+      history: [defaultConfig],
+      historyIndex: 0,
+    }),
+}));
