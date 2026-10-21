@@ -10,8 +10,10 @@ describe("New Devices (Pixel 9 Pro & Ultrawide Monitor) & Presets", () => {
     assert.strictEqual(pixel.isDevice, true);
     assert.strictEqual(pixel.containerClass, "pixel-9-pro");
     assert.ok(pixel.screenBounds, "Expected screen bounds for Pixel 9 Pro");
-    assert.strictEqual(pixel.screenBounds?.left, "7.00%");
-    assert.strictEqual(pixel.screenBounds?.top, "5.00%");
+    assert.strictEqual(pixel.screenBounds?.left, "3.20%");
+    assert.strictEqual(pixel.screenBounds?.top, "2.80%");
+    assert.strictEqual(pixel.screenBounds?.width, "93.60%");
+    assert.strictEqual(pixel.screenBounds?.height, "94.40%");
   });
 
   it("verifies Ultrawide Monitor device spec", () => {
@@ -21,6 +23,27 @@ describe("New Devices (Pixel 9 Pro & Ultrawide Monitor) & Presets", () => {
     assert.strictEqual(monitor.containerClass, "ultrawide-monitor");
     assert.strictEqual(monitor.aspectRatio, "3440 / 1440");
     assert.ok(monitor.screenBounds, "Expected screen bounds for Ultrawide");
+    assert.strictEqual(monitor.screenBounds?.left, "1.20%");
+    assert.strictEqual(monitor.screenBounds?.top, "1.80%");
+    assert.strictEqual(monitor.screenBounds?.width, "97.60%");
+    assert.strictEqual(monitor.screenBounds?.height, "92.40%");
+  });
+
+  it("verifies unibody chassis prevents background bleed with concentric bounds", () => {
+    const pixel = DEVICE_SPECS["pixel-9-pro" as any];
+    const monitor = DEVICE_SPECS["ultrawide-monitor" as any];
+
+    // Pixel horizontal margins sum to exactly 100%
+    const pLeft = parseFloat(pixel.screenBounds!.left);
+    const pWidth = parseFloat(pixel.screenBounds!.width);
+    const pRightMargin = 100 - (pLeft + pWidth);
+    assert.ok(Math.abs(pLeft - pRightMargin) < 0.01, "Pixel 9 Pro must have symmetrical left & right bezels");
+
+    // Monitor horizontal margins sum to exactly 100%
+    const mLeft = parseFloat(monitor.screenBounds!.left);
+    const mWidth = parseFloat(monitor.screenBounds!.width);
+    const mRightMargin = 100 - (mLeft + mWidth);
+    assert.ok(Math.abs(mLeft - mRightMargin) < 0.01, "Ultrawide Monitor must have symmetrical left & right bezels");
   });
 
   it("verifies new 4K Mystic gradients include Aurora Boreal, Sunset Prism & Glass Caustic", () => {

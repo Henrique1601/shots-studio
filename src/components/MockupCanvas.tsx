@@ -200,6 +200,43 @@ export const MockupCanvas = () => {
     }
   };
 
+  // Google Pixel 9 Pro titanium color finish palette
+  const getPixelFrameColors = () => {
+    switch (config.deviceColor) {
+      case "space-black":
+        return {
+          border: "#18181b",
+          shadow: "inset 0 0 0 1px rgba(255,255,255,0.12), 0 0 0 2px #09090b",
+          button: "#3f3f46",
+        };
+      case "silver":
+        return {
+          border: "#e4e4e7",
+          shadow: "inset 0 0 0 1px rgba(255,255,255,0.8), 0 0 0 2px #71717a",
+          button: "#a1a1aa",
+        };
+      case "natural-titanium":
+        return {
+          border: "#a8a29e",
+          shadow: "inset 0 0 0 1px rgba(255,255,255,0.3), 0 0 0 2px #44403c",
+          button: "#78716c",
+        };
+      case "desert-titanium":
+        return {
+          border: "#d4a373",
+          shadow: "inset 0 0 0 1px rgba(255,255,255,0.4), 0 0 0 2px #8a5a36",
+          button: "#b07d58",
+        };
+      case "default":
+      default:
+        return {
+          border: "#27272a",
+          shadow: "inset 0 0 0 1px rgba(255,255,255,0.18), 0 0 0 2px #18181b",
+          button: "#52525b",
+        };
+    }
+  };
+
   const processUploadedFile = (file: File) => {
     const url = URL.createObjectURL(file);
     const img = new Image();
@@ -435,8 +472,12 @@ export const MockupCanvas = () => {
       );
     }
 
-    // 2. Physical Device Mockups (iPhone, MacBook, iPad, Watch)
+    // 2. Physical Device Mockups (iPhone, MacBook, iPad, Watch, Pixel 9 Pro, Ultrawide Monitor)
     if (deviceSpec.isDevice) {
+      const isPixel = config.frameType === "pixel-9-pro";
+      const isUltrawide = config.frameType === "ultrawide-monitor";
+      const pixelColors = isPixel ? getPixelFrameColors() : null;
+
       return (
         <div
           style={{
@@ -445,26 +486,53 @@ export const MockupCanvas = () => {
           }}
           className="w-full h-full relative flex items-center justify-center transition-all duration-300"
         >
-          {/* Opaque black backing plate to prevent canvas background bleeding through bezel subpixel seams */}
-          <div
-            className="absolute bg-[#020202] pointer-events-none"
-            style={{
-              left: deviceSpec.screenBounds?.left ?? "0%",
-              top: deviceSpec.screenBounds?.top ?? "0%",
-              width: deviceSpec.screenBounds?.width ?? "100%",
-              height: deviceSpec.screenBounds?.height ?? "100%",
-              borderRadius: deviceSpec.containerClass?.includes("iphone")
-                ? "48px"
-                : deviceSpec.containerClass?.includes("ipad")
-                ? "24px"
-                : deviceSpec.containerClass?.includes("watch")
-                ? "36px"
-                : "4px",
-              transform: "scale(1.02)",
-              transformOrigin: "center",
-              zIndex: 5,
-            }}
-          />
+          {/* Ultrawide Monitor Desktop Stand (placed behind monitor at z-0) */}
+          {isUltrawide && (
+            <div className="absolute -bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center pointer-events-none z-0">
+              {/* Stand Stem / Neck with metallic gradient & cable grommet accent */}
+              <div className="w-16 h-10 bg-gradient-to-b from-[#25262c] to-[#141518] border-x border-white/10 shadow-lg flex items-center justify-center">
+                <div className="w-6 h-3 rounded-full bg-[#0a0a0c] border border-white/10 shadow-inner" />
+              </div>
+              {/* Heavy-duty weighted desktop base */}
+              <div className="w-56 h-3 rounded-md bg-gradient-to-b from-[#2a2b30] via-[#1e1f23] to-[#131416] border border-white/15 shadow-[0_12px_24px_rgba(0,0,0,0.6)] flex items-center justify-center">
+                <div className="w-52 h-[1px] bg-white/15" />
+              </div>
+            </div>
+          )}
+
+          {/* Opaque Chassis Body (Solid 100% background to completely prevent canvas gradient bleed-through) */}
+          {isPixel ? (
+            <div
+              className="absolute inset-0 rounded-[48px] bg-[#0c0d0f] pointer-events-none z-5 shadow-2xl"
+              style={{ background: "#0c0d0f" }}
+            />
+          ) : isUltrawide ? (
+            <div
+              className="absolute inset-0 rounded-xl bg-[#0c0d10] pointer-events-none z-5 shadow-2xl"
+              style={{ background: "#0c0d10" }}
+            />
+          ) : (
+            /* Opaque black backing plate for PNG-based devices (iPhone, iPad, Watch, MacBook) */
+            <div
+              className="absolute bg-[#020202] pointer-events-none"
+              style={{
+                left: deviceSpec.screenBounds?.left ?? "0%",
+                top: deviceSpec.screenBounds?.top ?? "0%",
+                width: deviceSpec.screenBounds?.width ?? "100%",
+                height: deviceSpec.screenBounds?.height ?? "100%",
+                borderRadius: deviceSpec.containerClass?.includes("iphone")
+                  ? "48px"
+                  : deviceSpec.containerClass?.includes("ipad")
+                  ? "24px"
+                  : deviceSpec.containerClass?.includes("watch")
+                  ? "36px"
+                  : "4px",
+                transform: "scale(1.02)",
+                transformOrigin: "center",
+                zIndex: 5,
+              }}
+            />
+          )}
 
           {/* Calibrated Screen Mask & Media Container (under bezel cutout) */}
           <div
@@ -474,6 +542,7 @@ export const MockupCanvas = () => {
               top: deviceSpec.screenBounds?.top ?? "0%",
               width: deviceSpec.screenBounds?.width ?? "100%",
               height: deviceSpec.screenBounds?.height ?? "100%",
+              borderRadius: isPixel ? "36px" : isUltrawide ? "6px" : undefined,
               maskImage: deviceSpec.maskSvg ? `url("${deviceSpec.maskSvg}")` : undefined,
               WebkitMaskImage: deviceSpec.maskSvg ? `url("${deviceSpec.maskSvg}")` : undefined,
               maskSize: "100% 100%",
@@ -517,43 +586,52 @@ export const MockupCanvas = () => {
               />
             )}
 
-            {/* Pixel 9 Pro Punch-hole camera */}
-            {config.frameType === "pixel-9-pro" && (
-              <div className="absolute top-2.5 left-1/2 -translate-x-1/2 w-3.5 h-3.5 rounded-full bg-black border border-neutral-800 z-30 pointer-events-none shadow-sm flex items-center justify-center">
-                <div className="w-1.5 h-1.5 rounded-full bg-[#0a1128]/80" />
+            {/* Pixel 9 Pro Centered Punch-Hole Camera with realistic lens reflections */}
+            {isPixel && (
+              <div className="absolute top-2.5 left-1/2 -translate-x-1/2 w-4 h-4 rounded-full bg-black border border-neutral-800 z-30 pointer-events-none shadow-sm flex items-center justify-center">
+                <div className="w-2.5 h-2.5 rounded-full bg-[#0a1224] ring-1 ring-white/10 flex items-center justify-center shadow-inner">
+                  <div className="w-1 h-1 rounded-full bg-white/40 -translate-x-[0.5px] -translate-y-[0.5px]" />
+                </div>
               </div>
             )}
           </div>
 
-          {/* Pixel 9 Pro Physical Frame Border */}
-          {config.frameType === "pixel-9-pro" && (
-            <div
-              className="absolute inset-0 rounded-[44px] pointer-events-none z-20 border-[8px] border-neutral-800 shadow-[inset_0_0_4px_rgba(255,255,255,0.2),0_0_0_2px_#171717]"
-              style={{
-                borderColor:
-                  config.deviceColor === "silver"
-                    ? "#d4d4d8"
-                    : config.deviceColor === "space-black"
-                    ? "#09090b"
-                    : config.deviceColor === "natural-titanium"
-                    ? "#a8a29e"
-                    : "#262626",
-              }}
-            />
+          {/* Pixel 9 Pro Physical Hardware Overlays (Titanium Band, Buttons, Antenna & Ear-piece) */}
+          {isPixel && pixelColors && (
+            <>
+              {/* Outer Metallic Bezel Band */}
+              <div
+                className="absolute inset-0 rounded-[48px] pointer-events-none z-20 border-[9px] shadow-sm transition-all duration-300"
+                style={{
+                  borderColor: pixelColors.border,
+                  boxShadow: pixelColors.shadow,
+                }}
+              />
+              {/* Top Ear-piece Speaker Grille */}
+              <div className="absolute top-[1.2%] left-1/2 -translate-x-1/2 w-12 h-[2px] rounded-full bg-[#18191c] border-b border-white/10 z-25 pointer-events-none" />
+              {/* Right Side Physical Buttons: Power & Volume Rocker */}
+              <div
+                className="absolute -right-[3px] top-[18%] w-[3px] h-[30px] rounded-r-sm pointer-events-none z-20 shadow-sm"
+                style={{ background: pixelColors.button }}
+              />
+              <div
+                className="absolute -right-[3px] top-[26%] w-[3px] h-[58px] rounded-r-sm pointer-events-none z-20 shadow-sm"
+                style={{ background: pixelColors.button }}
+              />
+            </>
           )}
 
-          {/* Ultrawide Monitor Frame & Stand */}
-          {config.frameType === "ultrawide-monitor" && (
-            <>
-              <div className="absolute inset-0 rounded-2xl pointer-events-none z-20 border-[6px] border-[#1f1f1f] shadow-[inset_0_1px_1px_rgba(255,255,255,0.15)] flex flex-col justify-end">
-                <div className="h-4 bg-[#141414] border-t border-white/5 flex items-center justify-center">
-                  <div className="w-1.5 h-1.5 rounded-full bg-white/30" />
-                </div>
+          {/* Ultrawide Monitor Modern 3-Side Micro-Bezel & Brushed Aluminum Bottom Chin */}
+          {isUltrawide && (
+            <div className="absolute inset-0 rounded-xl pointer-events-none z-20 border-[5px] border-[#18191c] shadow-[inset_0_1px_1px_rgba(255,255,255,0.15)] flex flex-col justify-end">
+              {/* Brushed Aluminum Bottom Chin Bar */}
+              <div className="h-5 bg-gradient-to-r from-[#17181c] via-[#212328] to-[#17181c] border-t border-white/10 flex items-center justify-between px-5 rounded-b-[7px]">
+                {/* Subtle brand pip / accent */}
+                <div className="w-4 h-1 rounded-full bg-white/20" />
+                {/* Power status LED indicator with soft glow */}
+                <div className="w-1.5 h-1.5 rounded-full bg-emerald-400/80 shadow-[0_0_6px_rgba(52,211,153,0.8)]" />
               </div>
-              <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 w-28 h-6 bg-gradient-to-b from-[#2a2a2a] to-[#1a1a1a] rounded-b-lg border-t border-white/10 z-0 shadow-lg pointer-events-none flex items-end justify-center">
-                <div className="w-44 h-2 bg-[#1f1f1f] rounded-full border border-white/10" />
-              </div>
-            </>
+            </div>
           )}
 
           {/* 3. Device Bezel Overlay (PNG with transparent screen cutout & Finish Tint) */}
