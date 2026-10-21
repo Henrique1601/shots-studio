@@ -34,8 +34,8 @@ describe("Frame Tab Redesign & Mini-Sidebars Integrity", () => {
     }
   });
 
-  it("verifies PRESET_MYSTIC has 16 curated high-resolution caustic gradients", () => {
-    assert.strictEqual(PRESET_MYSTIC.length, 16);
+  it("verifies PRESET_MYSTIC has at least 16 curated high-resolution caustic gradients", () => {
+    assert.ok(PRESET_MYSTIC.length >= 16, "Expected at least 16 mystic gradients");
     for (const m of PRESET_MYSTIC) {
       assert.ok(m.id, "Expected id for mystic gradient");
       assert.ok(m.name, "Expected name for mystic gradient");

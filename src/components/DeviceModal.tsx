@@ -23,7 +23,7 @@ export const DeviceModal = () => {
 
   const deviceList: {
     id: FrameType;
-    category: "essentials" | "iphone" | "mac" | "tablets" | "watch";
+    category: "essentials" | "iphone" | "android" | "mac" | "tablets" | "watch";
     name: string;
     sub: string;
     badge?: string;
@@ -60,6 +60,14 @@ export const DeviceModal = () => {
       thumb: "/shots-assets/devices/minimaldesktop.png",
     },
     {
+      id: "ultrawide-monitor",
+      category: "mac",
+      name: "Ultrawide 34\"",
+      sub: "21 / 9 Studio Monitor",
+      badge: "New",
+      thumb: "/shots-assets/devices/minimaldesktop.png",
+    },
+    {
       id: "iphone-17",
       category: "iphone",
       name: "iPhone 17",
@@ -73,6 +81,14 @@ export const DeviceModal = () => {
       name: "iPhone 16 Pro",
       sub: "402 / 874",
       thumb: "/shots-assets/devices/iphone16pro.png",
+    },
+    {
+      id: "pixel-9-pro",
+      category: "android",
+      name: "Google Pixel 9 Pro",
+      sub: "Flagship Android",
+      badge: "New",
+      thumb: "/shots-assets/devices/iphone17_black.png",
     },
     {
       id: "macbook",
@@ -134,8 +150,9 @@ export const DeviceModal = () => {
           {[
             { id: "all", label: "All", icon: Grid },
             { id: "iphone", label: "iPhone", icon: Smartphone },
+            { id: "android", label: "Android", icon: Smartphone },
             { id: "tablets", label: "iPad", icon: Tablet },
-            { id: "mac", label: "Mac", icon: Laptop },
+            { id: "mac", label: "Mac & Desktop", icon: Laptop },
             { id: "watch", label: "Watch", icon: Watch },
           ].map((item) => {
             const Icon = item.icon;

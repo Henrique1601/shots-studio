@@ -516,7 +516,45 @@ export const MockupCanvas = () => {
                 }}
               />
             )}
+
+            {/* Pixel 9 Pro Punch-hole camera */}
+            {config.frameType === "pixel-9-pro" && (
+              <div className="absolute top-2.5 left-1/2 -translate-x-1/2 w-3.5 h-3.5 rounded-full bg-black border border-neutral-800 z-30 pointer-events-none shadow-sm flex items-center justify-center">
+                <div className="w-1.5 h-1.5 rounded-full bg-[#0a1128]/80" />
+              </div>
+            )}
           </div>
+
+          {/* Pixel 9 Pro Physical Frame Border */}
+          {config.frameType === "pixel-9-pro" && (
+            <div
+              className="absolute inset-0 rounded-[44px] pointer-events-none z-20 border-[8px] border-neutral-800 shadow-[inset_0_0_4px_rgba(255,255,255,0.2),0_0_0_2px_#171717]"
+              style={{
+                borderColor:
+                  config.deviceColor === "silver"
+                    ? "#d4d4d8"
+                    : config.deviceColor === "space-black"
+                    ? "#09090b"
+                    : config.deviceColor === "natural-titanium"
+                    ? "#a8a29e"
+                    : "#262626",
+              }}
+            />
+          )}
+
+          {/* Ultrawide Monitor Frame & Stand */}
+          {config.frameType === "ultrawide-monitor" && (
+            <>
+              <div className="absolute inset-0 rounded-2xl pointer-events-none z-20 border-[6px] border-[#1f1f1f] shadow-[inset_0_1px_1px_rgba(255,255,255,0.15)] flex flex-col justify-end">
+                <div className="h-4 bg-[#141414] border-t border-white/5 flex items-center justify-center">
+                  <div className="w-1.5 h-1.5 rounded-full bg-white/30" />
+                </div>
+              </div>
+              <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 w-28 h-6 bg-gradient-to-b from-[#2a2a2a] to-[#1a1a1a] rounded-b-lg border-t border-white/10 z-0 shadow-lg pointer-events-none flex items-end justify-center">
+                <div className="w-44 h-2 bg-[#1f1f1f] rounded-full border border-white/10" />
+              </div>
+            </>
+          )}
 
           {/* 3. Device Bezel Overlay (PNG with transparent screen cutout & Finish Tint) */}
           {deviceSpec.deviceImg && (

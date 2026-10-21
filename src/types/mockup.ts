@@ -4,8 +4,10 @@ export type FrameType =
   | "minimal-desktop"
   | "iphone-17"
   | "iphone-16-pro"
+  | "pixel-9-pro"
   | "macbook"
   | "ipad-pro"
+  | "ultrawide-monitor"
   | "watch"
   | "code";
 
@@ -92,6 +94,15 @@ export type WatermarkPosition =
 
 export type WatermarkStyle = "default" | "shadow" | "glass" | "badge";
 export type WatermarkTheme = "light" | "dark";
+
+export interface SlideItem {
+  id: string;
+  title: string;
+  imageUrl: string | null;
+  secondaryImageUrl?: string | null;
+  tertiaryImageUrl?: string | null;
+  config: MockupConfig;
+}
 
 export type PortraitLightingMode = "natural" | "studio" | "contour" | "stage";
 
@@ -296,6 +307,18 @@ export const DEVICE_SPECS: Record<FrameType, DeviceSpec> = {
     },
     containerClass: "iphone-16-pro",
   },
+  "pixel-9-pro": {
+    name: "Pixel 9 Pro",
+    aspectRatio: "1440 / 3120",
+    isDevice: true,
+    screenBounds: {
+      left: "7.00%",
+      top: "5.00%",
+      width: "86.00%",
+      height: "90.00%",
+    },
+    containerClass: "pixel-9-pro",
+  },
   macbook: {
     name: "MacBook Pro 16",
     aspectRatio: "4893 / 3164",
@@ -323,6 +346,18 @@ export const DEVICE_SPECS: Record<FrameType, DeviceSpec> = {
       height: "80.00%",
     },
     containerClass: "ipad-pro-13",
+  },
+  "ultrawide-monitor": {
+    name: "Ultrawide 34\"",
+    aspectRatio: "3440 / 1440",
+    isDevice: true,
+    screenBounds: {
+      left: "3.50%",
+      top: "6.00%",
+      width: "93.00%",
+      height: "88.00%",
+    },
+    containerClass: "ultrawide-monitor",
   },
   watch: {
     name: "Apple Watch Ultra",
@@ -559,6 +594,10 @@ export const PRESET_MYSTIC = [
   { id: "mystic-14", name: "Dawn Mint", value: "radial-gradient(circle at 50% 110%, #2dd4bf 0%, #38bdf8 50%, #f0fdfa 100%)" },
   { id: "mystic-15", name: "Amber Beam", value: "radial-gradient(circle at 20% 100%, #eab308 0%, #ca8a04 40%, #1c1917 100%)" },
   { id: "mystic-16", name: "Tahoe Mist", value: "radial-gradient(circle at 50% 120%, #0284c7 0%, #0f172a 70%, #020617 100%)" },
+  { id: "mystic-17", name: "Aurora Boreal", value: "radial-gradient(ellipse at 50% 100%, #10b981 0%, #06b6d4 30%, #3b82f6 60%, #050b14 100%)" },
+  { id: "mystic-18", name: "Sunset Prism", value: "radial-gradient(ellipse at 70% 120%, #ff007a 0%, #7928ca 40%, #ff4b4b 75%, #18001e 100%)" },
+  { id: "mystic-19", name: "Glass Caustic", value: "radial-gradient(circle at 30% 20%, #e0e7ff 0%, #a5b4fc 35%, #6366f1 70%, #1e1b4b 100%)" },
+  { id: "mystic-20", name: "Emerald Cyber", value: "radial-gradient(ellipse at 20% 110%, #00f2fe 0%, #4facfe 50%, #000c24 100%)" },
 ];
 
 export const PRESET_DESKTOP = [

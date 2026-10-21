@@ -40,6 +40,9 @@ export const TopBar = () => {
     historyIndex,
     history,
     showToast,
+    slides,
+    isCarouselOpen,
+    setCarouselOpen,
   } = useMockupStore();
 
   const [isExporting, setIsExporting] = useState(false);
@@ -306,6 +309,21 @@ export const TopBar = () => {
         >
           <FolderOpen className="w-3.5 h-3.5 text-indigo-400" />
           <span>Meus Frames</span>
+        </button>
+
+        {/* Carousel Multi-Slide Toggle */}
+        <button
+          onClick={() => setCarouselOpen(!isCarouselOpen)}
+          title="Multi-Slide Carousel"
+          aria-label="Toggle Carousel"
+          className={`flex items-center space-x-1.5 px-2.5 py-1.5 rounded-xl border text-xs font-semibold transition-colors cursor-pointer ${
+            isCarouselOpen
+              ? "bg-blue-600/20 text-blue-400 border-blue-500/40 shadow-sm"
+              : "bg-[#1c1c1c] hover:bg-[#252525] border-[#2b2b2b] text-neutral-300"
+          }`}
+        >
+          <Layers className="w-3.5 h-3.5 text-blue-400" />
+          <span>Slides ({slides.length})</span>
         </button>
       </div>
 

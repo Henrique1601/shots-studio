@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { MockupConfig, PRESET_GRADIENTS, STYLE_OPTIONS } from "@/types/mockup";
+import { MockupConfig, PRESET_GRADIENTS, STYLE_OPTIONS, SlideItem } from "@/types/mockup";
 
 export interface ToastItem {
   id: string;
@@ -17,6 +17,16 @@ interface MockupStore {
   history: MockupConfig[];
   historyIndex: number;
   toasts: ToastItem[];
+  // Slides / Carousel Multi-page State
+  slides: SlideItem[];
+  activeSlideIndex: number;
+  isCarouselOpen: boolean;
+  setCarouselOpen: (open: boolean) => void;
+  addSlide: () => void;
+  duplicateSlide: (index: number) => void;
+  removeSlide: (index: number) => void;
+  setActiveSlideIndex: (index: number) => void;
+  reorderSlides: (startIndex: number, endIndex: number) => void;
   showToast: (message: string, type?: "success" | "info" | "warning" | "error") => void;
   removeToast: (id: string) => void;
   setImageUrl: (url: string | null) => void;
@@ -163,6 +173,102 @@ export const useMockupStore = create<MockupStore>((set, get) => ({
   history: [defaultConfig],
   historyIndex: 0,
   toasts: [],
+  slides: [
+    {
+      id: "slide-1",
+      title: "Slide 1",
+      imageUrl: null,
+      secondaryImageUrl: null,
+      tertiaryImageUrl: null,
+      config: defaultConfig,
+    },
+  ],
+  activeSlideIndex: 0,
+  isCarouselOpen: false,
+  setCarouselOpen: (open) => set({ isCarouselOpen: open }),
+  addSlide: () => {
+    const { slides, config, imageUrl } = get();
+    const newSlideId = `slide-${Date.now().toString(36)}`;
+    const newSlide: SlideItem = {
+      id: newSlideId,
+      title: `Slide ${slides.length + 1}`,
+      imageUrl: imageUrl,
+      secondaryImageUrl: config.secondaryImageUrl || null,
+      tertiaryImageUrl: config.tertiaryImageUrl || null,
+      config: { ...config },
+    };
+    const nextSlides = [...slides, newSlide];
+    set({
+      slides: nextSlides,
+      activeSlideIndex: nextSlides.length - 1,
+      isCarouselOpen: true,
+    });
+    get().showToast(`Slide ${nextSlides.length} added`);
+  },
+  duplicateSlide: (index) => {
+    const { slides } = get();
+    if (!slides[index]) return;
+    const target = slides[index];
+    const duplicated: SlideItem = {
+      ...target,
+      id: `slide-${Date.now().toString(36)}`,
+      title: `${target.title} (Copy)`,
+      config: { ...target.config },
+    };
+    const nextSlides = [...slides];
+    nextSlides.splice(index + 1, 0, duplicated);
+    set({
+      slides: nextSlides,
+      activeSlideIndex: index + 1,
+      config: { ...duplicated.config },
+      imageUrl: duplicated.imageUrl,
+    });
+    get().showToast("Slide duplicated");
+  },
+  removeSlide: (index) => {
+    const { slides, activeSlideIndex } = get();
+    if (slides.length <= 1) {
+      get().showToast("Cannot remove the only slide", "warning");
+      return;
+    }
+    const nextSlides = slides.filter((_, i) => i !== index);
+    const nextActive = Math.min(activeSlideIndex, nextSlides.length - 1);
+    const activeSlide = nextSlides[nextActive];
+    set({
+      slides: nextSlides,
+      activeSlideIndex: nextActive,
+      config: { ...activeSlide.config },
+      imageUrl: activeSlide.imageUrl,
+    });
+    get().showToast("Slide removed");
+  },
+  setActiveSlideIndex: (index) => {
+    const { slides, activeSlideIndex, config, imageUrl } = get();
+    if (index === activeSlideIndex || !slides[index]) return;
+    // Save current active slide state first
+    const updatedSlides = [...slides];
+    if (updatedSlides[activeSlideIndex]) {
+      updatedSlides[activeSlideIndex] = {
+        ...updatedSlides[activeSlideIndex],
+        config: { ...config },
+        imageUrl,
+      };
+    }
+    const targetSlide = updatedSlides[index];
+    set({
+      slides: updatedSlides,
+      activeSlideIndex: index,
+      config: { ...targetSlide.config },
+      imageUrl: targetSlide.imageUrl,
+    });
+  },
+  reorderSlides: (startIndex, endIndex) => {
+    const { slides } = get();
+    const result = Array.from(slides);
+    const [removed] = result.splice(startIndex, 1);
+    result.splice(endIndex, 0, removed);
+    set({ slides: result, activeSlideIndex: endIndex });
+  },
   showToast: (message, type = "success") => {
     const id = Math.random().toString(36).substring(2, 9);
     set((state) => ({ toasts: [...state.toasts, { id, message, type }] }));

@@ -8,6 +8,7 @@ import { MockupCanvas } from "@/components/MockupCanvas";
 import { DeviceModal } from "@/components/DeviceModal";
 import { TemplatesModal } from "@/components/TemplatesModal";
 import { VideoTimeline } from "@/components/VideoTimeline";
+import { CarouselBar } from "@/components/CarouselBar";
 import { MobileDrawer } from "@/components/MobileDrawer";
 import { ToastContainer } from "@/components/ToastContainer";
 import { useMockupStore } from "@/store/mockupStore";
@@ -121,6 +122,9 @@ export default function Home() {
 
       {/* Bottom: Timeline de Animação e Vídeo */}
       <VideoTimeline />
+
+      {/* Multi-Slide Carousel Bar */}
+      <CarouselBar />
 
       {/* Mobile Bottom Dock & Controls Drawer */}
       <MobileDrawer />
