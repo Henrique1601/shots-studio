@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useRef, useState, useEffect } from "react";
+import React, { useRef, useState } from "react";
 import { useMockupStore } from "@/store/mockupStore";
 import {
   STYLE_OPTIONS,
@@ -14,25 +14,23 @@ import {
   PRESET_TAHOE,
   PRESET_SOLIDS,
   ASPECT_RATIOS_STANDARD,
-  ASPECT_RATIOS_SOCIAL,
   AspectRatioType,
   DEFAULT_RATIO_DIMENSIONS,
   DEVICE_SPECS,
   VfxType,
-  WatermarkStyle,
-  WatermarkTheme,
+  FrameStyle,
+  ShadowMode,
+  CodeLanguage,
+  WatermarkProfile,
 } from "@/types/mockup";
 import {
   ChevronDown,
-  ChevronUp,
   Sparkles,
   Plus,
   Eye,
   EyeOff,
   SunMedium,
   Box,
-  Sliders,
-  Check,
   Wand2,
   Code2,
   Aperture,
@@ -43,8 +41,6 @@ import {
   Image as ImageIcon,
   ChevronLeft,
   ChevronRight,
-  SlidersHorizontal,
-  Upload,
 } from "lucide-react";
 import { extractPaletteFromImage, GeneratedGradient } from "@/utils/magicPalette";
 
@@ -67,9 +63,6 @@ export const LeftSidebar = () => {
 
   const [inputW, setInputW] = useState(config.customWidth.toString());
   const [inputH, setInputH] = useState(config.customHeight.toString());
-  const [bgTab, setBgTab] = useState<
-    "gradients" | "glass" | "tahoe" | "solid" | "magic" | "custom"
-  >("gradients");
   const [showAdjustLight, setShowAdjustLight] = useState(false);
   const [magicGradients, setMagicGradients] = useState<GeneratedGradient[]>([]);
   const [isExtracting, setIsExtracting] = useState(false);
@@ -128,11 +121,6 @@ export const LeftSidebar = () => {
     }
   };
 
-  useEffect(() => {
-    setInputW(config.customWidth.toString());
-    setInputH(config.customHeight.toString());
-  }, [config.customWidth, config.customHeight]);
-
   const handleSelectRatio = (
     ratioId: AspectRatioType,
     overrideW?: number,
@@ -169,7 +157,7 @@ export const LeftSidebar = () => {
     });
   };
 
-  const handleUpdateActiveWatermark = (updates: Partial<any>) => {
+  const handleUpdateActiveWatermark = (updates: Partial<WatermarkProfile>) => {
     const activeIdx = config.watermarkProfileIndex ?? 0;
     const profiles = [...(config.watermarkProfiles || [])];
     const currentProfile = profiles[activeIdx] || {
@@ -430,7 +418,7 @@ export const LeftSidebar = () => {
                   value={config.codeLanguage ?? "typescript"}
                   onChange={(e) =>
                     updateConfig({
-                      codeLanguage: e.target.value as any,
+                      codeLanguage: e.target.value as CodeLanguage,
                     })
                   }
                   className="w-full px-2 py-1.5 rounded bg-[#181818] border border-neutral-700 text-xs text-white capitalize cursor-pointer"
@@ -700,7 +688,7 @@ export const LeftSidebar = () => {
               {STYLE_OPTIONS.map((style) => (
                 <button
                   key={style.id}
-                  onClick={() => updateConfig({ frameStyle: style.id as any })}
+                  onClick={() => updateConfig({ frameStyle: style.id as FrameStyle })}
                   className={`flex flex-col items-center p-1 rounded-xl border transition-all cursor-pointer ${
                     config.frameStyle === style.id
                       ? "border-white bg-[#2e2e2e]"
@@ -784,7 +772,7 @@ export const LeftSidebar = () => {
               {SHADOW_OPTIONS.map((shadow) => (
                 <button
                   key={shadow.id}
-                  onClick={() => updateConfig({ shadowMode: shadow.id as any })}
+                  onClick={() => updateConfig({ shadowMode: shadow.id as ShadowMode })}
                   className={`flex flex-col items-center p-1 rounded-xl border transition-all cursor-pointer ${
                     config.shadowMode === shadow.id
                       ? "border-white bg-[#2e2e2e]"
@@ -2027,7 +2015,6 @@ export const LeftSidebar = () => {
           {/* C. Watermark Mini-Sidebar Carousel Profile System (media_1792516766485_2167325f.png) */}
           {activeMiniSidebar === "watermark" && (() => {
             const activeIdx = config.watermarkProfileIndex ?? 0;
-            const isNoWatermark = activeIdx === 0 || !config.watermark;
 
             return (
               <div className="space-y-3.5">

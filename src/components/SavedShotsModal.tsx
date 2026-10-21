@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { X, Trash2, FolderOpen, Save, Clock, Image as ImageIcon } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { db, SavedShot } from "@/lib/db";
 import { useMockupStore } from "@/store/mockupStore";
 
@@ -31,10 +31,23 @@ export const SavedShotsModal: React.FC<SavedShotsModalProps> = ({
   };
 
   useEffect(() => {
-    if (isOpen) {
-      fetchShots();
-      setShotName(`Shot #${new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}`);
-    }
+    if (!isOpen) return;
+    let isMounted = true;
+    (async () => {
+      try {
+        const allShots = await db.shots.orderBy("createdAt").reverse().toArray();
+        if (isMounted) {
+          setShots(allShots);
+          setShotName(`Shot #${new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}`);
+        }
+      } catch (e) {
+        console.error("Failed to load saved shots:", e);
+      }
+    })();
+
+    return () => {
+      isMounted = false;
+    };
   }, [isOpen]);
 
   const handleSaveCurrent = async () => {

@@ -4,7 +4,7 @@ import { DEVICE_SPECS, PRESET_MYSTIC } from "../src/types/mockup.ts";
 
 describe("New Devices (Pixel 9 Pro & Ultrawide Monitor) & Presets", () => {
   it("verifies Pixel 9 Pro device spec", () => {
-    const pixel = DEVICE_SPECS["pixel-9-pro" as any];
+    const pixel = DEVICE_SPECS["pixel-9-pro"];
     assert.ok(pixel, "Expected Pixel 9 Pro to exist in DEVICE_SPECS");
     assert.strictEqual(pixel.name, "Pixel 9 Pro");
     assert.strictEqual(pixel.isDevice, true);
@@ -17,7 +17,7 @@ describe("New Devices (Pixel 9 Pro & Ultrawide Monitor) & Presets", () => {
   });
 
   it("verifies Ultrawide Monitor device spec", () => {
-    const monitor = DEVICE_SPECS["ultrawide-monitor" as any];
+    const monitor = DEVICE_SPECS["ultrawide-monitor"];
     assert.ok(monitor, "Expected Ultrawide Monitor to exist in DEVICE_SPECS");
     assert.strictEqual(monitor.isDevice, true);
     assert.strictEqual(monitor.containerClass, "ultrawide-monitor");
@@ -30,8 +30,8 @@ describe("New Devices (Pixel 9 Pro & Ultrawide Monitor) & Presets", () => {
   });
 
   it("verifies unibody chassis prevents background bleed with concentric bounds", () => {
-    const pixel = DEVICE_SPECS["pixel-9-pro" as any];
-    const monitor = DEVICE_SPECS["ultrawide-monitor" as any];
+    const pixel = DEVICE_SPECS["pixel-9-pro"];
+    const monitor = DEVICE_SPECS["ultrawide-monitor"];
 
     // Pixel horizontal margins sum to exactly 100%
     const pLeft = parseFloat(pixel.screenBounds!.left);

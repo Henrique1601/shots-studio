@@ -259,6 +259,18 @@ export const MockupCanvas = () => {
     showToast("Terceira imagem carregada com sucesso! 📱", "success");
   };
 
+  const handlePrimarySlotClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleSecondarySlotClick = () => {
+    secondaryFileInputRef.current?.click();
+  };
+
+  const handleTertiarySlotClick = () => {
+    tertiaryFileInputRef.current?.click();
+  };
+
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault();
     setIsDragging(false);
@@ -345,7 +357,7 @@ export const MockupCanvas = () => {
 
   // Dynamic motion presets for live playback (Float, Turntable, Breathe, Orbit)
   const getMotionAnimation = (): {
-    animate: Record<string, any>;
+    animate: Record<string, string | number | number[]>;
     transition?: Transition;
   } => {
     if (!config.isAnimationPlaying || config.animationPreset === "none") {
@@ -1052,7 +1064,7 @@ export const MockupCanvas = () => {
                 >
                   {renderMockupItem(
                     imageUrl,
-                    () => fileInputRef.current?.click(),
+                    handlePrimarySlotClick,
                     false
                   )}
                 </div>
@@ -1070,7 +1082,7 @@ export const MockupCanvas = () => {
                 >
                   {renderMockupItem(
                     config.secondaryImageUrl || imageUrl,
-                    () => secondaryFileInputRef.current?.click(),
+                    handleSecondarySlotClick,
                     true
                   )}
                 </div>
@@ -1088,7 +1100,7 @@ export const MockupCanvas = () => {
                 >
                   {renderMockupItem(
                     config.tertiaryImageUrl || imageUrl,
-                    () => tertiaryFileInputRef.current?.click(),
+                    handleTertiarySlotClick,
                     true
                   )}
                 </div>
@@ -1109,7 +1121,7 @@ export const MockupCanvas = () => {
                         : undefined,
                   }}
                 >
-                  {renderMockupItem(imageUrl, () => fileInputRef.current?.click(), false)}
+                  {renderMockupItem(imageUrl, handlePrimarySlotClick, false)}
                 </div>
 
                 {/* Right Device / Media */}
@@ -1125,13 +1137,13 @@ export const MockupCanvas = () => {
                 >
                   {renderMockupItem(
                     config.secondaryImageUrl || imageUrl,
-                    () => secondaryFileInputRef.current?.click(),
+                    handleSecondarySlotClick,
                     true
                   )}
                 </div>
               </div>
             ) : (
-              renderMockupItem(imageUrl, () => fileInputRef.current?.click(), false)
+              renderMockupItem(imageUrl, handlePrimarySlotClick, false)
             )}
           </motion.div>
         )}

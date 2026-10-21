@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { MockupConfig, PRESET_GRADIENTS, STYLE_OPTIONS, SlideItem } from "@/types/mockup";
+import { MockupConfig, PRESET_GRADIENTS, STYLE_OPTIONS, SlideItem, FrameStyle } from "@/types/mockup";
 
 export interface ToastItem {
   id: string;
@@ -330,7 +330,7 @@ export const useMockupStore = create<MockupStore>((set, get) => ({
     const randRound = rounds[Math.floor(Math.random() * rounds.length)];
     get().updateConfig({
       backgroundValue: randGradient.value,
-      frameStyle: randStyle.id as any,
+      frameStyle: randStyle.id as FrameStyle,
       borderRoundness: randRound,
       borderRadius: randRound === "sharp" ? 0 : randRound === "curved" ? 20 : 36,
     });

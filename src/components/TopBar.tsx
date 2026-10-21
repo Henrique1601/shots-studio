@@ -13,19 +13,14 @@ import {
   Layers,
   Download,
   Copy,
-  SlidersHorizontal,
   X,
-  Check,
   FolderOpen,
-  Film,
-  Sparkles,
   ChevronDown,
 } from "lucide-react";
 import * as htmlToImage from "html-to-image";
 import confetti from "canvas-confetti";
 import { SavedShotsModal } from "./SavedShotsModal";
 import { FeedbackModal } from "./FeedbackModal";
-import { SOCIAL_MEDIA_PRESETS } from "@/types/mockup";
 
 export const TopBar = () => {
   const {
@@ -153,7 +148,7 @@ export const TopBar = () => {
         try {
           const frameCanvas = await htmlToImage.toCanvas(node, { pixelRatio: 1.5 });
           ctx.drawImage(frameCanvas, 0, 0);
-        } catch (err) {}
+        } catch {}
         requestAnimationFrame(captureFrame);
       };
 

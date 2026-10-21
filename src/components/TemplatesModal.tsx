@@ -3,8 +3,8 @@
 import React, { useState } from "react";
 import { useMockupStore } from "@/store/mockupStore";
 import { CURATED_TEMPLATES, TemplatePreset } from "@/types/mockup";
-import { X, Sparkles, Layout, Smartphone, Share2, Layers, Check } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+import { X, Sparkles, Layout, Smartphone, Share2, Layers } from "lucide-react";
+import { motion } from "framer-motion";
 import confetti from "canvas-confetti";
 
 export const TemplatesModal = () => {

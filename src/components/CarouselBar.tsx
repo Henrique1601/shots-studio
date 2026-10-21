@@ -9,7 +9,6 @@ import {
   Trash2,
   ChevronLeft,
   ChevronRight,
-  Maximize2,
   X,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";

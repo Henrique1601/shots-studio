@@ -2,17 +2,16 @@
 
 import React, { useState } from "react";
 import { useMockupStore } from "@/store/mockupStore";
-import { FrameType, DEVICE_SPECS } from "@/types/mockup";
+import { FrameType } from "@/types/mockup";
 import {
   X,
   Smartphone,
   Tablet,
   Laptop,
-  Monitor,
   Watch,
   Grid,
 } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 
 export const DeviceModal = () => {
   const { isDeviceModalOpen, setDeviceModalOpen, updateConfig } =

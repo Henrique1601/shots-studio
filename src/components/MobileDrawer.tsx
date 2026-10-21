@@ -22,8 +22,6 @@ import {
   Download,
   X,
   ChevronDown,
-  Sparkles,
-  Sliders,
   Check,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
