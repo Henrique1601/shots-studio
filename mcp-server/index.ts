@@ -14,8 +14,10 @@ const DEVICES = [
   { id: "iphone-17", name: "iPhone 17", type: "mobile", ratio: "1508 / 3278" },
   { id: "iphone-16-pro", name: "iPhone 16 Pro", type: "mobile", ratio: "1508 / 3279" },
   { id: "pixel-9-pro", name: "Google Pixel 9 Pro", type: "mobile", ratio: "1440 / 3120" },
+  { id: "foldable-phone", name: "Foldable Phone", type: "mobile", ratio: "2156 / 1916" },
   { id: "macbook", name: "MacBook Pro 16", type: "laptop", ratio: "4893 / 3164" },
   { id: "ipad-pro", name: "iPad Pro 13", type: "tablet", ratio: "2560 / 3415" },
+  { id: "imac-24", name: "iMac 24\" M4", type: "desktop", ratio: "16 / 11.8" },
   { id: "ultrawide-monitor", name: "Ultrawide 34\" Monitor", type: "desktop", ratio: "3440 / 1440" },
   { id: "watch", name: "Apple Watch Ultra", type: "wearable", ratio: "1640 / 2009" },
   { id: "browser", name: "Safari / Chrome Browser", type: "desktop", ratio: "16 / 10" },
@@ -98,7 +100,7 @@ server.tool(
   {
     image: z.string().describe("Image URL or file path for the primary mockup screen"),
     frameType: z
-      .enum(["screenshot", "browser", "minimal-desktop", "iphone-17", "iphone-16-pro", "pixel-9-pro", "macbook", "ipad-pro", "ultrawide-monitor", "watch", "code"])
+      .enum(["screenshot", "browser", "minimal-desktop", "iphone-17", "iphone-16-pro", "pixel-9-pro", "foldable-phone", "macbook", "ipad-pro", "imac-24", "ultrawide-monitor", "watch", "code"])
       .default("iphone-17")
       .describe("Device mockup or frame style"),
     background: z
@@ -192,7 +194,7 @@ server.tool(
     headline: z.string().describe("Main hook or launch headline"),
     subtitle: z.string().optional().describe("Secondary tagline or description"),
     badge: z.string().default("NEW").describe("Badge tag (e.g. 'v2.0', 'LAUNCH', 'SAAS')"),
-    device: z.enum(["iphone-17", "iphone-16-pro", "pixel-9-pro", "macbook", "ipad-pro", "ultrawide-monitor", "browser", "code", "screenshot"]).default("iphone-17").describe("Device framing"),
+    device: z.enum(["iphone-17", "iphone-16-pro", "pixel-9-pro", "foldable-phone", "macbook", "ipad-pro", "imac-24", "ultrawide-monitor", "browser", "code", "screenshot"]).default("iphone-17").describe("Device framing"),
     theme: z.enum(["dark", "glass", "tahoe", "vibrant", "cosmic"]).default("dark").describe("Visual mood"),
   },
   async ({ platform, image, headline, subtitle, badge, device, theme }) => {

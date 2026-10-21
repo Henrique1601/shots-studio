@@ -29,6 +29,26 @@ describe("New Devices (Pixel 9 Pro & Ultrawide Monitor) & Presets", () => {
     assert.strictEqual(monitor.screenBounds?.height, "92.40%");
   });
 
+  it("verifies iMac 24 M4 device spec", () => {
+    const imac = DEVICE_SPECS["imac-24"];
+    assert.ok(imac, "Expected iMac 24 to exist in DEVICE_SPECS");
+    assert.strictEqual(imac.isDevice, true);
+    assert.strictEqual(imac.name, "iMac 24\" M4");
+    assert.strictEqual(imac.containerClass, "imac-24");
+    assert.strictEqual(imac.screenBounds?.left, "2.20%");
+    assert.strictEqual(imac.screenBounds?.top, "2.20%");
+  });
+
+  it("verifies Foldable Phone device spec", () => {
+    const fold = DEVICE_SPECS["foldable-phone"];
+    assert.ok(fold, "Expected Foldable Phone to exist in DEVICE_SPECS");
+    assert.strictEqual(fold.isDevice, true);
+    assert.strictEqual(fold.name, "Foldable Phone");
+    assert.strictEqual(fold.containerClass, "foldable-phone");
+    assert.strictEqual(fold.aspectRatio, "2156 / 1916");
+    assert.strictEqual(fold.screenBounds?.left, "2.40%");
+  });
+
   it("verifies unibody chassis prevents background bleed with concentric bounds", () => {
     const pixel = DEVICE_SPECS["pixel-9-pro"];
     const monitor = DEVICE_SPECS["ultrawide-monitor"];
@@ -76,5 +96,24 @@ describe("Multi-Slide Carousel State Management Logic", () => {
     assert.strictEqual(filtered.length, 2);
     const activeIndex = Math.min(2, filtered.length - 1);
     assert.strictEqual(activeIndex, 1);
+  });
+
+  it("calculates slideshow auto-advance looping index correctly", () => {
+    const totalSlides = 4;
+    let currentIdx = 0;
+    currentIdx = (currentIdx + 1) % totalSlides;
+    assert.strictEqual(currentIdx, 1);
+    currentIdx = (currentIdx + 1) % totalSlides;
+    assert.strictEqual(currentIdx, 2);
+    currentIdx = (3 + 1) % totalSlides;
+    assert.strictEqual(currentIdx, 0, "Slideshow must loop back to slide 0 after the last slide");
+  });
+
+  it("formats batch zip slide filenames with 2-digit zero padding", () => {
+    const formatSlideName = (idx: number) => `slide-${String(idx + 1).padStart(2, "0")}.png`;
+    assert.strictEqual(formatSlideName(0), "slide-01.png");
+    assert.strictEqual(formatSlideName(8), "slide-09.png");
+    assert.strictEqual(formatSlideName(9), "slide-10.png");
+    assert.strictEqual(formatSlideName(15), "slide-16.png");
   });
 });

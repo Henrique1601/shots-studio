@@ -8,6 +8,8 @@ export type FrameType =
   | "macbook"
   | "ipad-pro"
   | "ultrawide-monitor"
+  | "imac-24"
+  | "foldable-phone"
   | "watch"
   | "code";
 
@@ -358,6 +360,30 @@ export const DEVICE_SPECS: Record<FrameType, DeviceSpec> = {
       height: "92.40%",
     },
     containerClass: "ultrawide-monitor",
+  },
+  "imac-24": {
+    name: "iMac 24\" M4",
+    aspectRatio: "16 / 11.8",
+    isDevice: true,
+    screenBounds: {
+      left: "2.20%",
+      top: "2.20%",
+      width: "95.60%",
+      height: "72.00%",
+    },
+    containerClass: "imac-24",
+  },
+  "foldable-phone": {
+    name: "Foldable Phone",
+    aspectRatio: "2156 / 1916",
+    isDevice: true,
+    screenBounds: {
+      left: "2.40%",
+      top: "2.50%",
+      width: "95.20%",
+      height: "95.00%",
+    },
+    containerClass: "foldable-phone",
   },
   watch: {
     name: "Apple Watch Ultra",

@@ -13,6 +13,7 @@ export const MockupCanvas = () => {
     config,
     imageUrl,
     imageDimensions,
+    activeSlideIndex,
     setImageUrl,
     setSecondaryImageUrl,
     setTertiaryImageUrl,
@@ -484,10 +485,12 @@ export const MockupCanvas = () => {
       );
     }
 
-    // 2. Physical Device Mockups (iPhone, MacBook, iPad, Watch, Pixel 9 Pro, Ultrawide Monitor)
+    // 2. Physical Device Mockups (iPhone, MacBook, iPad, Watch, Pixel 9 Pro, Ultrawide Monitor, iMac 24, Foldable)
     if (deviceSpec.isDevice) {
       const isPixel = config.frameType === "pixel-9-pro";
       const isUltrawide = config.frameType === "ultrawide-monitor";
+      const isIMac = config.frameType === "imac-24";
+      const isFoldable = config.frameType === "foldable-phone";
       const pixelColors = isPixel ? getPixelFrameColors() : null;
 
       return (
@@ -512,6 +515,16 @@ export const MockupCanvas = () => {
             </div>
           )}
 
+          {/* iMac 24" M4 Desktop Stand (placed behind chassis at z-0) */}
+          {isIMac && (
+            <div className="absolute -bottom-12 left-1/2 -translate-x-1/2 flex flex-col items-center pointer-events-none z-0">
+              {/* Stand Stem */}
+              <div className="w-14 h-12 bg-gradient-to-b from-[#e2e8f0] to-[#cbd5e1] border-x border-black/5 shadow-md" />
+              {/* Sleek Aluminum Rectangular Foot */}
+              <div className="w-44 h-2.5 rounded-sm bg-gradient-to-b from-[#f8fafc] to-[#cbd5e1] border border-white/60 shadow-[0_12px_24px_rgba(0,0,0,0.5)]" />
+            </div>
+          )}
+
           {/* Opaque Chassis Body (Solid 100% background to completely prevent canvas gradient bleed-through) */}
           {isPixel ? (
             <div
@@ -522,6 +535,16 @@ export const MockupCanvas = () => {
             <div
               className="absolute inset-0 rounded-xl bg-[#0c0d10] pointer-events-none z-5 shadow-2xl"
               style={{ background: "#0c0d10" }}
+            />
+          ) : isIMac ? (
+            <div
+              className="absolute inset-0 rounded-2xl bg-[#0c0d10] pointer-events-none z-5 shadow-2xl border-[3.5px] border-[#e2e8f0]"
+              style={{ background: "#0c0d10" }}
+            />
+          ) : isFoldable ? (
+            <div
+              className="absolute inset-0 rounded-[28px] bg-[#090a0d] pointer-events-none z-5 shadow-2xl"
+              style={{ background: "#090a0d" }}
             />
           ) : (
             /* Opaque black backing plate for PNG-based devices (iPhone, iPad, Watch, MacBook) */
@@ -554,7 +577,15 @@ export const MockupCanvas = () => {
               top: deviceSpec.screenBounds?.top ?? "0%",
               width: deviceSpec.screenBounds?.width ?? "100%",
               height: deviceSpec.screenBounds?.height ?? "100%",
-              borderRadius: isPixel ? "36px" : isUltrawide ? "6px" : undefined,
+              borderRadius: isPixel
+                ? "36px"
+                : isUltrawide
+                ? "6px"
+                : isIMac
+                ? "4px"
+                : isFoldable
+                ? "20px"
+                : undefined,
               maskImage: deviceSpec.maskSvg ? `url("${deviceSpec.maskSvg}")` : undefined,
               WebkitMaskImage: deviceSpec.maskSvg ? `url("${deviceSpec.maskSvg}")` : undefined,
               maskSize: "100% 100%",
@@ -598,12 +629,24 @@ export const MockupCanvas = () => {
               />
             )}
 
+            {/* Foldable Phone Center Crease Subtle Shadow */}
+            {isFoldable && (
+              <div className="absolute inset-y-0 left-1/2 -translate-x-1/2 w-4 pointer-events-none z-15 bg-gradient-to-r from-transparent via-black/30 to-transparent" />
+            )}
+
             {/* Pixel 9 Pro Centered Punch-Hole Camera with realistic lens reflections */}
             {isPixel && (
               <div className="absolute top-2.5 left-1/2 -translate-x-1/2 w-4 h-4 rounded-full bg-black border border-neutral-800 z-30 pointer-events-none shadow-sm flex items-center justify-center">
                 <div className="w-2.5 h-2.5 rounded-full bg-[#0a1224] ring-1 ring-white/10 flex items-center justify-center shadow-inner">
                   <div className="w-1 h-1 rounded-full bg-white/40 -translate-x-[0.5px] -translate-y-[0.5px]" />
                 </div>
+              </div>
+            )}
+
+            {/* Foldable Phone Punch-Hole Camera on right screen */}
+            {isFoldable && (
+              <div className="absolute top-3 right-[22%] w-3 h-3 rounded-full bg-black border border-neutral-800 z-30 pointer-events-none shadow-sm flex items-center justify-center">
+                <div className="w-1.5 h-1.5 rounded-full bg-[#0a1224]" />
               </div>
             )}
           </div>
@@ -644,6 +687,34 @@ export const MockupCanvas = () => {
                 <div className="w-1.5 h-1.5 rounded-full bg-emerald-400/80 shadow-[0_0_6px_rgba(52,211,153,0.8)]" />
               </div>
             </div>
+          )}
+
+          {/* iMac 24" M4 Modern Frame & Signature Pastel Chin */}
+          {isIMac && (
+            <div className="absolute inset-0 rounded-2xl pointer-events-none z-20 flex flex-col justify-between">
+              {/* Top Center Stage 12MP Camera Pip */}
+              <div className="w-full h-5 flex items-center justify-center">
+                <div className="w-2 h-2 rounded-full bg-black ring-1 ring-white/20 shadow-sm flex items-center justify-center">
+                  <div className="w-0.5 h-0.5 rounded-full bg-[#1e293b]" />
+                </div>
+              </div>
+              {/* Signature Pastel / Silver Bottom Chin */}
+              <div className="h-[25.2%] bg-gradient-to-b from-[#f1f5f9] via-[#e2e8f0] to-[#cbd5e1] rounded-b-[12px] border-t border-black/10 flex items-center justify-center shadow-inner">
+                {/* Minimalist Apple Logo Dot */}
+                <div className="w-2.5 h-2.5 rounded-full bg-slate-500/40 shadow-sm" />
+              </div>
+            </div>
+          )}
+
+          {/* Foldable Phone Hardware Frame & Spine Notches */}
+          {isFoldable && (
+            <>
+              {/* Outer chassis border */}
+              <div className="absolute inset-0 rounded-[28px] pointer-events-none z-20 border-[7px] border-[#22242a] shadow-[inset_0_0_0_1px_rgba(255,255,255,0.15)]" />
+              {/* Top & Bottom Hinge Notches */}
+              <div className="absolute top-0 left-1/2 -translate-x-1/2 w-6 h-1 rounded-b-sm bg-neutral-600 z-25 pointer-events-none" />
+              <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-6 h-1 rounded-t-sm bg-neutral-600 z-25 pointer-events-none" />
+            </>
           )}
 
           {/* 3. Device Bezel Overlay (PNG with transparent screen cutout & Finish Tint) */}
@@ -1018,6 +1089,7 @@ export const MockupCanvas = () => {
         {/* 3D Spatial Container with Auto-Contain & Smooth Spring Physics */}
         {config.showMockup && (
           <motion.div
+            key={`slide-view-${activeSlideIndex}`}
             {...getMotionAnimation()}
             style={{
               width: isMockupTallerThanFrame

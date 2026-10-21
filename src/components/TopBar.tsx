@@ -16,9 +16,11 @@ import {
   X,
   FolderOpen,
   ChevronDown,
+  Archive,
 } from "lucide-react";
 import * as htmlToImage from "html-to-image";
 import confetti from "canvas-confetti";
+import JSZip from "jszip";
 import { SavedShotsModal } from "./SavedShotsModal";
 import { FeedbackModal } from "./FeedbackModal";
 
@@ -36,6 +38,8 @@ export const TopBar = () => {
     history,
     showToast,
     slides,
+    activeSlideIndex,
+    setActiveSlideIndex,
     isCarouselOpen,
     setCarouselOpen,
   } = useMockupStore();
@@ -238,6 +242,58 @@ export const TopBar = () => {
     } catch (e) {
       console.error("Copy error:", e);
       showToast("Erro ao copiar imagem", "warning");
+    }
+  };
+
+  const handleExportAllSlidesZip = async () => {
+    if (slides.length <= 1) {
+      showToast("Adicione pelo menos 2 slides no carrossel para exportar em lote!", "info");
+      return;
+    }
+    const node = document.getElementById("mockup-export-container");
+    if (!node) return;
+
+    setIsExporting(true);
+    showToast("Iniciando renderização em lote dos slides... 📦", "info");
+
+    try {
+      const zip = new JSZip();
+      const originalIndex = activeSlideIndex;
+
+      for (let i = 0; i < slides.length; i++) {
+        showToast(`Renderizando slide ${i + 1} de ${slides.length}... ⏳`, "info");
+        setActiveSlideIndex(i);
+        // Pause to ensure canvas renders slide state
+        await new Promise((resolve) => setTimeout(resolve, 320));
+
+        const dataUrl = await htmlToImage.toPng(node, exportOptions);
+        const base64Data = dataUrl.replace(/^data:image\/png;base64,/, "");
+        zip.file(`slide-${String(i + 1).padStart(2, "0")}.png`, base64Data, { base64: true });
+      }
+
+      // Restore user's current slide
+      setActiveSlideIndex(originalIndex);
+
+      showToast("Compactando arquivo .ZIP... 🗜️", "info");
+      const zipBlob = await zip.generateAsync({ type: "blob" });
+      const url = URL.createObjectURL(zipBlob);
+      const link = document.createElement("a");
+      link.download = `framecraft-carrossel-${Date.now()}.zip`;
+      link.href = url;
+      link.click();
+      URL.revokeObjectURL(url);
+
+      confetti({
+        particleCount: 120,
+        spread: 70,
+        origin: { y: 0.2 },
+      });
+      showToast(`Carrossel de ${slides.length} slides exportado com sucesso em .ZIP! 🎉`, "success");
+    } catch (err) {
+      console.error("Batch ZIP export error:", err);
+      showToast("Erro ao exportar carrossel em lote", "error");
+    } finally {
+      setIsExporting(false);
     }
   };
 
@@ -554,6 +610,21 @@ export const TopBar = () => {
                 <Copy className="w-3.5 h-3.5 text-neutral-300" />
                 <span>Copiar para Área de Transferência</span>
               </button>
+
+              {/* BATCH ALL SLIDES ZIP EXPORT */}
+              {slides.length > 1 && (
+                <button
+                  disabled={isExporting}
+                  onClick={async () => {
+                    await handleExportAllSlidesZip();
+                    setShowSettings(false);
+                  }}
+                  className="w-full py-2 px-3 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-semibold text-xs transition-all flex items-center justify-center space-x-2 shadow-md active:scale-98 disabled:opacity-50 cursor-pointer"
+                >
+                  <Archive className="w-3.5 h-3.5" />
+                  <span>Baixar Todos os Slides ({slides.length} em .ZIP)</span>
+                </button>
+              )}
             </div>
           </div>
         )}

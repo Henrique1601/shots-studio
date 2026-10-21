@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useMockupStore } from "@/store/mockupStore";
 import {
   Layers,
@@ -9,6 +9,8 @@ import {
   Trash2,
   ChevronLeft,
   ChevronRight,
+  Play,
+  Pause,
   X,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -24,6 +26,17 @@ export const CarouselBar = () => {
     removeSlide,
     setActiveSlideIndex,
   } = useMockupStore();
+
+  const [isPlayingSlideshow, setIsPlayingSlideshow] = useState(false);
+
+  useEffect(() => {
+    if (!isPlayingSlideshow || slides.length <= 1) return;
+    const interval = setInterval(() => {
+      const nextIdx = (activeSlideIndex + 1) % slides.length;
+      setActiveSlideIndex(nextIdx);
+    }, 2800);
+    return () => clearInterval(interval);
+  }, [isPlayingSlideshow, slides.length, activeSlideIndex, setActiveSlideIndex]);
 
   if (!isCarouselOpen) {
     return (
@@ -74,6 +87,26 @@ export const CarouselBar = () => {
               <ChevronRight className="w-3.5 h-3.5" />
             </button>
           </div>
+
+          {/* Slideshow Presentation Mode Button */}
+          {slides.length > 1 && (
+            <button
+              onClick={() => setIsPlayingSlideshow(!isPlayingSlideshow)}
+              className={`px-2 py-1 rounded-lg text-[11px] font-medium flex items-center space-x-1.5 transition-colors cursor-pointer ${
+                isPlayingSlideshow
+                  ? "bg-blue-600 text-white shadow-sm"
+                  : "bg-white/5 hover:bg-white/10 text-neutral-300 hover:text-white border border-white/5"
+              }`}
+              title={isPlayingSlideshow ? "Pausar Apresentação" : "Apresentação Automática (Slideshow)"}
+            >
+              {isPlayingSlideshow ? (
+                <Pause className="w-3 h-3 text-white" />
+              ) : (
+                <Play className="w-3 h-3 text-blue-400" />
+              )}
+              <span>{isPlayingSlideshow ? "Pausar" : "Apresentar"}</span>
+            </button>
+          )}
 
           <button
             onClick={() => setCarouselOpen(false)}

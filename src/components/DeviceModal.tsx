@@ -90,11 +90,27 @@ export const DeviceModal = () => {
       thumb: "/shots-assets/devices/iphone17_black.png",
     },
     {
+      id: "foldable-phone",
+      category: "android",
+      name: "Foldable Phone",
+      sub: "Dual Screen Unfolded",
+      badge: "Fold",
+      thumb: "/shots-assets/devices/ipadpro13.png",
+    },
+    {
       id: "macbook",
       category: "mac",
       name: "MacBook Pro 16",
       sub: "3456 / 2234",
       thumb: "/shots-assets/devices/macbookpro16.png",
+    },
+    {
+      id: "imac-24",
+      category: "mac",
+      name: "iMac 24\" M4",
+      sub: "4.5K Retina Display",
+      badge: "M4",
+      thumb: "/shots-assets/devices/minimaldesktop.png",
     },
     {
       id: "ipad-pro",
