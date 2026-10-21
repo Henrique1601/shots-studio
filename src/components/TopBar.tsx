@@ -24,6 +24,7 @@ import {
 import * as htmlToImage from "html-to-image";
 import confetti from "canvas-confetti";
 import { SavedShotsModal } from "./SavedShotsModal";
+import { FeedbackModal } from "./FeedbackModal";
 import { SOCIAL_MEDIA_PRESETS } from "@/types/mockup";
 
 export const TopBar = () => {
@@ -44,6 +45,7 @@ export const TopBar = () => {
   const [isExporting, setIsExporting] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
   const [isSavedShotsOpen, setIsSavedShotsOpen] = useState(false);
+  const [isFeedbackOpen, setIsFeedbackOpen] = useState(false);
 
   const exportOptions = {
     quality: 0.95,
@@ -363,7 +365,7 @@ export const TopBar = () => {
 
         {/* Feedback */}
         <button
-          onClick={() => showToast("Obrigado pelo seu feedback! 💬", "info")}
+          onClick={() => setIsFeedbackOpen(true)}
           title="Feedback"
           aria-label="Send feedback"
           className="p-1.5 rounded-xl hover:bg-[#252525] text-neutral-400 hover:text-white transition-colors cursor-pointer"
@@ -543,6 +545,12 @@ export const TopBar = () => {
           </div>
         )}
       </div>
+
+      {/* Feedback Modal */}
+      <FeedbackModal
+        isOpen={isFeedbackOpen}
+        onClose={() => setIsFeedbackOpen(false)}
+      />
 
       {/* Saved Shots Modal */}
       <SavedShotsModal

@@ -66,6 +66,7 @@ const defaultConfig: MockupConfig = {
   shapesItems: [1, 2, 3, 4, 5, 6],
   animationPreset: "none",
   isAnimationPlaying: false,
+  isTimelineOpen: false,
   animationDuration: 5,
   mockupMode: "single",
   secondaryImageUrl: null,

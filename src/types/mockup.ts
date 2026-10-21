@@ -192,6 +192,7 @@ export interface MockupConfig {
   // Animation & Motion
   animationPreset: AnimationPreset;
   isAnimationPlaying: boolean;
+  isTimelineOpen?: boolean;
   animationDuration: number;
   // Duo / Multi-Device Mode (Single, Duo, Trio)
   mockupMode: "single" | "duo" | "trio";

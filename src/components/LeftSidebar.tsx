@@ -269,7 +269,8 @@ export const LeftSidebar = () => {
   const deviceSpec = DEVICE_SPECS[config.frameType] || DEVICE_SPECS.screenshot;
 
   return (
-    <aside className="hidden lg:flex w-[228px] shrink-0 bg-[#1c1c1c] rounded-2xl flex-col h-[calc(100vh-6.5rem)] my-auto ml-3 select-none text-white overflow-hidden shadow-2xl border border-white/5 relative z-20">
+    <div className="hidden lg:flex relative h-[calc(100vh-6.5rem)] my-auto ml-3 select-none z-30 shrink-0">
+      <aside className="w-[228px] shrink-0 bg-[#1c1c1c] rounded-2xl flex flex-col h-full text-white overflow-hidden shadow-2xl border border-white/5 relative z-20">
       {/* Top Tabs: Mockup vs Frame with active indicator pill */}
       <div className="p-2 border-b border-[#262626] shrink-0">
         <div className="flex bg-[#141414] p-0.5 rounded-xl relative">
@@ -1879,9 +1880,11 @@ export const LeftSidebar = () => {
         </div>
       </div>
 
+      </aside>
+
       {/* ================= FLOATING MINI-SIDEBARS ("MINI SIDEBARS DAS OPÇÕES") ================= */}
       {activeMiniSidebar !== "none" && (
-        <div className="absolute left-[236px] top-4 z-50 w-72 bg-[#1c1c1c] rounded-2xl border border-white/10 shadow-2xl p-4 text-white space-y-3.5 animate-in fade-in zoom-in-95 duration-150">
+        <div className="absolute left-[240px] top-0 z-50 w-72 bg-[#1c1c1c] rounded-2xl border border-white/10 shadow-2xl p-4 text-white space-y-3.5 animate-in fade-in zoom-in-95 duration-150 backdrop-blur-xl">
           {/* A. Background Effects Mini-Sidebar (media_1792516812407_0f130f7c.png) */}
           {activeMiniSidebar === "bg-effects" && (
             <div className="space-y-3.5">
@@ -2502,6 +2505,6 @@ export const LeftSidebar = () => {
           )}
         </div>
       )}
-    </aside>
+    </div>
   );
 };
