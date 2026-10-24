@@ -65,3 +65,14 @@ O estúdio suporta a criação de múltiplos slides independentes em uma mesma s
 1. Cada slide armazena seu próprio conjunto de imagens (primária, secundária, terciária) e configurações exclusivas de moldura.
 2. O **CarouselBar** inferior permite duplicar, reordenar, adicionar e alternar slides com transições suaves.
 3. O botão de exportação em lote gera um arquivo `.zip` com numeração ordenada sequencial (`slide-01.png`, `slide-02.png`, etc.).
+
+
+## 🔄 Refatoração Arquitetural v1.2 (Desmembramento de Monólitos)
+
+- **LeftSidebar.tsx reduzido de 2.549 para 85 linhas**: Atua agora estritamente como orquestrador dos sub-painéis.
+- **MockupTab.tsx (762 linhas)**: Isolado em src/components/sidebar/MockupTab.tsx.
+- **FrameTab.tsx (1.109 linhas)**: Isolado em src/components/sidebar/FrameTab.tsx.
+- **MiniSidebars.tsx (718 linhas)**: Isolado em src/components/sidebar/MiniSidebars.tsx.
+- **useCanvasOrbit.ts (86 linhas)**: Hook desacoplado de órbita 3D, precisão com Shift e reset duplo-clique.
+- **CanvasOverlays.tsx (216 linhas)**: Extraído de MockupCanvas (VFX, iluminação de estúdio, anotações, marca d'água, 3D shapes).
+- **src/constants/presets.ts & shapes.ts**: Separação clara entre tipos puros (	ypes/mockup.ts) e constantes/presets de renderização.

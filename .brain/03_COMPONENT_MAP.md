@@ -84,3 +84,13 @@ graph TD
 
 ### 5. `DeviceModal.tsx`
 - **Responsabilidade:** Catálogo modal estruturado por seções oficiais (`Essentials`, `iPhone 17 Lineup`, `Flagships & Workstations`) e filtros no topo por tipo de dispositivo com seleção instantânea.
+
+
+### 📦 Sub-componentes Modulares (v1.2)
+- src/components/sidebar/MockupTab.tsx: Controles do dispositivo, 12 estilos, bordas, sombras e detalhes da tela.
+- src/components/sidebar/FrameTab.tsx: Proporções de aspect ratio, dimensões customizadas, seletores de background 4K.
+- src/components/sidebar/MiniSidebars.tsx: Mini sidebars flutuantes (VFX, Lighting, Watermark Profiles, 3D Shapes).
+- src/components/canvas/CanvasOverlays.tsx: Camadas de pós-processamento e anotações sobre o mockup.
+- src/hooks/useCanvasOrbit.ts: Hook de captura de ponteiro e cálculo de inclinação 3D espacial.
+- src/constants/presets.ts: Catálogo de dispositivos, especificações, gradientes e paletas.
+- src/constants/shapes.ts: Conjuntos de layout 3D flutuante.
