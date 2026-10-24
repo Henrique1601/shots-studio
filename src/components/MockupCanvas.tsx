@@ -541,6 +541,7 @@ export const MockupCanvas = () => {
                 style={{
                   objectFit: config.imageFit || "cover",
                   objectPosition: `50% ${config.imagePositionY ?? 50}%`,
+                  ...getImageFilterStyle(),
                 }}
                 className="w-full h-full block select-none pointer-events-none transition-all duration-150"
               />
@@ -737,6 +738,7 @@ export const MockupCanvas = () => {
               style={{
                 objectFit: config.imageFit || "cover",
                 objectPosition: `50% ${config.imagePositionY ?? 50}%`,
+                ...getImageFilterStyle(),
               }}
               className="w-full h-full block select-none transition-all duration-150"
             />
