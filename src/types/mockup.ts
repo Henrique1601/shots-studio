@@ -3,6 +3,7 @@ export type FrameType =
   | "browser"
   | "minimal-desktop"
   | "iphone-17"
+  | "iphone-17-air"
   | "iphone-16-pro"
   | "pixel-9-pro"
   | "macbook"
@@ -295,6 +296,20 @@ export const DEVICE_SPECS: Record<FrameType, DeviceSpec> = {
     },
     containerClass: "iphone-17",
   },
+  "iphone-17-air": {
+    name: "iPhone 17 Air",
+    aspectRatio: "1260 / 2736",
+    isDevice: true,
+    deviceImg: "/shots-assets/devices/iphone17_black.png",
+    maskSvg: "/shots-assets/devices/iphone17air_display.svg",
+    screenBounds: {
+      left: "8.50%",
+      top: "8.50%",
+      width: "83.00%",
+      height: "83.00%",
+    },
+    containerClass: "iphone-17-air",
+  },
   "iphone-16-pro": {
     name: "iPhone 16 Pro",
     aspectRatio: "1508 / 3279",
@@ -516,6 +531,10 @@ export const STYLE_OPTIONS = [
   { id: "inset-dark", label: "Inset Dark", img: "/shots-assets/mockups_Screenshot_styles_inset-dark.png" },
   { id: "outline", label: "Outline", img: "/shots-assets/mockups_Screenshot_styles_outline.png" },
   { id: "border", label: "Border", img: "/shots-assets/mockups_Screenshot_styles_border.png" },
+  { id: "retro", label: "Retro", img: "/shots-assets/mockups_Screenshot_styles_default.png" },
+  { id: "card", label: "Card", img: "/shots-assets/mockups_Screenshot_styles_glass-light.png" },
+  { id: "stack", label: "Stack", img: "/shots-assets/mockups_Screenshot_styles_inset-light.png" },
+  { id: "stack-2", label: "Stack 2", img: "/shots-assets/mockups_Screenshot_styles_inset-dark.png" },
 ];
 
 export const SHADOW_OPTIONS = [

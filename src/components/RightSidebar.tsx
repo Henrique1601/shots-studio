@@ -11,6 +11,7 @@ export const RightSidebar = () => {
   const [activeMode, setActiveMode] = useState<"zoom" | "tilt">("zoom");
   const padRef = useRef<HTMLDivElement>(null);
   const [isDraggingPad, setIsDraggingPad] = useState(false);
+  const isCustomTilted = config.tiltX !== 0 || config.tiltY !== 0 || config.tiltZ !== 0 || (config.zoom !== 100 && config.layoutPreset === "center");
 
   const updateTiltFromPointer = (e: React.PointerEvent<HTMLDivElement> | PointerEvent) => {
     if (!padRef.current) return;
@@ -196,21 +197,16 @@ export const RightSidebar = () => {
             </div>
 
             {/* Helper Labels */}
-            <div className="absolute bottom-1.5 left-2 text-[9px] text-neutral-500 font-mono pointer-events-none">
-              {isDraggingPad
-                ? `X: ${config.tiltX}° · Y: ${config.tiltY}°`
-                : "Drag or hold ⇧ for precision"}
-            </div>
-            <div className="absolute bottom-1.5 right-2 text-[9px] text-neutral-500 font-mono pointer-events-none">
-              2x click: reset
+            <div className="absolute bottom-1.5 inset-x-0 text-center text-[10px] text-neutral-400 font-sans pointer-events-none">
+              {isDraggingPad ? `X: ${config.tiltX}° · Y: ${config.tiltY}°` : "Hold ⇧ for precision"}
             </div>
           </div>
 
           {/* Exact Shots.so Zoom Slider (75% to 400%) */}
           {activeMode === "zoom" ? (
-            <div className="mt-2.5 flex items-center justify-between text-xs px-1">
-              <span className="text-neutral-400 text-[11px]">Zoom</span>
-              <div className="flex items-center space-x-2 w-32">
+            <div className="mt-2.5 px-3 py-1.5 rounded-xl bg-[#222222] border border-white/5 flex items-center justify-between text-xs">
+              <span className="text-neutral-400 text-[11px] font-medium">Zoom</span>
+              <div className="flex items-center space-x-2.5 flex-1 max-w-[130px] ml-2">
                 <input
                   type="range"
                   min="75"
@@ -221,7 +217,7 @@ export const RightSidebar = () => {
                   }
                   className="w-full accent-white h-1 bg-[#3a3a3a] rounded-lg appearance-none cursor-pointer"
                 />
-                <span className="text-[10px] text-neutral-300 w-8 text-right font-mono">
+                <span className="text-[11px] text-white font-mono w-9 text-right font-medium">
                   {config.zoom}%
                 </span>
               </div>
@@ -268,15 +264,58 @@ export const RightSidebar = () => {
           )}
         </div>
 
-        {/* LAYOUT PRESETS */}
+        {/* LAYOUT PRESETS (or BASE LAYOUT when flat) */}
         <div>
           <div className="text-[10px] font-bold text-neutral-400 tracking-wider mb-2">
-            LAYOUT PRESETS
+            {isCustomTilted ? "LAYOUT PRESETS" : "BASE LAYOUT"}
           </div>
 
           <div className="space-y-2">
+            {/* Custom Layout Card (Shows prominently with white border when tilted away from flat center) */}
+            {isCustomTilted && (
+              <div className="w-full p-1.5 rounded-xl border border-white/80 bg-[#262626] text-left transition-all relative overflow-hidden shadow-lg">
+                <div className="w-full h-20 rounded-lg bg-black/40 flex items-center justify-center relative overflow-hidden">
+                  <div
+                    style={{
+                      transform: `perspective(300px) rotateX(${config.tiltX}deg) rotateY(${config.tiltY}deg) rotateZ(${config.tiltZ}deg) scale(${Math.min(1.4, config.zoom / 180)})`,
+                    }}
+                    className="w-24 h-16 rounded-md bg-[#161616] border border-white/30 shadow-2xl flex items-center justify-center"
+                  >
+                    <div className="w-3 h-3 rounded-full bg-white/30" />
+                  </div>
+
+                  <div className="absolute inset-0 bg-black/30 backdrop-blur-[1px] flex items-center justify-center">
+                    <button
+                      onClick={() =>
+                        updateConfig({
+                          tiltX: 0,
+                          tiltY: 0,
+                          tiltZ: 0,
+                          zoom: 100,
+                          layoutPreset: "center",
+                        })
+                      }
+                      className="px-3 py-1 rounded-full bg-black/90 hover:bg-black border border-white/30 text-[10px] font-semibold text-white flex items-center gap-1.5 shadow-xl transition-transform hover:scale-105 cursor-pointer"
+                      title="Reset to Flat Center"
+                    >
+                      <X className="w-3 h-3 text-neutral-300" />
+                      <span>Custom Layout</span>
+                    </button>
+                  </div>
+                </div>
+                <div className="mt-1 px-1 flex items-center justify-between">
+                  <span className="text-[11px] font-medium text-white">
+                    Custom Layout
+                  </span>
+                  <span className="text-[9px] text-neutral-400 font-mono">
+                    {config.zoom}%
+                  </span>
+                </div>
+              </div>
+            )}
+
             {LAYOUT_PRESETS_LIST.map((preset) => {
-              const isSelected = config.layoutPreset === preset.id;
+              const isSelected = !isCustomTilted && config.layoutPreset === preset.id;
               return (
                 <button
                   key={preset.id}
@@ -304,15 +343,6 @@ export const RightSidebar = () => {
                     >
                       <div className="w-3 h-3 rounded-full bg-white/20" />
                     </div>
-
-                    {isSelected && (
-                      <div className="absolute inset-0 bg-black/50 backdrop-blur-[1px] flex items-center justify-center">
-                        <span className="px-2 py-0.5 rounded-full bg-[#111111]/90 border border-white/20 text-[9px] font-semibold text-white flex items-center gap-1 shadow-md">
-                          <X className="w-2.5 h-2.5 text-neutral-400" />
-                          Custom Layout
-                        </span>
-                      </div>
-                    )}
                   </div>
                   <div className="mt-1 px-1 flex items-center justify-between">
                     <span className="text-[11px] font-medium text-neutral-300">

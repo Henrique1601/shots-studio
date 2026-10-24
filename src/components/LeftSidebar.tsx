@@ -30,6 +30,7 @@ import {
   Eye,
   EyeOff,
   SunMedium,
+  Focus,
   Box,
   Wand2,
   Code2,
@@ -48,6 +49,7 @@ export const LeftSidebar = () => {
   const {
     config,
     imageUrl,
+    imageDimensions,
     setImageUrl,
     setSecondaryImageUrl,
     setTertiaryImageUrl,
@@ -684,29 +686,55 @@ export const LeftSidebar = () => {
             <div className="text-[10px] font-bold text-neutral-400 tracking-wider mb-2">
               STYLE
             </div>
-            <div className="grid grid-cols-2 gap-1.5">
+            <div className="grid grid-cols-3 gap-1.5">
               {STYLE_OPTIONS.map((style) => (
                 <button
                   key={style.id}
                   onClick={() => updateConfig({ frameStyle: style.id as FrameStyle })}
                   className={`flex flex-col items-center p-1 rounded-xl border transition-all cursor-pointer ${
                     config.frameStyle === style.id
-                      ? "border-white bg-[#2e2e2e]"
+                      ? "border-white bg-[#2e2e2e] shadow-sm"
                       : "border-transparent bg-[#222222] hover:bg-[#282828]"
                   }`}
                 >
-                  <div className="w-full h-10 rounded-lg overflow-hidden bg-black/30 flex items-center justify-center mb-1">
-                    <img
-                      src={style.img}
-                      alt={style.label}
-                      className="w-full h-full object-cover"
-                    />
+                  <div className="w-full h-9 rounded-lg overflow-hidden bg-black/30 flex items-center justify-center mb-1 relative border border-white/5">
+                    {style.id === "retro" ? (
+                      <div className="w-6 h-5 rounded-xs border-2 border-neutral-700 bg-neutral-200 shadow-sm" />
+                    ) : style.id === "card" ? (
+                      <div className="w-6 h-5 rounded-sm bg-white border border-neutral-300 shadow-md" />
+                    ) : style.id === "stack" ? (
+                      <div className="relative w-6 h-5">
+                        <div className="absolute inset-0 translate-y-1 translate-x-1 rounded-xs bg-white/20 border border-white/10" />
+                        <div className="absolute inset-0 rounded-xs bg-white/80 shadow-md" />
+                      </div>
+                    ) : style.id === "stack-2" ? (
+                      <div className="relative w-6 h-5">
+                        <div className="absolute inset-0 rotate-6 rounded-xs bg-white/30" />
+                        <div className="absolute inset-0 rounded-xs bg-white/90 shadow-md" />
+                      </div>
+                    ) : (
+                      <img
+                        src={style.img}
+                        alt={style.label}
+                        className="w-full h-full object-cover"
+                      />
+                    )}
                   </div>
-                  <span className="text-[10px] text-neutral-300 truncate w-full text-center">
+                  <span className="text-[9px] text-neutral-300 truncate w-full text-center">
                     {style.label}
                   </span>
                 </button>
               ))}
+            </div>
+            {/* More Styles Pill */}
+            <div className="mt-1.5 flex justify-center">
+              <button
+                type="button"
+                className="w-full py-1 rounded-xl bg-[#222222] hover:bg-[#282828] text-neutral-400 hover:text-white text-xs flex items-center justify-center transition-colors cursor-pointer border border-white/5"
+                title="More Style Finishes"
+              >
+                •••
+              </button>
             </div>
           </div>
 
@@ -793,10 +821,10 @@ export const LeftSidebar = () => {
               ))}
             </div>
 
-            {/* Exact Opacity Slider (10 to 70) */}
-            <div className="mt-2.5 flex items-center justify-between text-xs px-1">
-              <span className="text-neutral-400 text-[11px]">Opacity</span>
-              <div className="flex items-center space-x-2 w-28">
+            {/* Exact Integrated Capsule Opacity Slider (10 to 70) */}
+            <div className="mt-2.5 px-3 py-1.5 rounded-xl bg-[#242424] border border-white/5 flex items-center justify-between text-xs">
+              <span className="text-neutral-400 text-[11px] font-medium">Opacity</span>
+              <div className="flex items-center space-x-2 w-28 ml-2">
                 <input
                   type="range"
                   min="10"
@@ -807,7 +835,7 @@ export const LeftSidebar = () => {
                   }
                   className="w-full accent-white h-1 bg-[#3a3a3a] rounded-lg appearance-none cursor-pointer"
                 />
-                <span className="text-[10px] text-neutral-300 w-4 text-right">
+                <span className="text-[11px] text-white font-mono w-5 text-right font-medium">
                   {config.shadowOpacity}
                 </span>
               </div>
@@ -815,10 +843,10 @@ export const LeftSidebar = () => {
 
             <button
               onClick={() => setShowAdjustLight(!showAdjustLight)}
-              className="w-full mt-2.5 py-1.5 rounded-xl bg-[#242424] hover:bg-[#2a2a2a] text-[11px] text-neutral-300 flex items-center justify-center space-x-1.5 transition-colors cursor-pointer"
+              className="w-full mt-2.5 py-1.5 rounded-xl bg-[#242424] hover:bg-[#2c2c2c] border border-white/5 text-[11px] text-neutral-200 flex items-center justify-center space-x-1.5 transition-colors cursor-pointer font-medium"
             >
-              <SunMedium className="w-3.5 h-3.5 text-neutral-400" />
-              <span>{showAdjustLight ? "Fechar Luz" : "Adjust Light"}</span>
+              <Focus className="w-3.5 h-3.5 text-neutral-400" />
+              <span>{showAdjustLight ? "Close Adjustments" : "Adjust Light"}</span>
             </button>
 
             {showAdjustLight && (
@@ -881,7 +909,7 @@ export const LeftSidebar = () => {
             </div>
             <button
               onClick={() => updateConfig({ showMockup: !config.showMockup })}
-              className="w-full py-2 px-3 rounded-xl bg-[#242424] hover:bg-[#2c2c2c] text-xs font-medium text-neutral-200 flex items-center justify-center space-x-2 transition-all cursor-pointer"
+              className="w-full py-2 px-3 rounded-xl bg-[#242424] hover:bg-[#2c2c2c] text-xs font-medium text-neutral-200 flex items-center justify-center space-x-2 transition-all cursor-pointer border border-white/5"
             >
               {config.showMockup ? (
                 <>
@@ -895,6 +923,29 @@ export const LeftSidebar = () => {
                 </>
               )}
             </button>
+          </div>
+
+          {/* DETAILS (Exact Shots.so Spec) */}
+          <div>
+            <div className="text-[10px] font-bold text-neutral-400 tracking-wider mb-1.5">
+              DETAILS
+            </div>
+            <div className="p-3 rounded-2xl bg-[#242424] border border-white/5 space-y-2 text-xs">
+              <div className="flex items-center justify-between">
+                <span className="text-neutral-400 text-[11px]">Device</span>
+                <span className="font-semibold text-white text-[11px]">{deviceSpec.name}</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-neutral-400 text-[11px]">Screen pixels</span>
+                <span className="font-medium text-neutral-200 text-[11px]">
+                  {deviceSpec.isDevice
+                    ? (deviceSpec.aspectRatio.replace(" / ", " × ") + " px")
+                    : imageDimensions
+                    ? `${imageDimensions.width} × ${imageDimensions.height} px`
+                    : "Adapts to image"}
+                </span>
+              </div>
+            </div>
           </div>
         </div>
 

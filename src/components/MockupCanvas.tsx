@@ -369,7 +369,7 @@ export const MockupCanvas = () => {
           rotateX: config.tiltX,
           rotateY: config.tiltY,
           rotateZ: config.tiltZ,
-          scale: config.zoom / 100,
+          scale: (config.zoom / 100) * (config.scale || 1),
         },
         transition: { type: "spring", stiffness: 320, damping: 28 },
       };
@@ -749,6 +749,10 @@ export const MockupCanvas = () => {
           config.frameStyle === "inset-dark" && "bg-[#111111] border border-neutral-800 shadow-inner",
           config.frameStyle === "outline" && "border-2 border-white/80 bg-black/40",
           config.frameStyle === "border" && "border-4 border-black bg-[#161616]",
+          config.frameStyle === "retro" && "border-8 border-[#222222] ring-1 ring-white/10 bg-[#e8e8ed] shadow-2xl",
+          config.frameStyle === "card" && "bg-white p-2.5 sm:p-3.5 shadow-2xl border border-neutral-200",
+          config.frameStyle === "stack" && "bg-white/95 border border-white/40 shadow-2xl relative",
+          config.frameStyle === "stack-2" && "bg-white/95 border border-white/40 shadow-2xl relative",
           config.frameStyle === "default" && "bg-[#0d0d0d]"
         )}
       >
@@ -764,6 +768,20 @@ export const MockupCanvas = () => {
               {config.browserUrl || (config.frameType === "minimal-desktop" ? "Studio Workspace" : "shots.so/editor")}
             </div>
             <div className="w-8" />
+          </div>
+        )}
+
+        {/* Stacked Underlay Cards for Stack & Stack-2 Styles */}
+        {config.frameStyle === "stack" && (
+          <div className="absolute inset-0 pointer-events-none -z-10">
+            <div className="absolute inset-0 translate-y-3 translate-x-3 rounded-[inherit] bg-white/20 border border-white/10 shadow-lg" />
+            <div className="absolute inset-0 translate-y-1.5 translate-x-1.5 rounded-[inherit] bg-white/40 border border-white/20 shadow-md" />
+          </div>
+        )}
+        {config.frameStyle === "stack-2" && (
+          <div className="absolute inset-0 pointer-events-none -z-10">
+            <div className="absolute inset-0 rotate-3 rounded-[inherit] bg-white/25 border border-white/15 shadow-lg" />
+            <div className="absolute inset-0 -rotate-2 rounded-[inherit] bg-white/45 border border-white/25 shadow-md" />
           </div>
         )}
 
