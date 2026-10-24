@@ -56,7 +56,7 @@ Planejamento estratégico e catálogo exaustivo de evolução para o **Shots Stu
   - Integração com busca paginada e virtualizada no Unsplash API para backgrounds com debounce e sem memory leak.
 
 ### 3. ⌨️ Atalhos de Teclado Globais & Histórico (Undo / Redo)
-- [ ] **Global Keyboard Shortcuts Engine**:
+- [x] **Global Keyboard Shortcuts Engine** (Concluído em v1.2.2):
   - `D`: Abre modal de aparelhos (*DeviceModal*).
   - `T`: Abre galeria de templates (*TemplatesModal*).
   - `1` / `2`: Alterna instantaneamente entre tabs Mockup e Frame.
@@ -96,7 +96,7 @@ Planejamento estratégico e catálogo exaustivo de evolução para o **Shots Stu
   - Exportação de animações com o vídeo reproduzindo dentro do dispositivo.
 
 ### 3. 📋 Cópia Instantânea para Área de Transferência (Clipboard API)
-- [ ] **Copy to Clipboard (PNG/WebP)**:
+- [x] **Copy to Clipboard (PNG/WebP)** (Concluído em v1.2.2):
   - Botão "Copy Image" no TopBar e atalho `Ctrl+C`.
   - Converter canvas via `toBlob('image/png')` e escrever no clipboard com `navigator.clipboard.write([new ClipboardItem(...)])` sem download em disco.
 
