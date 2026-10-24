@@ -11,44 +11,110 @@ import { VideoTimeline } from "@/components/VideoTimeline";
 import { CarouselBar } from "@/components/CarouselBar";
 import { MobileDrawer } from "@/components/MobileDrawer";
 import { ToastContainer } from "@/components/ToastContainer";
+import { KeyboardShortcutsModal } from "@/components/common/KeyboardShortcutsModal";
 import { useMockupStore } from "@/store/mockupStore";
+import { useExportStudio } from "@/hooks/useExportStudio";
 
 export default function Home() {
   const {
     setImageUrl,
     setImageDimensions,
+    updateConfig,
     undo,
     redo,
     showToast,
+    isDeviceModalOpen,
+    isTemplatesModalOpen,
     setDeviceModalOpen,
     setTemplatesModalOpen,
   } = useMockupStore();
 
-  // Global Keyboard Shortcuts (Ctrl+V, Ctrl+Z, Ctrl+Y, Delete, Esc)
+  const { handleExport, handleCopy } = useExportStudio();
+
+  // Global Keyboard Shortcuts Engine
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       const activeTag = document.activeElement?.tagName.toLowerCase();
-      if (activeTag === "input" || activeTag === "textarea") return;
+      if (activeTag === "input" || activeTag === "textarea" || (document.activeElement as HTMLElement)?.isContentEditable) {
+        return;
+      }
 
       const isMac = navigator.platform.toUpperCase().indexOf("MAC") >= 0;
       const modKey = isMac ? e.metaKey : e.ctrlKey;
 
+      // 1. D: Toggle Devices Modal
+      if (e.key.toLowerCase() === "d" && !modKey && !e.altKey) {
+        e.preventDefault();
+        setDeviceModalOpen(!isDeviceModalOpen);
+        return;
+      }
+
+      // 2. T: Toggle Templates Modal
+      if (e.key.toLowerCase() === "t" && !modKey && !e.altKey) {
+        e.preventDefault();
+        setTemplatesModalOpen(!isTemplatesModalOpen);
+        return;
+      }
+
+      // 3. Tab switching with keys '1' and '2'
+      if (e.key === "1" && !modKey && !e.altKey) {
+        e.preventDefault();
+        updateConfig({ activeTab: "mockup" });
+        showToast("Aba: Mockup", "info");
+        return;
+      }
+      if (e.key === "2" && !modKey && !e.altKey) {
+        e.preventDefault();
+        updateConfig({ activeTab: "frame" });
+        showToast("Aba: Frame", "info");
+        return;
+      }
+
+      // 4. Ctrl + C: Copy to Clipboard
+      if (modKey && e.key.toLowerCase() === "c" && !e.shiftKey) {
+        // If text is highlighted, let native copy work
+        if (window.getSelection()?.toString().length) return;
+        e.preventDefault();
+        handleCopy();
+        return;
+      }
+
+      // 5. Ctrl + E: Trigger Quick Export
+      if (modKey && e.key.toLowerCase() === "e") {
+        e.preventDefault();
+        handleExport();
+        return;
+      }
+
+      // 6. Ctrl + Z: Undo
       if (modKey && e.key.toLowerCase() === "z" && !e.shiftKey) {
         e.preventDefault();
         undo();
         showToast("Desfazer (Undo) ↩️", "info");
-      } else if (
+        return;
+      }
+
+      // 7. Ctrl + Y or Ctrl + Shift + Z: Redo
+      if (
         (modKey && e.key.toLowerCase() === "y") ||
         (modKey && e.shiftKey && e.key.toLowerCase() === "z")
       ) {
         e.preventDefault();
         redo();
         showToast("Refazer (Redo) ↪️", "info");
-      } else if (e.key === "Delete" || e.key === "Backspace") {
+        return;
+      }
+
+      // 8. Delete / Backspace: Clear media
+      if (e.key === "Delete" || e.key === "Backspace") {
         setImageUrl(null);
         setImageDimensions(null);
         showToast("Imagem removida do mockup", "info");
-      } else if (e.key === "Escape") {
+        return;
+      }
+
+      // 9. Escape: Close open modals
+      if (e.key === "Escape") {
         setDeviceModalOpen(false);
         setTemplatesModalOpen(false);
       }
@@ -96,11 +162,16 @@ export default function Home() {
   }, [
     setImageUrl,
     setImageDimensions,
+    updateConfig,
     undo,
     redo,
     showToast,
+    isDeviceModalOpen,
+    isTemplatesModalOpen,
     setDeviceModalOpen,
     setTemplatesModalOpen,
+    handleCopy,
+    handleExport,
   ]);
 
   return (
@@ -134,6 +205,9 @@ export default function Home() {
 
       {/* Modal da Galeria de Templates Curados */}
       <TemplatesModal />
+
+      {/* Global Keyboard Shortcuts Modal (?) */}
+      <KeyboardShortcutsModal />
 
       {/* Global Toast Notification System */}
       <ToastContainer />
