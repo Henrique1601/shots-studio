@@ -34,7 +34,7 @@ Planejamento estratégico e catálogo exaustivo de evolução para o **Shots Stu
 ## 🟡 Fase 2: Excelência de Código, Performance & Engenharia (v1.3.0)
 
 ### 1. 🧱 Arquitetura, Modularização & Clean Code
-- [ ] **Desacoplar `useExportStudio.ts` de `TopBar.tsx`**:
+- [x] **Desacoplar `useExportStudio.ts` de `TopBar.tsx`** (Concluído em v1.2.1):
   - Extrair os 4 pipelines de exportação (`handleExport`, `handleExportVideo`, `handleExportGif`, `handleExportAllSlidesZip`) para `src/hooks/useExportStudio.ts`.
   - Reduzir `TopBar.tsx` de 647 para menos de 180 linhas puramente declarativas.
 - [ ] **Desacoplar `DeviceFrameRenderer.tsx` de `MockupCanvas.tsx`**:
@@ -79,7 +79,7 @@ Planejamento estratégico e catálogo exaustivo de evolução para o **Shots Stu
 ## 🟣 Fase 3: Mídia Rica, Tratamento de Imagem & Estúdio Criativo (v1.4.0)
 
 ### 1. 🎛️ Filtros de Imagem em Tempo Real (Image Grading)
-- [ ] **Controles de Tratamento de Imagem no MockupTab**:
+- [x] **Controles de Tratamento de Imagem no MockupTab** (Concluído em v1.2.1):
   - Slider de Brilho (50% a 150%).
   - Slider de Contraste (50% a 150%).
   - Slider de Saturação (0% a 200%).
