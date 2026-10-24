@@ -1,6 +1,6 @@
 # 🚀 07_ROADMAP_AND_BACKLOG.md — Roadmap Estratégico & Backlog de Engenharia
 
-Planejamento estratégico de evolução para o **Shots Studio**, consolidado pela mesa diretora do **`global-master-agent`**.
+Planejamento estratégico de evolução para o **Shots Studio**, consolidado pela mesa diretora do **`global-master-agent`** com foco em engenharia de excelência, paridade 1:1, performance de 60fps e acabamento de estúdio nível Apple/Linear.
 
 ---
 
@@ -31,27 +31,32 @@ Planejamento estratégico de evolução para o **Shots Studio**, consolidado pel
 
 ---
 
-### 🟡 Fase 2: Excelência de Código & Produtividade Viral (v1.3.0 - Backlog Prioritário)
+### 🟡 Fase 2: Excelência de Código, Performance & Engenharia (v1.3.0 - Backlog Ativo)
 
-#### 1. 🧱 Arquitetura & Clean Code (TopBar & Canvas)
+#### 1. 🧱 Modularização & Clean Architecture
 - [ ] **Desacoplar `useExportStudio.ts` de `TopBar.tsx`**:
   - Extrair os 4 pipelines de exportação (`handleExport`, `handleExportVideo`, `handleExportGif`, `handleExportAllSlidesZip`) para um custom hook dedicado `src/hooks/useExportStudio.ts`.
   - Reduzir `TopBar.tsx` de 647 para menos de 180 linhas puramente declarativas.
 - [ ] **Desacoplar `DeviceFrameRenderer.tsx` de `MockupCanvas.tsx`**:
   - Isolar a renderização física dos chassis metálicos (Pixel 9 Pro, iMac 24", Ultrawide, Foldable, iPhone 17) em `src/components/canvas/DeviceFrameRenderer.tsx`.
   - Reduzir `MockupCanvas.tsx` para menos de 300 linhas focadas no container espacial e drag & drop.
+- [ ] **Modularizar `DeviceModal.tsx` (559 linhas)**:
+  - Criar `DeviceCategoryNav.tsx` e `DeviceCard.tsx` com animações suaves de entrada (stagger children).
 
-#### 2. ⚡ Performance & Caching
+#### 2. ⚡ Performance Extrema & Render em Background
 - [ ] **OffscreenCanvas & Background Processing**:
   - Mover gravação de vídeo/GIF para `OffscreenCanvas` com Web Workers, garantindo que o render 4K não bloqueie a thread principal da UI (mantendo 60fps constantes).
   - Suporte a compressão client-side em WebP com taxa de compressão configurável.
+- [ ] **Lazy Loading & Preloading de Modelos e Ativos 3D**:
+  - Implementar prefetch inteligente dos assets de 3D Shapes e device frames mais populares para eliminar delay ao alternar dispositivos.
 
 #### 3. ⌨️ Atalhos de Teclado Globais & Histórico (Undo / Redo)
-- [ ] **Global Keyboard Shortcuts**:
+- [ ] **Global Keyboard Shortcuts Engine**:
   - `D`: Abre modal de aparelhos (*DeviceModal*).
   - `T`: Abre galeria de templates (*TemplatesModal*).
   - `1` / `2`: Alterna instantaneamente entre tabs Mockup e Frame.
   - `Ctrl/Cmd + E`: Dispara exportação rápida da imagem atual.
+  - `Ctrl/Cmd + C`: Copia mockup renderizado em PNG direto para a área de transferência (`ClipboardItem API`).
   - `Espaço + Arrastar`: Modo Pan para navegar em telas ampliadas com zoom.
 - [ ] **Histórico Temporal (Undo / Redo)**:
   - Adicionar middleware `temporal` do Zustand no `mockupStore.ts` com suporte nativo a `Ctrl + Z` e `Ctrl + Shift + Z`.
@@ -68,9 +73,44 @@ Planejamento estratégico de evolução para o **Shots Studio**, consolidado pel
 
 ---
 
-### 🔵 Fase 3: Mídia Dinâmica, Filtros & Nuvem (v1.4.0+)
-- [ ] **Copiar Imagem Direto para o Clipboard (`ClipboardItem API`)**: Botão de cópia rápida sem download.
-- [ ] **Filtros de Imagem em Tempo Real**: Brilho, contraste, saturação e escala de cinza via CSS filters.
-- [ ] **Suporte a Vídeos (MP4/WebM) no Frame**: Autoplay em loop mutado dentro de telas de smartphones e monitores.
-- [ ] **Sincronização opcional com Supabase / Neon Postgres**: Persistência de workspaces e coleções de mockups na nuvem.
-- [ ] **Extensão para Google Chrome**: Captura de abas com 1 clique diretamente para o editor Shots Studio.
+### 🟣 Fase 2.5: Novas Capacidades de Estúdio & Mídia Rica (v1.3.5)
+
+#### 1. 📋 Cópia Instantânea para Área de Transferência (Clipboard API)
+- [ ] **Copy to Clipboard (PNG/WebP)**:
+  - Adicionar botão "Copy Image" no TopBar e atalho `Ctrl+C`.
+  - Converter canvas via `toBlob('image/png')` e escrever no clipboard com `navigator.clipboard.write([new ClipboardItem(...)])` sem forçar download em disco.
+
+#### 2. 🎛️ Filtros de Imagem em Tempo Real (CSS Image Grading)
+- [ ] **Controles de Tratamento de Imagem no MockupTab**:
+  - Slider de Brilho (50% a 150%).
+  - Slider de Contraste (50% a 150%).
+  - Slider de Saturação (0% a 200%).
+  - Toggle de Escala de Cinza / P&B Artístico.
+  - Filtro de Nitidez / Unsharp Mask via SVG filter overlay.
+
+#### 3. 🎥 Suporte a Vídeos (MP4 & WebM) Dentro dos Mockups
+- [ ] **Video Frame Player**:
+  - Aceitar arquivos `.mp4` e `.webm` no dropzone.
+  - Renderizar tag `<video>` com `autoPlay`, `loop`, `muted` e `playsInline` adaptando-se perfeitamente aos chassis curvos dos dispositivos.
+  - Sincronizar reprodução de vídeo com a rotação 3D do canvas.
+
+#### 4. 🪟 Molduras de Sistema Operacional Adicionais
+- [ ] **Windows 11 Mica / Acrylic Frame**:
+  - Barra de título estilo Windows 11 com cantos arredondados, botões minimizar/maximizar/fechar à direita e efeito translúcido Mica.
+- [ ] **iPad Pro com Apple Pencil & Magic Keyboard**:
+  - Novo mockup mostrando o iPad acoplado no Magic Keyboard com trackpad.
+
+#### 5. 🎨 Extrator Inteligente de Gradiente por Ponto Médio
+- [ ] **Smart Color Sampling**:
+  - Conta-gotas interativo (*EyeDropper API*) permitindo clicar em qualquer pixel da imagem inserida para transformar em cor de fundo ou gradiente harmônico instantaneamente.
+
+---
+
+### 🔵 Fase 3: Nuvem, Colaboração & Comunidade (v1.4.0+)
+- [ ] **Persistência em Nuvem (Supabase / Neon Postgres)**:
+  - Extensão do banco Dexie local para sincronização em nuvem autenticada (OAuth via Google/GitHub).
+  - Compartilhamento de mockups via URLs curtas públicas (`shots.app/s/xyz123`).
+- [ ] **Extensão Oficial para Chrome & Firefox**:
+  - Captura direta da aba visível ou elemento inspecionado enviando em 1 clique para o Shots Studio com mockup já selecionado.
+- [ ] **API de Exportação Headless (Serverless Render)**:
+  - Endpoint `POST /api/render` para geração automatizada de mockups via webhook (ideal para geradores de banners em CI/CD).
