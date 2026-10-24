@@ -758,6 +758,31 @@ export const MockupCanvas = () => {
     );
   };
 
+
+  // Dynamic CSS filter string for image grading
+  const getImageFilterStyle = (): React.CSSProperties => {
+    const filters: string[] = [];
+    if (config.brightness !== undefined && config.brightness !== 100) {
+      filters.push(`brightness(${config.brightness}%)`);
+    }
+    if (config.contrast !== undefined && config.contrast !== 100) {
+      filters.push(`contrast(${config.contrast}%)`);
+    }
+    if (config.saturation !== undefined && config.saturation !== 100) {
+      filters.push(`saturate(${config.saturation}%)`);
+    }
+    if (config.grayscale) {
+      filters.push("grayscale(100%)");
+    }
+    if (config.sepia) {
+      filters.push("sepia(100%)");
+    }
+    if (config.hueRotate && config.hueRotate !== 0) {
+      filters.push(`hue-rotate(${config.hueRotate}deg)`);
+    }
+    return filters.length ? { filter: filters.join(" ") } : {};
+  };
+
   const getCanvasBackgroundStyle = (): React.CSSProperties => {
     if (config.backgroundType === "transparent") {
       return {

@@ -7,6 +7,8 @@ import {
   Focus,
   EyeOff,
   Eye,
+  Sliders,
+  RotateCcw,
 } from "lucide-react";
 import { useMockupStore } from "@/store/mockupStore";
 import {
@@ -50,6 +52,7 @@ export const MockupTab: React.FC<MockupTabProps> = ({ onExtractPalette }) => {
 
   const [showAdjustLight, setShowAdjustLight] = useState(false);
   const [isExtracting, setIsExtracting] = useState(false);
+  const [showGrading, setShowGrading] = useState(false);
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -413,6 +416,138 @@ export const MockupTab: React.FC<MockupTabProps> = ({ onExtractPalette }) => {
               </div>
             </div>
           )}
+
+          
+          {/* Image Grading & Filters (Fase 3: Tratamento de Imagem) */}
+          {imageUrl && (
+            <div className="p-2.5 rounded-xl bg-[#222222] space-y-2 text-xs">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-1.5 text-neutral-300">
+                  <Sliders className="w-3.5 h-3.5 text-pink-400" />
+                  <span className="text-[11px] font-semibold">Tratamento de Imagem</span>
+                </div>
+                <div className="flex items-center space-x-1">
+                  {(config.brightness !== 100 || config.contrast !== 100 || config.saturation !== 100 || config.grayscale || config.sepia || (config.hueRotate && config.hueRotate !== 0)) && (
+                    <button
+                      onClick={() =>
+                        updateConfig({
+                          brightness: 100,
+                          contrast: 100,
+                          saturation: 100,
+                          grayscale: false,
+                          sepia: false,
+                          hueRotate: 0,
+                        })
+                      }
+                      title="Resetar filtros"
+                      className="p-1 rounded text-neutral-400 hover:text-white cursor-pointer"
+                    >
+                      <RotateCcw className="w-3 h-3" />
+                    </button>
+                  )}
+                  <button
+                    onClick={() => setShowGrading(!showGrading)}
+                    className="text-[10px] text-neutral-400 hover:text-white cursor-pointer px-1.5 py-0.5 rounded hover:bg-white/5"
+                  >
+                    {showGrading ? "Ocultar" : "Ajustar"}
+                  </button>
+                </div>
+              </div>
+
+              {showGrading && (
+                <div className="space-y-2.5 pt-2 border-t border-white/5">
+                  {/* Brilho */}
+                  <div className="space-y-1">
+                    <div className="flex items-center justify-between text-[10px]">
+                      <span className="text-neutral-400">Brilho</span>
+                      <span className="font-mono text-neutral-300">{config.brightness ?? 100}%</span>
+                    </div>
+                    <input
+                      type="range"
+                      min="50"
+                      max="150"
+                      value={config.brightness ?? 100}
+                      onChange={(e) => updateConfig({ brightness: Number(e.target.value) })}
+                      className="w-full accent-pink-500 h-1 bg-[#333] rounded-lg appearance-none cursor-pointer"
+                    />
+                  </div>
+
+                  {/* Contraste */}
+                  <div className="space-y-1">
+                    <div className="flex items-center justify-between text-[10px]">
+                      <span className="text-neutral-400">Contraste</span>
+                      <span className="font-mono text-neutral-300">{config.contrast ?? 100}%</span>
+                    </div>
+                    <input
+                      type="range"
+                      min="50"
+                      max="150"
+                      value={config.contrast ?? 100}
+                      onChange={(e) => updateConfig({ contrast: Number(e.target.value) })}
+                      className="w-full accent-pink-500 h-1 bg-[#333] rounded-lg appearance-none cursor-pointer"
+                    />
+                  </div>
+
+                  {/* Saturação */}
+                  <div className="space-y-1">
+                    <div className="flex items-center justify-between text-[10px]">
+                      <span className="text-neutral-400">Saturação</span>
+                      <span className="font-mono text-neutral-300">{config.saturation ?? 100}%</span>
+                    </div>
+                    <input
+                      type="range"
+                      min="0"
+                      max="200"
+                      value={config.saturation ?? 100}
+                      onChange={(e) => updateConfig({ saturation: Number(e.target.value) })}
+                      className="w-full accent-pink-500 h-1 bg-[#333] rounded-lg appearance-none cursor-pointer"
+                    />
+                  </div>
+
+                  {/* Matiz (Hue) */}
+                  <div className="space-y-1">
+                    <div className="flex items-center justify-between text-[10px]">
+                      <span className="text-neutral-400">Matiz (Hue)</span>
+                      <span className="font-mono text-neutral-300">{config.hueRotate ?? 0}°</span>
+                    </div>
+                    <input
+                      type="range"
+                      min="0"
+                      max="360"
+                      value={config.hueRotate ?? 0}
+                      onChange={(e) => updateConfig({ hueRotate: Number(e.target.value) })}
+                      className="w-full accent-pink-500 h-1 bg-[#333] rounded-lg appearance-none cursor-pointer"
+                    />
+                  </div>
+
+                  {/* P&B e Sepia Quick Toggles */}
+                  <div className="flex items-center space-x-2 pt-1">
+                    <button
+                      onClick={() => updateConfig({ grayscale: !config.grayscale })}
+                      className={`flex-1 py-1 px-2 rounded-lg text-[10px] font-medium transition-all cursor-pointer ${
+                        config.grayscale
+                          ? "bg-white/20 text-white border border-white/40"
+                          : "bg-[#181818] text-neutral-400 hover:text-white border border-neutral-700"
+                      }`}
+                    >
+                      P&B Artístico
+                    </button>
+                    <button
+                      onClick={() => updateConfig({ sepia: !config.sepia })}
+                      className={`flex-1 py-1 px-2 rounded-lg text-[10px] font-medium transition-all cursor-pointer ${
+                        config.sepia
+                          ? "bg-amber-500/20 text-amber-300 border border-amber-500/40"
+                          : "bg-[#181818] text-neutral-400 hover:text-white border border-neutral-700"
+                      }`}
+                    >
+                      Vintage Sepia
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+
 
           {/* SECONDARY MEDIA (Slot 2 for Duo or Trio) */}
           {(config.mockupMode === "duo" || config.mockupMode === "trio") && (

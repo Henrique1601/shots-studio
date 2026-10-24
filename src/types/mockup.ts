@@ -247,6 +247,13 @@ export interface MockupConfig {
   codeTheme?: CodeTheme;
   codeShowLineNumbers?: boolean;
   codeTitle?: string;
+  // Image Grading & Filters
+  brightness?: number; // 50 to 150 (%)
+  contrast?: number;   // 50 to 150 (%)
+  saturation?: number; // 0 to 200 (%)
+  grayscale?: boolean;
+  sepia?: boolean;
+  hueRotate?: number;  // 0 to 360 (deg)
 }
 
 export interface DeviceSpec {

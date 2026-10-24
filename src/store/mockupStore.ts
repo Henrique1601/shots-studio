@@ -161,6 +161,13 @@ const defaultConfig: MockupConfig = {
   codeTheme: "one-dark",
   codeShowLineNumbers: true,
   codeTitle: "metrics.ts",
+  // Image Grading Defaults
+  brightness: 100,
+  contrast: 100,
+  saturation: 100,
+  grayscale: false,
+  sepia: false,
+  hueRotate: 0,
 };
 
 export const useMockupStore = create<MockupStore>((set, get) => ({
