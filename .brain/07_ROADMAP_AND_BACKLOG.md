@@ -14,13 +14,20 @@ Planejamento estratégico de evolução para o **Shots Studio**.
 - [x] Fórmulas de sombra multi-camada adaptativa e ajuste de luz especular.
 - [x] Carrossel multi-slide com download em ZIP em até 6K.
 - [x] Linha do tempo de animação integrada (Turntable, Float, Pulse, Orbit).
+- [x] Card DETAILS no rodapé do Mockup com resolução em tempo real.
+- [x] Eliminação de 100% das barras de rolagem nativas visíveis.
+- [x] 61 testes automatizados cobrindo fórmulas matemáticas e specs.
 
 ---
 
-### 🟡 Fase 2: Motor Serverless de Renderização de Vídeo (v1.1.0)
-- [ ] Pipeline de renderização em nuvem via Remotion Lambda para exportação de arquivos `.mp4` e `.webm` em 60fps sem sobrecarregar a CPU do cliente.
-- [ ] Integração com efeitos sonoros de transição e click nos mockups.
-- [ ] Exportação em formato GIF otimizado para Twitter/X e LinkedIn.
+### 🟡 Fase 2: Mídia Dinâmica, Filtros & Produtividade Viral (v1.1.0 - Em Planejamento Ativo)
+*Consulte a especificação completa no documento [08_IMPROVEMENT_PRD_V1_1.md](./08_IMPROVEMENT_PRD_V1_1.md).*
+
+- [ ] **Copiar Imagem Direto para o Clipboard (`ClipboardItem API`):** Cópia rápida em 1 clique sem necessidade de baixar arquivo.
+- [ ] **Filtros de Imagem em Tempo Real:** Ajustes de Brilho (50-150%), Contraste (50-150%), Saturação (0-200%) e Modo Preto & Branco.
+- [ ] **Suporte a Vídeos (MP4/WebM) no Frame:** Renderização com autoplay em loop e som mutado dentro dos aparelhos.
+- [ ] **Novo Dispositivo Exclusivo:** Nothing Phone (Glyph Edition) com luzes traseiras interativas.
+- [ ] **Exportador de GIF Animado:** Gravação de cenas 3D em rotação para compartilhamento no X/Twitter.
 
 ---
 

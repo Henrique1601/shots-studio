@@ -1,6 +1,6 @@
 # 🧠 CÉREBRO DO PROJETO — SHOTS STUDIO (Shots.so Clone)
 
-> **Status:** Produção Ativa | **Versão:** v1.0.0-elite  
+> **Status:** Produção Ativa | **Versão:** v1.0.0-elite (Planejamento v1.1.0 Ativo)  
 > **Deploy Vercel:** [shots-app.vercel.app](https://shots-app.vercel.app)  
 > **Repositório GitHub:** [github.com/Henrique1601/shots-studio](https://github.com/Henrique1601/shots-studio)  
 > **Última Atualização:** 2026-10-24  
@@ -21,6 +21,7 @@ flowchart TD
     ADR["05_DECISION_RECORDS_ADR.md\n(Registros de Decisões)"]
     QA["06_TESTING_AND_QUALITY.md\n(61 Testes & Qualidade)"]
     Roadmap["07_ROADMAP_AND_BACKLOG.md\n(Próximos Passos & Inovações)"]
+    PRD["08_IMPROVEMENT_PRD_V1_1.md\n(PRD Detalhado de Melhorias v1.1)"]
 
     Index --> Arch
     Index --> Parity
@@ -29,6 +30,7 @@ flowchart TD
     Index --> ADR
     Index --> QA
     Index --> Roadmap
+    Index --> PRD
 ```
 
 ---
@@ -44,6 +46,7 @@ flowchart TD
 | **[05_DECISION_RECORDS_ADR.md](./05_DECISION_RECORDS_ADR.md)** | Histórico de decisões arquiteturais: por que Zustand sem Redux, por que SVG Masks com concentric bounds, etc. |
 | **[06_TESTING_AND_QUALITY.md](./06_TESTING_AND_QUALITY.md)** | Suíte de testes automatizados (`tests/*.test.ts`), rotinas de build Turbopack e checklist de validação. |
 | **[07_ROADMAP_AND_BACKLOG.md](./07_ROADMAP_AND_BACKLOG.md)** | Próximas iterações: renderização serverless Remotion de vídeo MP4, novos mockups e extensões. |
+| **[08_IMPROVEMENT_PRD_V1_1.md](./08_IMPROVEMENT_PRD_V1_1.md)** | **[NOVO]** PRD de melhorias: cópia para o clipboard, filtros de imagem, suporte a vídeo nos mockups e Nothing Phone. |
 
 ---
 
