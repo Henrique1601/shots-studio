@@ -18,8 +18,11 @@ import {
   FolderOpen,
   ChevronDown,
   Archive,
+  FileDown,
+  FileUp,
 } from "lucide-react";
 import { SavedShotsModal } from "./SavedShotsModal";
+import { exportProjectBundle, importProjectBundle } from "@/lib/projectBundle";
 import { FeedbackModal } from "./FeedbackModal";
 
 export const TopBar = () => {
@@ -45,6 +48,36 @@ export const TopBar = () => {
   const [showSettings, setShowSettings] = useState(false);
   const [isSavedShotsOpen, setIsSavedShotsOpen] = useState(false);
   const [isFeedbackOpen, setIsFeedbackOpen] = useState(false);
+  const bundleInputRef = React.useRef<HTMLInputElement>(null);
+
+  const handleExportBundle = () => {
+    try {
+      exportProjectBundle({
+        version: "1.0.0",
+        timestamp: Date.now(),
+        appName: "FrameCraft Studio",
+        config,
+        slides,
+        activeSlideIndex,
+        metadata: { ratio: config.aspectRatio }
+      });
+      showToast("Projeto .framecraft exportado com sucesso! 📦", "success");
+    } catch {
+      showToast("Erro ao exportar projeto.", "error");
+    }
+  };
+
+  const handleImportBundleFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    try {
+      const data = await importProjectBundle(file);
+      if (data.config) updateConfig(data.config as any);
+      showToast("Projeto .framecraft restaurado com sucesso! 🚀", "success");
+    } catch (err: any) {
+      showToast(err.message || "Arquivo .framecraft inválido.", "error");
+    }
+  };
 
   // Hook isolado com 100% dos algoritmos de exportação
   const {
