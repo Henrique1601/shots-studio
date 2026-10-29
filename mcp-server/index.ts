@@ -373,6 +373,104 @@ server.tool(
   }
 );
 
+// TOOL 6: AI Styler & Brand Identity Generator
+server.tool(
+  "framecraft_ai_styler",
+  "Generates complete studio mockup configurations and color palettes tailored to brand styles (e.g. Cyberpunk, Apple Minimalist, SaaS Launch, Luxury Dark, Neon Pop)",
+  {
+    theme: z.enum(["cyberpunk", "apple-minimal", "saas-modern", "luxury-dark", "neon-pop"]).describe("The aesthetic visual direction"),
+    device: z.enum(["iphone-16-pro", "macbook", "pixel-9-pro", "imac-24", "ultrawide-monitor", "code"]).optional().describe("Target device mockup"),
+    brandColor: z.string().optional().describe("Optional primary brand hex color (e.g. #06b6d4)"),
+  },
+  async ({ theme, device = "iphone-16-pro", brandColor }) => {
+    const STYLES_MAP: Record<string, any> = {
+      "cyberpunk": {
+        name: "Cyberpunk High-Tech",
+        gradient: "radial-gradient(circle at 20% 20%, rgba(6, 182, 212, 0.4) 0%, transparent 50%), radial-gradient(circle at 80% 80%, rgba(236, 72, 153, 0.4) 0%, transparent 50%), linear-gradient(135deg, #050508 0%, #0d0e15 100%)",
+        lightPreset: "cyber",
+        lightIntensity: 65,
+        shadowMode: "adaptive",
+        shadowOpacity: 70,
+        tiltX: 6,
+        tiltY: -12,
+        tiltZ: 2,
+        borderRadius: 20,
+      },
+      "apple-minimal": {
+        name: "Apple Studio Minimalist",
+        gradient: "radial-gradient(circle at 50% 0%, rgba(255, 255, 255, 0.8) 0%, transparent 60%), linear-gradient(180deg, #f8fafc 0%, #e2e8f0 100%)",
+        lightPreset: "studio",
+        lightIntensity: 30,
+        shadowMode: "hug",
+        shadowOpacity: 35,
+        tiltX: 0,
+        tiltY: 0,
+        tiltZ: 0,
+        borderRadius: 28,
+      },
+      "saas-modern": {
+        name: "Modern SaaS Launch",
+        gradient: "radial-gradient(circle at 10% 20%, rgba(99, 102, 241, 0.3) 0%, transparent 50%), radial-gradient(circle at 90% 80%, rgba(59, 130, 246, 0.25) 0%, transparent 50%), linear-gradient(135deg, #090d16 0%, #0f172a 100%)",
+        lightPreset: "natural",
+        lightIntensity: 45,
+        shadowMode: "spread",
+        shadowOpacity: 55,
+        tiltX: 4,
+        tiltY: -6,
+        tiltZ: 0,
+        borderRadius: 22,
+      },
+      "luxury-dark": {
+        name: "Luxury Obsidian Gold",
+        gradient: "radial-gradient(circle at 50% 10%, rgba(234, 179, 8, 0.25) 0%, transparent 60%), linear-gradient(135deg, #0a0a0c 0%, #17171a 100%)",
+        lightPreset: "stage",
+        lightIntensity: 50,
+        shadowMode: "adaptive",
+        shadowOpacity: 80,
+        tiltX: 8,
+        tiltY: -10,
+        tiltZ: 1,
+        borderRadius: 24,
+      },
+      "neon-pop": {
+        name: "Neon Pop Electric",
+        gradient: "linear-gradient(135deg, #ec4899 0%, #8b5cf6 50%, #3b82f6 100%)",
+        lightPreset: "contour",
+        lightIntensity: 60,
+        shadowMode: "spread",
+        shadowOpacity: 65,
+        tiltX: -4,
+        tiltY: 8,
+        tiltZ: -1,
+        borderRadius: 26,
+      },
+    };
+
+    const selected = STYLES_MAP[theme] || STYLES_MAP["saas-modern"];
+    const config = {
+      frameType: device,
+      aspectRatio: "16:9",
+      backgroundType: "gradient",
+      gradient: brandColor ? `radial-gradient(circle at 50% 30%, ${brandColor}44 0%, transparent 60%), ${selected.gradient}` : selected.gradient,
+      ...selected,
+    };
+
+    return {
+      content: [
+        {
+          type: "text",
+          text: `### 🎨 AI Mockup Theme Applied: ${selected.name}\n\n` +
+            `* **Theme:** \`${theme}\`\n` +
+            `* **Device:** \`${device}\`\n` +
+            `* **Lighting:** \`${selected.lightPreset}\` (${selected.lightIntensity}%)\n` +
+            `* **Shadow:** \`${selected.shadowMode}\` (${selected.shadowOpacity}%)\n\n` +
+            `\`\`\`json\n${JSON.stringify(config, null, 2)}\n\`\`\``,
+        },
+      ],
+    };
+  }
+);
+
 // Start the Stdio Server
 async function run() {
   const transport = new StdioServerTransport();
