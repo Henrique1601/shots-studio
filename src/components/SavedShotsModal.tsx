@@ -38,7 +38,7 @@ export const SavedShotsModal: React.FC<SavedShotsModalProps> = ({
         const allShots = await db.shots.orderBy("createdAt").reverse().toArray();
         if (isMounted) {
           setShots(allShots);
-          setShotName(`Shot #${new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}`);
+          setShotName(`Frame #${new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}`);
         }
       } catch (e) {
         console.error("Failed to load saved shots:", e);
@@ -116,7 +116,7 @@ export const SavedShotsModal: React.FC<SavedShotsModalProps> = ({
           </div>
           <button
             onClick={onClose}
-            aria-label="Close saved shots modal"
+            aria-label="Close saved projects modal"
             className="p-1.5 rounded-lg text-neutral-400 hover:text-white hover:bg-white/10 transition-colors"
           >
             <X className="w-4 h-4" />
@@ -129,7 +129,7 @@ export const SavedShotsModal: React.FC<SavedShotsModalProps> = ({
             type="text"
             value={shotName}
             onChange={(e) => setShotName(e.target.value)}
-            placeholder="Nome do novo shot..."
+            placeholder="Nome do novo frame..."
             className="flex-1 px-3 py-1.5 rounded-xl bg-[#121212] border border-[#333] text-xs text-white placeholder-neutral-500 focus:outline-none focus:border-indigo-500"
           />
           <button
@@ -138,7 +138,7 @@ export const SavedShotsModal: React.FC<SavedShotsModalProps> = ({
             className="flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-white text-black font-semibold text-xs hover:bg-neutral-200 transition-all disabled:opacity-50 cursor-pointer"
           >
             <Save className="w-3.5 h-3.5" />
-            <span>Salvar Shot Atual</span>
+            <span>Salvar Frame Atual</span>
           </button>
         </div>
 
@@ -201,7 +201,7 @@ export const SavedShotsModal: React.FC<SavedShotsModalProps> = ({
                   </button>
                   <button
                     onClick={() => handleDeleteShot(shot.id)}
-                    aria-label={`Delete shot ${shot.name}`}
+                    aria-label={`Excluir projeto ${shot.name}`}
                     className="p-1.5 rounded-lg text-neutral-500 hover:text-red-400 hover:bg-red-500/10 transition-colors cursor-pointer"
                   >
                     <Trash2 className="w-3.5 h-3.5" />

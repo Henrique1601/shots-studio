@@ -202,7 +202,7 @@ export const RightSidebar = () => {
             </div>
           </div>
 
-          {/* Exact Shots.so Zoom Slider (75% to 400%) */}
+          {/* Exact FrameCraft Studio Zoom Slider (75% to 400%) */}
           {activeMode === "zoom" ? (
             <div className="mt-2.5 px-3 py-1.5 rounded-xl bg-[#222222] border border-white/5 flex items-center justify-between text-xs">
               <span className="text-neutral-400 text-[11px] font-medium">Zoom</span>

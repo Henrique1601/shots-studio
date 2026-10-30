@@ -97,7 +97,7 @@ const defaultConfig: MockupConfig = {
   lightPreset: "soft-studio",
   lightIntensity: 35,
   watermarkText: "FrameCraft",
-  watermarkPlatform: "shots",
+  watermarkPlatform: "framecraft",
   watermarkPosition: "top-left",
   watermarkStyle: "default",
   watermarkTheme: "dark",
@@ -118,7 +118,7 @@ const defaultConfig: MockupConfig = {
     {
       enabled: true,
       text: "FrameCraft",
-      platform: "shots",
+      platform: "framecraft",
       style: "default",
       theme: "dark",
       size: 80,

@@ -34,7 +34,7 @@ describe("New Studio Features: Light, Watermark, Image Fit & Spatial Pad", () =>
   });
 
   it("verifies watermark platforms and 4-corner positions", () => {
-    const platforms: WatermarkPlatform[] = ["shots", "twitter", "instagram", "none"];
+    const platforms: WatermarkPlatform[] = ["framecraft", "shots", "twitter", "instagram", "none"];
     const positions: WatermarkPosition[] = [
       "top-left",
       "top-right",
@@ -42,7 +42,7 @@ describe("New Studio Features: Light, Watermark, Image Fit & Spatial Pad", () =>
       "bottom-right",
     ];
 
-    assert.strictEqual(platforms.length, 4);
+    assert.strictEqual(platforms.length, 5);
     assert.strictEqual(positions.length, 4);
 
     for (const pos of positions) {

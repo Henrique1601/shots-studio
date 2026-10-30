@@ -6,6 +6,6 @@ export default function robots(): MetadataRoute.Robots {
       userAgent: "*",
       allow: "/",
     },
-    sitemap: "https://shots-app.vercel.app/sitemap.xml",
+    sitemap: "https://framecraft.app/sitemap.xml",
   };
 }

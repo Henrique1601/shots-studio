@@ -88,7 +88,7 @@ export type LightPreset =
   | "top-right"
   | "dramatic";
 
-export type WatermarkPlatform = "shots" | "twitter" | "instagram" | "none";
+export type WatermarkPlatform = "framecraft" | "shots" | "twitter" | "instagram" | "none";
 export type WatermarkPosition =
   | "top-left"
   | "top-right"
@@ -160,7 +160,7 @@ export interface MockupConfig {
   borderRoundness: BorderRoundness;
   borderRadius: number;
   shadowMode: ShadowMode;
-  shadowOpacity: number; // 10 - 70 in Shots.so
+  shadowOpacity: number; // 10 - 70 in FrameCraft Studio
   showMockup: boolean;
   padding: number;
   scale: number;

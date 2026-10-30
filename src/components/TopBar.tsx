@@ -147,7 +147,7 @@ export const TopBar = () => {
 
         <button
           onClick={() => setIsSavedShotsOpen(true)}
-          aria-label="Abrir biblioteca de shots salvos"
+          aria-label="Abrir biblioteca de projetos FrameCraft"
           className="flex items-center space-x-1.5 px-2.5 py-1.5 rounded-xl bg-[#1c1c1c] hover:bg-[#252525] border border-[#2b2b2b] text-xs font-semibold transition-colors cursor-pointer"
         >
           <FolderOpen className="w-3.5 h-3.5 text-indigo-400" />
@@ -170,7 +170,7 @@ export const TopBar = () => {
         </button>
       </div>
 
-      {/* 2. Center: Command Bar Desktop (Os 7 botões reais do Shots.so) */}
+      {/* 2. Center: Command Bar Desktop (Os 7 botões reais do FrameCraft) */}
       <div className="hidden md:flex items-center space-x-1.5 bg-[#181818] px-2 py-1 rounded-2xl border border-[#262626]">
         {/* Undo */}
         <button
@@ -428,7 +428,7 @@ export const TopBar = () => {
         onClose={() => setIsFeedbackOpen(false)}
       />
 
-      {/* Saved Shots Modal */}
+      {/* Saved Projects Modal */}
       <SavedShotsModal
         isOpen={isSavedShotsOpen}
         onClose={() => setIsSavedShotsOpen(false)}

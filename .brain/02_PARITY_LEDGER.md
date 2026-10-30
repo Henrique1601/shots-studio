@@ -1,12 +1,12 @@
-# ⚖️ 02_PARITY_LEDGER.md — Livro-Razão de Paridade 1:1 com Shots.so
+# ⚖️ 02_PARITY_LEDGER.md — Livro-Razão de Paridade & Qualidade Visual FrameCraft Studio
 
-Este documento audita item a item a paridade funcional e visual entre a nossa implementação e a plataforma oficial **Shots.so**, baseando-se nas capturas de tela reais armazenadas no cérebro (`.user_uploaded/media_*.png`).
+Este documento audita item a item a paridade funcional e visual da nossa implementação com os mais altos padrões de design de estúdio profissional, baseando-se nas capturas de tela reais armazenadas no cérebro (`.user_uploaded/media_*.png`).
 
 ---
 
 ## 📊 Matriz de Paridade
 
-| Recurso / Seção | Shots.so Oficial | Nossa Implementação | Status |
+| Recurso / Seção | Padrão Studio Original | Implementação FrameCraft | Status |
 | :--- | :--- | :--- | :---: |
 | **Grid de Estilos** | 3 colunas com 12 acabamentos visuais + botão `•••` | 3 colunas (`grid-cols-3`), 12 estilos ativos + `•••` | 🟢 100% |
 | **Seção Details** | Exibe `Device` e `Screen pixels` no rodapé da aba Mockup | Card `DETAILS` dinâmico em `LeftSidebar.tsx` | 🟢 100% |

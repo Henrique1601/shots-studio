@@ -1,6 +1,6 @@
 # 📜 05_DECISION_RECORDS_ADR.md — Registros de Decisões Arquiteturais (ADRs)
 
-Este documento registra as decisões críticas tomadas durante a engenharia reversa e desenvolvimento do **Shots Studio**.
+Este documento registra as decisões críticas tomadas durante o desenvolvimento do **FrameCraft Studio**.
 
 ---
 
@@ -41,7 +41,7 @@ Este documento registra as decisões críticas tomadas durante a engenharia reve
 ## 🏛️ ADR-004: Eliminação Global de Scrollbars Visíveis
 
 - **Status:** Aceito
-- **Contexto:** Barras de rolagem nativas cinzas do navegador quebram a imersão de desktop app do Shots.so.
+- **Contexto:** Barras de rolagem nativas cinzas do navegador quebram a imersão de desktop app do FrameCraft Studio.
 - **Decisão:** Aplicação de regras globais em `globals.css`:
   ```css
   * {

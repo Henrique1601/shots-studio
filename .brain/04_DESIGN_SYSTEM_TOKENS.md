@@ -1,6 +1,6 @@
 # 🎨 04_DESIGN_SYSTEM_TOKENS.md — Design System & Tokens Oficiais
 
-Tokens de cores, fórmulas matemáticas de sombras, tipografia e parâmetros de física do clone **Shots.so**.
+Tokens de cores, fórmulas matemáticas de sombras, tipografia e parâmetros de física do **FrameCraft Studio**.
 
 ---
 
@@ -23,7 +23,7 @@ Tokens de cores, fórmulas matemáticas de sombras, tipografia e parâmetros de 
 
 ## 🌑 Fórmulas Matemáticas de Sombra (4-Layer Shadows)
 
-As sombras do Shots.so utilizam equações multi-camadas que simulam a iluminação difusa de um estúdio de fotografia real:
+As sombras do FrameCraft Studio utilizam equações multi-camadas que simulam a iluminação difusa de um estúdio de fotografia real:
 
 ### 1. Adaptive Shadow (Fórmula Oficial de 4 Camadas)
 Dada a opacidade base configurada pelo usuário $O \in [0.10, 0.70]$:

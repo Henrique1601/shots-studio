@@ -2,11 +2,11 @@
 
 ## 1. Visão Geral da Stack Tecnológica
 
-O **Shots Studio** foi projetado para oferecer a sensação de um aplicativo desktop de alto desempenho executado inteiramente no navegador:
+O **FrameCraft Studio** foi projetado para oferecer a sensação de um aplicativo desktop de alto desempenho executado inteiramente no navegador:
 
 - **Framework:** **Next.js 16.4.2** com **Turbopack** e React 19.
 - **Gerenciamento de Estado:** **Zustand** com histórico nativo de `undo`/`redo` (armazenamento de até 50 snapshots).
-- **Estilização:** Tailwind CSS v3 com variáveis de design tokens Shots.so e `clsx` / `tailwind-merge`.
+- **Estilização:** Tailwind CSS com variáveis de design tokens FrameCraft Studio e `clsx` / `tailwind-merge`.
 - **Animações & Física 3D:** **Framer Motion** com transformações espaciais via CSS 3D (`perspective: 150em`, `rotateX`, `rotateY`, `rotateZ`, `scale`).
 - **Motor de Exportação:** `html-to-image` com escalonamento de densidade de pixels em 1x (FHD), 2x (4K) e 3x (6K), com renderização paralela de carrossel em lote via `JSZip`.
 - **Persistência Local-First:** `Dexie.js` (IndexedDB) para salvamento offline de rascunhos e projetos.

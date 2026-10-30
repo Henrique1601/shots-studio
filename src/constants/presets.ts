@@ -390,27 +390,27 @@ export const PRESET_DESKTOP = [
 
 export const PRESET_GRADIENTS = [
   {
-    id: "shots-official",
-    name: "Shots Official",
+    id: "framecraft-official",
+    name: "FrameCraft Official",
     value: "linear-gradient(140deg, rgb(255, 100, 50) 12.8%, rgb(255, 0, 101) 43.52%, rgb(123, 46, 255) 84.34%)",
   },
   {
-    id: "shots-sunset-glow",
+    id: "framecraft-sunset-glow",
     name: "Sunset Glow",
     value: "linear-gradient(140deg, rgb(244, 229, 240), rgb(229, 54, 171), rgb(92, 3, 188), rgb(14, 7, 37))",
   },
   {
-    id: "shots-pastels",
+    id: "framecraft-pastels",
     name: "Pastel Dream",
     value: "linear-gradient(135deg, rgb(238, 221, 243), rgb(238, 146, 177), rgb(99, 48, 180))",
   },
   {
-    id: "shots-sky-coral",
+    id: "framecraft-sky-coral",
     name: "Sky Coral",
     value: "linear-gradient(113.96deg, rgb(69, 190, 232) 13.54%, rgb(214, 161, 172) 50%, rgb(232, 140, 93) 85.42%)",
   },
   {
-    id: "shots-mint-punch",
+    id: "framecraft-mint-punch",
     name: "Mint Punch",
     value: "linear-gradient(113.96deg, rgb(69, 233, 159) 11.98%, rgb(213, 168, 155) 50%, rgb(232, 70, 152) 85.42%)",
   },
@@ -659,7 +659,7 @@ export const CURATED_TEMPLATES: TemplatePreset[] = [
   {
     id: "twitter-release",
     name: "X / Twitter Announcement",
-    tagline: "High-contrast browser mockup with Shots Official gradient",
+    tagline: "High-contrast browser mockup with FrameCraft Official gradient",
     category: "social",
     config: {
       frameType: "browser",
@@ -743,7 +743,7 @@ export const CURATED_TEMPLATES: TemplatePreset[] = [
       watermark: true,
       annotationsEnabled: true,
       annotationHeadline: "Product of the Day #1",
-      annotationSubtitle: "Join 10,000+ creators building with Shots",
+      annotationSubtitle: "Join 10,000+ creators building with FrameCraft",
       annotationBadge: "LIVE ON PRODUCT HUNT",
       annotationBadgeColor: "#ea580c",
       annotationPosition: "top",

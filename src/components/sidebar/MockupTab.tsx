@@ -190,7 +190,7 @@ export const MockupTab: React.FC<MockupTabProps> = ({ onExtractPalette }) => {
                 type="text"
                 value={config.browserUrl ?? ""}
                 onChange={(e) => updateConfig({ browserUrl: e.target.value })}
-                placeholder={config.frameType === "minimal-desktop" ? "Studio Workspace" : "shots.so/editor"}
+                placeholder={config.frameType === "minimal-desktop" ? "Studio Workspace" : "framecraft.app/editor"}
                 className="w-full px-2.5 py-1.5 rounded-xl bg-[#222222] border border-neutral-700 hover:border-neutral-500 focus:border-indigo-500 text-xs text-white placeholder-neutral-500 focus:outline-none transition-colors"
               />
             </div>

@@ -317,11 +317,11 @@ export const MiniSidebars: React.FC<MiniSidebarsProps> = ({
                   <button
                     onClick={() => {
                       const nextPlatform =
-                        config.watermarkPlatform === "shots"
+                        config.watermarkPlatform === "shots" || config.watermarkPlatform === "framecraft"
                           ? "twitter"
                           : config.watermarkPlatform === "twitter"
                           ? "instagram"
-                          : "shots";
+                          : "framecraft";
                       handleUpdateActiveWatermark({ platform: nextPlatform });
                     }}
                     className="p-1.5 rounded-lg bg-[#181818] text-white hover:bg-[#333] transition-colors cursor-pointer"

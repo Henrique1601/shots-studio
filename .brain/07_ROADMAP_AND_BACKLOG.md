@@ -1,13 +1,13 @@
 # 🚀 07_ROADMAP_AND_BACKLOG.md — Master Roadmap & Backlog de Engenharia
 
-Planejamento estratégico e catálogo exaustivo de evolução para o **Shots Studio**, consolidado pela mesa diretora do **`global-master-agent`** com foco em engenharia de excelência, paridade absoluta 1:1, performance de 60fps, inteligência artificial integrada e acabamento de estúdio nível Apple/Linear/Stripe.
+Planejamento estratégico e catálogo exaustivo de evolução para o **FrameCraft Studio**, consolidado pela mesa diretora do **`global-master-agent`** com foco em engenharia de excelência, performance de 60fps, inteligência artificial integrada e acabamento de estúdio nível Apple/Linear/Stripe.
 
 ---
 
 ## 📅 Roadmap de Versões
 
 ### 🟢 Fase 1: Paridade Visual & Estúdio Essencial (Concluída - v1.0.0-elite)
-- [x] Design System fiel ao Shots.so com dark theme exclusivo.
+- [x] Design System fiel ao padrão de estúdio profissional com dark theme exclusivo.
 - [x] 12 Estilos oficiais em grid de 4 colunas (Default, Glass Light/Dark, Liquid Glass, Inset Light/Dark, Outline, Border, Retro, Card, Stack, Stack 2).
 - [x] Catálogo completo de aparelhos incluindo iPhone 17 e iPhone 17 Air com Dynamic Island.
 - [x] Pad 3D interativo com captura de rotação física e reset via Custom Layout e duplo-clique.
@@ -144,17 +144,17 @@ Planejamento estratégico e catálogo exaustivo de evolução para o **Shots Stu
 ### 1. ☁️ Persistência em Nuvem & Compartilhamento Social
 - [ ] **Sincronização com Supabase / Neon Postgres**:
   - Evolução do banco local Dexie para sincronização em nuvem autenticada (OAuth via Google/GitHub).
-  - Compartilhamento de mockups via URLs curtas públicas (`shots.app/s/xyz123`).
+  - Compartilhamento de mockups via URLs curtas públicas (`framecraft.app/s/xyz123`).
   - Modo visualizador (*View-Only*) interativo permitindo que clientes e colegas girem o mockup 3D em tempo real pelo link.
 - [ ] **Galeria Comunitária & Templates Públicos**:
   - Feed exploratório de criações da comunidade com botão "Remixar Template" com 1 clique.
 
 ### 2. 🔌 Extensões e Automação para Desenvolvedores
 - [ ] **Extensão Oficial para Chrome, Firefox e Arc**:
-  - Captura direta da aba visível, tela inteira ou elemento inspecionado enviando em 1 clique para o Shots Studio com mockup já selecionado.
+  - Captura direta da aba visível, tela inteira ou elemento inspecionado enviando em 1 clique para o FrameCraft Studio com mockup já selecionado.
 - [ ] **API de Exportação Headless (Serverless Render)**:
   - Endpoint `POST /api/render` para geração automatizada de mockups via webhook (ideal para automação de banners em CI/CD, GitHub Actions e blogs).
 - [ ] **Exportação para Código (Code Snippet Generator)**:
   - Botão "Copy JSX / Tailwind" gerando o código React exato para renderizar aquele mesmo visual dentro de qualquer projeto web.
 - [ ] **Plugin para Figma**:
-  - Sincronização direta de frames do Figma diretamente para o Shots Studio sem precisar exportar arquivos manuais.
+  - Sincronização direta de frames do Figma diretamente para o FrameCraft Studio sem precisar exportar arquivos manuais.

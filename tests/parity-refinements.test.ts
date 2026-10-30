@@ -7,7 +7,7 @@ import {
 } from "../src/types/mockup.ts";
 
 describe("Parity Refinements & Brain Corrections", () => {
-  it("verifies all 12 authentic Shots.so styles exist in STYLE_OPTIONS", () => {
+  it("verifies all 12 authentic FrameCraft styles exist in STYLE_OPTIONS", () => {
     const expectedStyles = [
       "default",
       "glass-light",
@@ -31,7 +31,7 @@ describe("Parity Refinements & Brain Corrections", () => {
     }
   });
 
-  it("verifies iPhone 17 Air device spec matches Shots.so proportions", () => {
+  it("verifies iPhone 17 Air device spec matches FrameCraft proportions", () => {
     const airSpec = DEVICE_SPECS["iphone-17-air"];
     assert.ok(airSpec, "iPhone 17 Air must have a device spec");
     assert.strictEqual(airSpec.isDevice, true);

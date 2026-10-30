@@ -43,7 +43,7 @@ export const DeviceModal = () => {
               Choose Device
             </span>
             <span className="text-xs text-neutral-400">
-              • Official Shots.so Collection
+              • Official FrameCraft Collection
             </span>
           </div>
           <button
@@ -54,7 +54,7 @@ export const DeviceModal = () => {
           </button>
         </div>
 
-        {/* Top Category Filter Pills (Matching Shots.so 1:1) */}
+        {/* Top Category Filter Pills (Matching FrameCraft 1:1) */}
         <div className="px-5 py-3 border-b border-[#242424] flex items-center space-x-2 overflow-x-auto shrink-0 scrollbar-none">
           <button
             onClick={() => setFilter("all")}
@@ -93,7 +93,7 @@ export const DeviceModal = () => {
           })}
         </div>
 
-        {/* Scrollable Device Content with Authentic Shots.so Section Headers */}
+        {/* Scrollable Device Content with Authentic FrameCraft Section Headers */}
         <div className="flex-1 overflow-y-auto p-5 space-y-6">
           {/* SECTION 1: ESSENTIALS */}
           {(filter === "all" || filter === "desktop") && (

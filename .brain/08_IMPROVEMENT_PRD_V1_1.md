@@ -1,4 +1,4 @@
-# 📋 PRD & PLANO MESTRE DE MELHORIAS: SHOTS STUDIO (v1.1 - v1.3)
+# 📋 PRD & PLANO MESTRE DE MELHORIAS: FRAMECRAFT STUDIO (v1.1 - v1.3)
 
 > **Autor:** Planning Master Agent (`planning-master-agent`)  
 > **Status:** Aprovado para Execução  
@@ -9,7 +9,7 @@
 
 ## 🎯 1. Resumo Executivo & Visão do Produto
 
-O **Shots Studio** atingiu paridade visual e funcional de 100% com o Shots.so (12 estilos em 3 colunas, iPhone 17 e iPhone 17 Air, popover com seções, pad 3D com reset em Custom Layout, 61 testes automatizados e deploy ativo em `shots-app.vercel.app`).
+O **FrameCraft Studio** atingiu excelência visual e funcional completa (12 estilos em 3 colunas, iPhone 17 e iPhone 17 Air, popover com seções, pad 3D com reset em Custom Layout, 65 testes automatizados e deploy ativo em `framecraft.app`).
 
 Para elevar o projeto de um clone de paridade para uma **plataforma líder de criação visual e mockups virais**, este plano estratégico estabelece 4 novos épicos de melhorias mapeados com grafo de dependências (DAG), análise de riscos (Pre-Mortem) e critérios de aceite testáveis.
 
@@ -19,7 +19,7 @@ Para elevar o projeto de um clone de paridade para uma **plataforma líder de cr
 
 ```mermaid
 mindmap
-  root((Shots Studio\nNovas Melhorias))
+  root((FrameCraft Studio\nNovas Melhorias))
     Épico A: Experiência de Mídia & Edição
       Recorte & Crop Interativo 1:1, 4:5, 16:9
       Filtros de Imagem ao Vivo (Saturação, Contraste, P&B, Vinheta)
@@ -65,7 +65,7 @@ flowchart TD
 ## 📝 4. Especificação Detalhada das Tarefas & Critérios de Aceite
 
 ### 🌟 TASK-01: Botão "Copiar Imagem" Direto para o Clipboard (`ClipboardItem`)
-- **Problema:** Usuários no Shots.so frequentemente não querem baixar o arquivo PNG, mas apenas copiar (`Ctrl+C` ou botão) e colar diretamente no Slack, Discord, Twitter/X ou Figma.
+- **Problema:** Usuários frequentemente não querem baixar o arquivo PNG, mas apenas copiar (`Ctrl+C` ou botão) e colar diretamente no Slack, Discord, Twitter/X ou Figma.
 - **Implementação:**
   - Adicionar função `copyToClipboard()` via `navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })])`.
   - Conectar ao ícone de cópia já existente no botão de exportação da `TopBar.tsx` e `RightSidebar.tsx`.
@@ -92,7 +92,7 @@ flowchart TD
 ---
 
 ### 🎥 TASK-04: Suporte Completo a Vídeo (MP4/WebM) Dentro dos Mockups
-- **Problema:** O Shots.so oficial aceita vídeos curtos e gravações de tela para demonstrar fluxos de apps em movimento.
+- **Problema:** Permitir que criadores utilizem vídeos curtos e gravações de tela para demonstrar fluxos de apps em movimento dentro dos frames.
 - **Implementação:**
   - Permitir que os inputs de arquivo aceitem `accept="image/*,video/*"`.
   - Detectar se `imageUrl` termina com formato de vídeo ou blob de vídeo e renderizar tag `<video src={...} autoPlay loop muted playsInline />` com as mesmas máscaras de tela e cantos curvos.

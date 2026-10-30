@@ -146,7 +146,7 @@ export const CanvasOverlays: React.FC<CanvasOverlaysProps> = ({
                 : "bg-black text-white font-bold border border-white/20 shadow-xl")
           )}
         >
-          {config.watermarkPlatform === "shots" && (
+          {(config.watermarkPlatform === "shots" || config.watermarkPlatform === "framecraft") && (
             <div className="w-3.5 h-3.5 rounded-md bg-white flex items-center justify-center">
               <span className="w-1.5 h-1.5 bg-black rounded-sm" />
             </div>
@@ -160,11 +160,11 @@ export const CanvasOverlays: React.FC<CanvasOverlaysProps> = ({
             </div>
           )}
           <div className="text-[10px] font-medium leading-none">
-            {config.watermarkPlatform === "shots" && (
+            {(config.watermarkPlatform === "shots" || config.watermarkPlatform === "framecraft") && (
               <span className="opacity-60">Made with </span>
             )}
             <span className="font-bold">
-              {config.watermarkText || "Shots.so"}
+              {config.watermarkText || "FrameCraft"}
             </span>
           </div>
         </div>

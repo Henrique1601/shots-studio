@@ -184,7 +184,7 @@ export default function Home() {
         {/* Left: Edições do Mockup / Estilos / Bordas / Sombras */}
         <LeftSidebar />
 
-        {/* Center: Canvas de Visualização 3D com Watermark Shots.so */}
+        {/* Center: Canvas de Visualização 3D com Watermark FrameCraft */}
         <MockupCanvas />
 
         {/* Right: Layouts, Presets 3D, Zoom, Tilt e Exportação */}

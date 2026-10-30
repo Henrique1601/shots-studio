@@ -2,9 +2,9 @@ import type { MetadataRoute } from "next";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "Shots Studio — Mockup Generator 3D",
-    short_name: "Shots Studio",
-    description: "Create stunning 3D device mockups directly in your browser.",
+    name: "FrameCraft Studio — Mockup Generator 3D",
+    short_name: "FrameCraft",
+    description: "Create stunning 3D device mockups directly in your browser with FrameCraft Studio.",
     start_url: "/",
     display: "standalone",
     background_color: "#0a0a0a",

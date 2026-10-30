@@ -12,7 +12,7 @@
   --font-mono: var(--font-geist-mono);
 }
 
-/* Ocultar scrollbars em todos os navegadores, exatamente como o Shots.so */
+/* Ocultar scrollbars em todos os navegadores para layout studio imersivo FrameCraft */
 * {
   scrollbar-width: none !important;
   -ms-overflow-style: none !important;

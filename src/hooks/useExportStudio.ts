@@ -46,7 +46,7 @@ export function useExportStudio() {
       }
 
       const link = document.createElement("a");
-      link.download = `shot-${Date.now()}.${config.exportFormat.toLowerCase()}`;
+      link.download = `framecraft-${Date.now()}.${config.exportFormat.toLowerCase()}`;
       link.href = dataUrl;
       link.click();
 
@@ -55,7 +55,7 @@ export function useExportStudio() {
         spread: 60,
         origin: { y: 0.15 },
       });
-      showToast(`Shot exportado com sucesso (${config.exportFormat})! 🚀`);
+      showToast(`Mockup FrameCraft exportado com sucesso (${config.exportFormat})! 🚀`);
     } catch (err) {
       console.error("Export error:", err);
       showToast("Erro ao exportar imagem", "warning");
@@ -95,7 +95,7 @@ export function useExportStudio() {
         const url = URL.createObjectURL(blob);
         const a = document.createElement("a");
         a.href = url;
-        a.download = `shot-clip-${Date.now()}.webm`;
+        a.download = `framecraft-clip-${Date.now()}.webm`;
         a.click();
         confetti({
           particleCount: 75,
@@ -176,7 +176,7 @@ export function useExportStudio() {
         (obj) => {
           if (!obj.error && obj.image) {
             const link = document.createElement("a");
-            link.download = `shot-animated-${Date.now()}.gif`;
+            link.download = `framecraft-animated-${Date.now()}.gif`;
             link.href = obj.image;
             link.click();
             confetti({ particleCount: 80, spread: 65, origin: { y: 0.2 } });

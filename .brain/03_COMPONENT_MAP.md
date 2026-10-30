@@ -65,7 +65,7 @@ graph TD
   - Proporções padrão (16:9, 1:1, 4:5, 9:16, etc.) e redes sociais (Post, Story, Cover, etc.).
   - Inputs manuais de largura $W$ e altura $H$ com botão de aplicação `Set`.
   - Coleções de fundos: Sólidos, Gradientes Cósmicos, Místicos 4K, Desktop Tahoe, Vidro e Unsplash.
-  - Efeitos de estúdio: Vinheta, Ruído analógico (SVG Noise), Watermark Shots.so e Iluminação Portrait Apple.
+  - Efeitos de estúdio: Vinheta, Ruído analógico (SVG Noise), Watermark FrameCraft e Iluminação Portrait Apple.
 
 ### 3. `MockupCanvas.tsx`
 - **Responsabilidade:** Renderizador central de alta fidelidade visual.

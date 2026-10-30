@@ -10,7 +10,9 @@ export interface SavedShot {
   imageDimensions: { width: number; height: number } | null;
 }
 
-export const db = new Dexie("ShotsStudioDB") as Dexie & {
+export type SavedProject = SavedShot;
+
+export const db = new Dexie("FrameCraftStudioDB") as Dexie & {
   shots: EntityTable<SavedShot, "id">;
 };
 

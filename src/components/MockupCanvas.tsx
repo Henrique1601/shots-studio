@@ -77,7 +77,7 @@ export const MockupCanvas = () => {
 
   const deviceSpec = DEVICE_SPECS[config.frameType] || DEVICE_SPECS.screenshot;
 
-  // Exact 4-layer box-shadow formula from Shots.so for rectangular frames
+  // Exact 4-layer box-shadow formula for rectangular frames in FrameCraft Studio
   const getShotsShadow = () => {
     if (config.shadowMode === "none") return "none";
     const opacity = (config.shadowOpacity / 100) * 0.4;
@@ -706,7 +706,7 @@ export const MockupCanvas = () => {
               <span className="w-2.5 h-2.5 rounded-full bg-[#27C93F] shadow-sm" />
             </div>
             <div className="h-5 px-3 rounded-md bg-white/5 border border-white/5 text-[9px] text-neutral-300 flex items-center justify-center font-mono max-w-[220px] truncate">
-              {config.browserUrl || (config.frameType === "minimal-desktop" ? "Studio Workspace" : "shots.so/editor")}
+              {config.browserUrl || (config.frameType === "minimal-desktop" ? "Studio Workspace" : "framecraft.app/editor")}
             </div>
             <div className="w-8" />
           </div>

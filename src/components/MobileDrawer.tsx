@@ -163,7 +163,7 @@ export const MobileDrawer = () => {
                         type="text"
                         value={config.browserUrl ?? ""}
                         onChange={(e) => updateConfig({ browserUrl: e.target.value })}
-                        placeholder={config.frameType === "minimal-desktop" ? "Studio Workspace" : "shots.so/editor"}
+                        placeholder={config.frameType === "minimal-desktop" ? "Studio Workspace" : "framecraft.app/editor"}
                         className="w-full px-3 py-2 rounded-xl bg-[#222222] border border-white/10 text-xs text-white placeholder-neutral-500 focus:outline-none focus:border-indigo-500"
                       />
                     </div>
@@ -327,7 +327,7 @@ export const MobileDrawer = () => {
                   {/* Watermark & VFX Toggles */}
                   <div className="space-y-2 pt-2 border-t border-white/5">
                     <div className="flex items-center justify-between py-1">
-                      <span className="text-xs font-medium text-white">Watermark Shots.so</span>
+                      <span className="text-xs font-medium text-white">Watermark FrameCraft</span>
                       <button
                         onClick={() => updateConfig({ watermark: !config.watermark })}
                         className={`w-9 h-5 rounded-full transition-colors relative p-0.5 ${
