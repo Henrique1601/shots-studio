@@ -46,7 +46,7 @@ Planejamento estratégico e catálogo exaustivo de evolução para o **Shots Stu
   - Extrair `SpatialTiltPad.tsx` (wireframe 3D, drag de rotação, sliders e reset) e `LayoutPresetsGrid.tsx`.
 
 ### 2. ⚡ Performance Extrema & Render em Background
-- [ ] **OffscreenCanvas & Background Processing via Web Workers**:
+- [x] **Pipeline de Exportação com Web Worker (src/workers/exportWorker.ts)** (Concluído em v1.2.3):
   - Mover gravação de vídeo/GIF para `OffscreenCanvas` com Web Workers, garantindo que o render 4K não bloqueie a thread principal da UI (mantendo 60fps constantes).
 - [ ] **Compressão Client-Side Inteligente**:
   - Suporte a compressão nativa em WebP e AVIF com slider de qualidade (80% a 100%) para downloads mais leves sem perda perceptível.
