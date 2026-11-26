@@ -383,7 +383,19 @@ server.tool(
     brandColor: z.string().optional().describe("Optional primary brand hex color (e.g. #06b6d4)"),
   },
   async ({ theme, device = "iphone-16-pro", brandColor }) => {
-    const STYLES_MAP: Record<string, any> = {
+    interface StylePreset {
+      name: string;
+      gradient: string;
+      lightPreset: string;
+      lightIntensity: number;
+      shadowMode: string;
+      shadowOpacity: number;
+      tiltX: number;
+      tiltY: number;
+      tiltZ: number;
+      borderRadius: number;
+    }
+    const STYLES_MAP: Record<string, StylePreset> = {
       "cyberpunk": {
         name: "Cyberpunk High-Tech",
         gradient: "radial-gradient(circle at 20% 20%, rgba(6, 182, 212, 0.4) 0%, transparent 50%), radial-gradient(circle at 80% 80%, rgba(236, 72, 153, 0.4) 0%, transparent 50%), linear-gradient(135deg, #050508 0%, #0d0e15 100%)",
@@ -448,11 +460,13 @@ server.tool(
 
     const selected = STYLES_MAP[theme] || STYLES_MAP["saas-modern"];
     const config = {
+      ...selected,
       frameType: device,
       aspectRatio: "16:9",
       backgroundType: "gradient",
-      gradient: brandColor ? `radial-gradient(circle at 50% 30%, ${brandColor}44 0%, transparent 60%), ${selected.gradient}` : selected.gradient,
-      ...selected,
+      gradient: brandColor
+        ? `radial-gradient(circle at 50% 30%, ${brandColor}44 0%, transparent 60%), ${selected.gradient}`
+        : selected.gradient,
     };
 
     return {

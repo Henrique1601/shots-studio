@@ -1,5 +1,3 @@
-import type { MockupConfig } from "@/types/mockup";
-
 export interface ExportWorkerRequest {
   taskId: string;
   slides: Array<{

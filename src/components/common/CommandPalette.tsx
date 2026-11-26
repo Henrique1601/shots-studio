@@ -320,20 +320,22 @@ export const CommandPalette = () => {
   }, [commands, query]);
 
   useEffect(() => {
-    setSelectedIndex(0);
-  }, [query, isCommandPaletteOpen]);
-
-  useEffect(() => {
     if (isCommandPaletteOpen) {
-      setQuery("");
-      setTimeout(() => inputRef.current?.focus(), 20);
+      const id = setTimeout(() => inputRef.current?.focus(), 20);
+      return () => clearTimeout(id);
     }
   }, [isCommandPaletteOpen]);
 
   if (!isCommandPaletteOpen) return null;
 
-  const executeSelected = (item: CommandItem) => {
+  const closePalette = () => {
+    setQuery("");
+    setSelectedIndex(0);
     setCommandPaletteOpen(false);
+  };
+
+  const executeSelected = (item: CommandItem) => {
+    closePalette();
     item.action();
   };
 
@@ -349,14 +351,14 @@ export const CommandPalette = () => {
       executeSelected(filtered[selectedIndex]);
     } else if (e.key === "Escape") {
       e.preventDefault();
-      setCommandPaletteOpen(false);
+      closePalette();
     }
   };
 
   return (
     <div
       className="fixed inset-0 z-50 flex items-start justify-center pt-[12vh] bg-black/70 backdrop-blur-sm px-4"
-      onClick={() => setCommandPaletteOpen(false)}
+      onClick={closePalette}
     >
       <div
         className="w-full max-w-xl bg-[#161618] border border-white/15 rounded-2xl shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-150"
@@ -370,12 +372,15 @@ export const CommandPalette = () => {
             ref={inputRef}
             type="text"
             value={query}
-            onChange={(e) => setQuery(e.target.value)}
+            onChange={(e) => {
+              setQuery(e.target.value);
+              setSelectedIndex(0);
+            }}
             placeholder="Digite um comando, dispositivo, fundo ou ação (ex: iPhone, Duo, Exportar)..."
             className="flex-1 bg-transparent text-sm text-white placeholder-neutral-500 outline-none"
           />
           <button
-            onClick={() => setCommandPaletteOpen(false)}
+            onClick={closePalette}
             className="p-1 rounded-lg hover:bg-white/10 text-neutral-400 hover:text-white transition-colors cursor-pointer"
           >
             <X className="w-4 h-4" />

@@ -41,10 +41,10 @@ export const TopBar = () => {
     showToast,
     slides,
     activeSlideIndex,
-    setActiveSlideIndex,
     isCarouselOpen,
     setCarouselOpen,
     setCommandPaletteOpen,
+    loadProjectBundle,
   } = useMockupStore();
 
   const [showSettings, setShowSettings] = useState(false);
@@ -74,10 +74,17 @@ export const TopBar = () => {
     if (!file) return;
     try {
       const data = await importProjectBundle(file);
-      if (data.config) updateConfig(data.config as any);
+      loadProjectBundle({
+        config: data.config,
+        slides: data.slides,
+        activeSlideIndex: data.activeSlideIndex,
+      });
       showToast("Projeto .framecraft restaurado com sucesso! 🚀", "success");
-    } catch (err: any) {
-      showToast(err.message || "Arquivo .framecraft inválido.", "error");
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : "Arquivo .framecraft inválido.";
+      showToast(message, "error");
+    } finally {
+      e.target.value = "";
     }
   };
 
@@ -184,6 +191,34 @@ export const TopBar = () => {
             Ctrl+K
           </kbd>
         </button>
+
+        {/* Project Bundle .framecraft Export / Import */}
+        <button
+          onClick={handleExportBundle}
+          title="Exportar Projeto Completo (.framecraft)"
+          aria-label="Exportar Projeto .framecraft"
+          className="hidden xl:flex items-center space-x-1 px-2 py-1.5 rounded-xl border border-emerald-500/30 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 text-xs font-semibold transition-colors cursor-pointer"
+        >
+          <FileDown className="w-3.5 h-3.5" />
+          <span>Salvar</span>
+        </button>
+
+        <button
+          onClick={() => bundleInputRef.current?.click()}
+          title="Abrir Projeto (.framecraft)"
+          aria-label="Abrir Projeto .framecraft"
+          className="hidden xl:flex items-center space-x-1 px-2 py-1.5 rounded-xl border border-[#2b2b2b] bg-[#1c1c1c] hover:bg-[#252525] text-neutral-300 text-xs font-semibold transition-colors cursor-pointer"
+        >
+          <FileUp className="w-3.5 h-3.5 text-amber-400" />
+          <span>Abrir</span>
+        </button>
+        <input
+          ref={bundleInputRef}
+          type="file"
+          accept=".framecraft,application/json"
+          onChange={handleImportBundleFile}
+          className="hidden"
+        />
       </div>
 
       {/* 2. Center: Command Bar Desktop (Os 7 botões reais do FrameCraft) */}

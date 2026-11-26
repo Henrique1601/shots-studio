@@ -3,13 +3,19 @@
 import { useCanvasOrbit } from "@/hooks/useCanvasOrbit";
 import { CanvasOverlays } from "./canvas/CanvasOverlays";
 
-import React, { useRef, useState, useEffect } from "react";
+import React, { useRef, useState, useEffect, useCallback } from "react";
 import { useMockupStore } from "@/store/mockupStore";
 import { SHAPES_LAYOUTS, DEVICE_SPECS, parseAspectRatio } from "@/types/mockup";
 import { Plus, RotateCcw, Compass } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { motion, type Transition } from "framer-motion";
 import { CodeSnippetFrame } from "./CodeSnippetFrame";
+import {
+  PixelFrame,
+  UltrawideFrame,
+  IMacFrame,
+  FoldableFrame,
+} from "./devices";
 
 export const MockupCanvas = () => {
   const {
@@ -200,17 +206,11 @@ export const MockupCanvas = () => {
     showToast("Terceira imagem carregada com sucesso! 📱", "success");
   };
 
-  const handlePrimarySlotClick = () => {
-    fileInputRef.current?.click();
-  };
-
-  const handleSecondarySlotClick = () => {
-    secondaryFileInputRef.current?.click();
-  };
-
-  const handleTertiarySlotClick = () => {
-    tertiaryFileInputRef.current?.click();
-  };
+  const triggerSlotUpload = useCallback((slot: "primary" | "secondary" | "tertiary") => {
+    if (slot === "primary") fileInputRef.current?.click();
+    else if (slot === "secondary") secondaryFileInputRef.current?.click();
+    else tertiaryFileInputRef.current?.click();
+  }, []);
 
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault();
@@ -399,9 +399,10 @@ export const MockupCanvas = () => {
   // Reusable renderer for physical devices, code snippet or browser/screenshot frames
   const renderMockupItem = (
     currentImg: string | null,
-    onSlotClick: () => void,
+    slot: "primary" | "secondary" | "tertiary",
     isSecondary = false
   ) => {
+    const onSlotClick = () => triggerSlotUpload(slot);
     // 1. Ray.so / Carbon Code Snippet Studio
     if (config.frameType === "code") {
       return (
@@ -432,6 +433,7 @@ export const MockupCanvas = () => {
       const isIMac = config.frameType === "imac-24";
       const isFoldable = config.frameType === "foldable-phone";
       const pixelColors = isPixel ? getPixelFrameColors() : null;
+      const filterStr = getImageFilterStyle().filter;
 
       return (
         <div
@@ -441,233 +443,127 @@ export const MockupCanvas = () => {
           }}
           className="w-full h-full relative flex items-center justify-center transition-all duration-300"
         >
-          {/* Ultrawide Monitor Desktop Stand (placed behind monitor at z-0) */}
-          {isUltrawide && (
-            <div className="absolute -bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center pointer-events-none z-0">
-              {/* Stand Stem / Neck with metallic gradient & cable grommet accent */}
-              <div className="w-16 h-10 bg-gradient-to-b from-[#25262c] to-[#141518] border-x border-white/10 shadow-lg flex items-center justify-center">
-                <div className="w-6 h-3 rounded-full bg-[#0a0a0c] border border-white/10 shadow-inner" />
-              </div>
-              {/* Heavy-duty weighted desktop base */}
-              <div className="w-56 h-3 rounded-md bg-gradient-to-b from-[#2a2b30] via-[#1e1f23] to-[#131416] border border-white/15 shadow-[0_12px_24px_rgba(0,0,0,0.6)] flex items-center justify-center">
-                <div className="w-52 h-[1px] bg-white/15" />
-              </div>
-            </div>
-          )}
-
-          {/* iMac 24" M4 Desktop Stand (placed behind chassis at z-0) */}
-          {isIMac && (
-            <div className="absolute -bottom-12 left-1/2 -translate-x-1/2 flex flex-col items-center pointer-events-none z-0">
-              {/* Stand Stem */}
-              <div className="w-14 h-12 bg-gradient-to-b from-[#e2e8f0] to-[#cbd5e1] border-x border-black/5 shadow-md" />
-              {/* Sleek Aluminum Rectangular Foot */}
-              <div className="w-44 h-2.5 rounded-sm bg-gradient-to-b from-[#f8fafc] to-[#cbd5e1] border border-white/60 shadow-[0_12px_24px_rgba(0,0,0,0.5)]" />
-            </div>
-          )}
-
-          {/* Opaque Chassis Body (Solid 100% background to completely prevent canvas gradient bleed-through) */}
-          {isPixel ? (
-            <div
-              className="absolute inset-0 rounded-[48px] bg-[#0c0d0f] pointer-events-none z-5 shadow-2xl"
-              style={{ background: "#0c0d0f" }}
+          {isPixel && pixelColors ? (
+            <PixelFrame
+              config={config}
+              imageUrl={currentImg}
+              onSlotClick={onSlotClick}
+              isSecondary={isSecondary}
+              filterStyle={filterStr}
+              pixelColors={pixelColors}
             />
           ) : isUltrawide ? (
-            <div
-              className="absolute inset-0 rounded-xl bg-[#0c0d10] pointer-events-none z-5 shadow-2xl"
-              style={{ background: "#0c0d10" }}
+            <UltrawideFrame
+              config={config}
+              imageUrl={currentImg}
+              onSlotClick={onSlotClick}
+              isSecondary={isSecondary}
+              filterStyle={filterStr}
             />
           ) : isIMac ? (
-            <div
-              className="absolute inset-0 rounded-2xl bg-[#0c0d10] pointer-events-none z-5 shadow-2xl border-[3.5px] border-[#e2e8f0]"
-              style={{ background: "#0c0d10" }}
+            <IMacFrame
+              config={config}
+              imageUrl={currentImg}
+              onSlotClick={onSlotClick}
+              isSecondary={isSecondary}
+              filterStyle={filterStr}
             />
           ) : isFoldable ? (
-            <div
-              className="absolute inset-0 rounded-[28px] bg-[#090a0d] pointer-events-none z-5 shadow-2xl"
-              style={{ background: "#090a0d" }}
+            <FoldableFrame
+              config={config}
+              imageUrl={currentImg}
+              onSlotClick={onSlotClick}
+              isSecondary={isSecondary}
+              filterStyle={filterStr}
             />
           ) : (
-            /* Opaque black backing plate for PNG-based devices (iPhone, iPad, Watch, MacBook) */
-            <div
-              className="absolute bg-[#020202] pointer-events-none"
-              style={{
-                left: deviceSpec.screenBounds?.left ?? "0%",
-                top: deviceSpec.screenBounds?.top ?? "0%",
-                width: deviceSpec.screenBounds?.width ?? "100%",
-                height: deviceSpec.screenBounds?.height ?? "100%",
-                borderRadius: deviceSpec.containerClass?.includes("iphone")
-                  ? "48px"
-                  : deviceSpec.containerClass?.includes("ipad")
-                  ? "24px"
-                  : deviceSpec.containerClass?.includes("watch")
-                  ? "36px"
-                  : "4px",
-                transform: "scale(1.02)",
-                transformOrigin: "center",
-                zIndex: 5,
-              }}
-            />
-          )}
-
-          {/* Calibrated Screen Mask & Media Container (under bezel cutout) */}
-          <div
-            style={{
-              position: "absolute",
-              left: deviceSpec.screenBounds?.left ?? "0%",
-              top: deviceSpec.screenBounds?.top ?? "0%",
-              width: deviceSpec.screenBounds?.width ?? "100%",
-              height: deviceSpec.screenBounds?.height ?? "100%",
-              borderRadius: isPixel
-                ? "36px"
-                : isUltrawide
-                ? "6px"
-                : isIMac
-                ? "4px"
-                : isFoldable
-                ? "20px"
-                : undefined,
-              maskImage: deviceSpec.maskSvg ? `url("${deviceSpec.maskSvg}")` : undefined,
-              WebkitMaskImage: deviceSpec.maskSvg ? `url("${deviceSpec.maskSvg}")` : undefined,
-              maskSize: "100% 100%",
-              WebkitMaskSize: "100% 100%",
-            }}
-            className="overflow-hidden bg-[#0a0a0a] flex items-center justify-center cursor-pointer z-10"
-            onClick={onSlotClick}
-          >
-            {currentImg ? (
-              <img
-                src={currentImg}
-                alt={isSecondary ? "Secondary device media" : "Uploaded media"}
-                style={{
-                  objectFit: config.imageFit || "cover",
-                  objectPosition: `50% ${config.imagePositionY ?? 50}%`,
-                  ...getImageFilterStyle(),
-                }}
-                className="w-full h-full block select-none pointer-events-none transition-all duration-150"
-              />
-            ) : (
-              <div className="flex flex-col items-center justify-center p-6 text-center group">
-                <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center mb-2 group-hover:scale-110 transition-transform border border-white/20 shadow-md">
-                  <Plus className="w-5 h-5 text-white" />
-                </div>
-                <h3 className="text-xs font-semibold text-white tracking-tight mb-0.5">
-                  {isSecondary ? "2nd Device Media" : "Drop or Paste"}
-                </h3>
-                <p className="text-[10px] text-neutral-400">
-                  {isSecondary ? "Click to upload" : "Images & Videos"}
-                </p>
-              </div>
-            )}
-
-            {/* Specular Screen Glare / Reflection Layer */}
-            {config.lightPreset !== "none" && (
-              <div
-                className="absolute inset-0 pointer-events-none z-15 mix-blend-screen transition-opacity duration-200"
-                style={{
-                  background: getGlareGradient(),
-                  opacity: (config.lightIntensity ?? 35) / 100,
-                }}
-              />
-            )}
-
-            {/* Foldable Phone Center Crease Subtle Shadow */}
-            {isFoldable && (
-              <div className="absolute inset-y-0 left-1/2 -translate-x-1/2 w-4 pointer-events-none z-15 bg-gradient-to-r from-transparent via-black/30 to-transparent" />
-            )}
-
-            {/* Pixel 9 Pro Centered Punch-Hole Camera with realistic lens reflections */}
-            {isPixel && (
-              <div className="absolute top-2.5 left-1/2 -translate-x-1/2 w-4 h-4 rounded-full bg-black border border-neutral-800 z-30 pointer-events-none shadow-sm flex items-center justify-center">
-                <div className="w-2.5 h-2.5 rounded-full bg-[#0a1224] ring-1 ring-white/10 flex items-center justify-center shadow-inner">
-                  <div className="w-1 h-1 rounded-full bg-white/40 -translate-x-[0.5px] -translate-y-[0.5px]" />
-                </div>
-              </div>
-            )}
-
-            {/* Foldable Phone Punch-Hole Camera on right screen */}
-            {isFoldable && (
-              <div className="absolute top-3 right-[22%] w-3 h-3 rounded-full bg-black border border-neutral-800 z-30 pointer-events-none shadow-sm flex items-center justify-center">
-                <div className="w-1.5 h-1.5 rounded-full bg-[#0a1224]" />
-              </div>
-            )}
-          </div>
-
-          {/* Pixel 9 Pro Physical Hardware Overlays (Titanium Band, Buttons, Antenna & Ear-piece) */}
-          {isPixel && pixelColors && (
             <>
-              {/* Outer Metallic Bezel Band */}
+              {/* Opaque black backing plate for PNG-based devices (iPhone, iPad, Watch, MacBook) */}
               <div
-                className="absolute inset-0 rounded-[48px] pointer-events-none z-20 border-[9px] shadow-sm transition-all duration-300"
+                className="absolute bg-[#020202] pointer-events-none"
                 style={{
-                  borderColor: pixelColors.border,
-                  boxShadow: pixelColors.shadow,
+                  left: deviceSpec.screenBounds?.left ?? "0%",
+                  top: deviceSpec.screenBounds?.top ?? "0%",
+                  width: deviceSpec.screenBounds?.width ?? "100%",
+                  height: deviceSpec.screenBounds?.height ?? "100%",
+                  borderRadius: deviceSpec.containerClass?.includes("iphone")
+                    ? "48px"
+                    : deviceSpec.containerClass?.includes("ipad")
+                    ? "24px"
+                    : deviceSpec.containerClass?.includes("watch")
+                    ? "36px"
+                    : "4px",
+                  transform: "scale(1.02)",
+                  transformOrigin: "center",
+                  zIndex: 5,
                 }}
               />
-              {/* Top Ear-piece Speaker Grille */}
-              <div className="absolute top-[1.2%] left-1/2 -translate-x-1/2 w-12 h-[2px] rounded-full bg-[#18191c] border-b border-white/10 z-25 pointer-events-none" />
-              {/* Right Side Physical Buttons: Power & Volume Rocker */}
+
+              {/* Calibrated Screen Mask & Media Container (under bezel cutout) */}
               <div
-                className="absolute -right-[3px] top-[18%] w-[3px] h-[30px] rounded-r-sm pointer-events-none z-20 shadow-sm"
-                style={{ background: pixelColors.button }}
-              />
-              <div
-                className="absolute -right-[3px] top-[26%] w-[3px] h-[58px] rounded-r-sm pointer-events-none z-20 shadow-sm"
-                style={{ background: pixelColors.button }}
-              />
+                style={{
+                  position: "absolute",
+                  left: deviceSpec.screenBounds?.left ?? "0%",
+                  top: deviceSpec.screenBounds?.top ?? "0%",
+                  width: deviceSpec.screenBounds?.width ?? "100%",
+                  height: deviceSpec.screenBounds?.height ?? "100%",
+                  maskImage: deviceSpec.maskSvg ? `url("${deviceSpec.maskSvg}")` : undefined,
+                  WebkitMaskImage: deviceSpec.maskSvg ? `url("${deviceSpec.maskSvg}")` : undefined,
+                  maskSize: "100% 100%",
+                  WebkitMaskSize: "100% 100%",
+                }}
+                className="overflow-hidden bg-[#0a0a0a] flex items-center justify-center cursor-pointer z-10"
+                onClick={onSlotClick}
+              >
+                {currentImg ? (
+                  <img
+                    src={currentImg}
+                    alt={isSecondary ? "Secondary device media" : "Uploaded media"}
+                    style={{
+                      objectFit: config.imageFit || "cover",
+                      objectPosition: `50% ${config.imagePositionY ?? 50}%`,
+                      ...getImageFilterStyle(),
+                    }}
+                    className="w-full h-full block select-none pointer-events-none transition-all duration-150"
+                  />
+                ) : (
+                  <div className="flex flex-col items-center justify-center p-6 text-center group">
+                    <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center mb-2 group-hover:scale-110 transition-transform border border-white/20 shadow-md">
+                      <Plus className="w-5 h-5 text-white" />
+                    </div>
+                    <h3 className="text-xs font-semibold text-white tracking-tight mb-0.5">
+                      {isSecondary ? "2nd Device Media" : "Drop or Paste"}
+                    </h3>
+                    <p className="text-[10px] text-neutral-400">
+                      {isSecondary ? "Click to upload" : "Images & Videos"}
+                    </p>
+                  </div>
+                )}
+
+                {/* Specular Screen Glare / Reflection Layer */}
+                {config.lightPreset !== "none" && (
+                  <div
+                    className="absolute inset-0 pointer-events-none z-15 mix-blend-screen transition-opacity duration-200"
+                    style={{
+                      background: getGlareGradient(),
+                      opacity: (config.lightIntensity ?? 35) / 100,
+                    }}
+                  />
+                )}
+              </div>
+
+              {/* Device Bezel Overlay (PNG with transparent screen cutout & Finish Tint) */}
+              {deviceSpec.deviceImg && (
+                <img
+                  src={deviceSpec.deviceImg}
+                  alt={deviceSpec.name}
+                  style={{
+                    filter: getDeviceFinishFilter(),
+                  }}
+                  className="absolute inset-0 w-full h-full object-fill block select-none pointer-events-none z-20 transition-all duration-300"
+                />
+              )}
             </>
-          )}
-
-          {/* Ultrawide Monitor Modern 3-Side Micro-Bezel & Brushed Aluminum Bottom Chin */}
-          {isUltrawide && (
-            <div className="absolute inset-0 rounded-xl pointer-events-none z-20 border-[5px] border-[#18191c] shadow-[inset_0_1px_1px_rgba(255,255,255,0.15)] flex flex-col justify-end">
-              {/* Brushed Aluminum Bottom Chin Bar */}
-              <div className="h-5 bg-gradient-to-r from-[#17181c] via-[#212328] to-[#17181c] border-t border-white/10 flex items-center justify-between px-5 rounded-b-[7px]">
-                {/* Subtle brand pip / accent */}
-                <div className="w-4 h-1 rounded-full bg-white/20" />
-                {/* Power status LED indicator with soft glow */}
-                <div className="w-1.5 h-1.5 rounded-full bg-emerald-400/80 shadow-[0_0_6px_rgba(52,211,153,0.8)]" />
-              </div>
-            </div>
-          )}
-
-          {/* iMac 24" M4 Modern Frame & Signature Pastel Chin */}
-          {isIMac && (
-            <div className="absolute inset-0 rounded-2xl pointer-events-none z-20 flex flex-col justify-between">
-              {/* Top Center Stage 12MP Camera Pip */}
-              <div className="w-full h-5 flex items-center justify-center">
-                <div className="w-2 h-2 rounded-full bg-black ring-1 ring-white/20 shadow-sm flex items-center justify-center">
-                  <div className="w-0.5 h-0.5 rounded-full bg-[#1e293b]" />
-                </div>
-              </div>
-              {/* Signature Pastel / Silver Bottom Chin */}
-              <div className="h-[25.2%] bg-gradient-to-b from-[#f1f5f9] via-[#e2e8f0] to-[#cbd5e1] rounded-b-[12px] border-t border-black/10 flex items-center justify-center shadow-inner">
-                {/* Minimalist Apple Logo Dot */}
-                <div className="w-2.5 h-2.5 rounded-full bg-slate-500/40 shadow-sm" />
-              </div>
-            </div>
-          )}
-
-          {/* Foldable Phone Hardware Frame & Spine Notches */}
-          {isFoldable && (
-            <>
-              {/* Outer chassis border */}
-              <div className="absolute inset-0 rounded-[28px] pointer-events-none z-20 border-[7px] border-[#22242a] shadow-[inset_0_0_0_1px_rgba(255,255,255,0.15)]" />
-              {/* Top & Bottom Hinge Notches */}
-              <div className="absolute top-0 left-1/2 -translate-x-1/2 w-6 h-1 rounded-b-sm bg-neutral-600 z-25 pointer-events-none" />
-              <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-6 h-1 rounded-t-sm bg-neutral-600 z-25 pointer-events-none" />
-            </>
-          )}
-
-          {/* 3. Device Bezel Overlay (PNG with transparent screen cutout & Finish Tint) */}
-          {deviceSpec.deviceImg && (
-            <img
-              src={deviceSpec.deviceImg}
-              alt={deviceSpec.name}
-              style={{
-                filter: getDeviceFinishFilter(),
-              }}
-              className="absolute inset-0 w-full h-full object-fill block select-none pointer-events-none z-20 transition-all duration-300"
-            />
           )}
         </div>
       );
@@ -1031,11 +927,7 @@ export const MockupCanvas = () => {
                         : undefined,
                   }}
                 >
-                  {renderMockupItem(
-                    imageUrl,
-                    handlePrimarySlotClick,
-                    false
-                  )}
+                  {renderMockupItem(imageUrl, "primary", false)}
                 </div>
 
                 {/* 2. Center Device (Elevated) */}
@@ -1051,7 +943,7 @@ export const MockupCanvas = () => {
                 >
                   {renderMockupItem(
                     config.secondaryImageUrl || imageUrl,
-                    handleSecondarySlotClick,
+                    "secondary",
                     true
                   )}
                 </div>
@@ -1069,7 +961,7 @@ export const MockupCanvas = () => {
                 >
                   {renderMockupItem(
                     config.tertiaryImageUrl || imageUrl,
-                    handleTertiarySlotClick,
+                    "tertiary",
                     true
                   )}
                 </div>
@@ -1090,7 +982,7 @@ export const MockupCanvas = () => {
                         : undefined,
                   }}
                 >
-                  {renderMockupItem(imageUrl, handlePrimarySlotClick, false)}
+                  {renderMockupItem(imageUrl, "primary", false)}
                 </div>
 
                 {/* Right Device / Media */}
@@ -1106,13 +998,13 @@ export const MockupCanvas = () => {
                 >
                   {renderMockupItem(
                     config.secondaryImageUrl || imageUrl,
-                    handleSecondarySlotClick,
+                    "secondary",
                     true
                   )}
                 </div>
               </div>
             ) : (
-              renderMockupItem(imageUrl, handlePrimarySlotClick, false)
+              renderMockupItem(imageUrl, "primary", false)
             )}
           </motion.div>
         )}

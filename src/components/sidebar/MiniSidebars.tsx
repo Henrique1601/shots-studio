@@ -15,13 +15,8 @@ import {
   Trash2,
 } from "lucide-react";
 import { useMockupStore } from "@/store/mockupStore";
-import { SHAPES_LAYOUTS } from "@/constants/shapes";
 import type {
   PortraitLightingMode,
-  WatermarkPlatform,
-  WatermarkPosition,
-  WatermarkStyle,
-  WatermarkTheme,
   WatermarkProfile,
   VfxType,
 } from "@/types/mockup";

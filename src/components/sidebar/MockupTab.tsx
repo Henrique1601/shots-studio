@@ -20,19 +20,16 @@ import type {
   FrameStyle,
   ShadowMode,
   BorderRoundness,
-  LightPreset,
-  DeviceColorFinish,
   CodeLanguage,
-  CodeTheme,
 } from "@/types/mockup";
-import { extractPaletteFromImage, type GeneratedGradient } from "@/utils/magicPalette";
+import type { GeneratedGradient } from "@/utils/magicPalette";
 
 interface MockupTabProps {
   onExtractPalette?: (gradients: GeneratedGradient[]) => void;
   magicGradients?: GeneratedGradient[];
 }
 
-export const MockupTab: React.FC<MockupTabProps> = ({ onExtractPalette }) => {
+export const MockupTab: React.FC<MockupTabProps> = () => {
   const {
     config,
     imageUrl,
@@ -51,7 +48,6 @@ export const MockupTab: React.FC<MockupTabProps> = ({ onExtractPalette }) => {
   const tertiaryFileInputRef = useRef<HTMLInputElement>(null);
 
   const [showAdjustLight, setShowAdjustLight] = useState(false);
-  const [isExtracting, setIsExtracting] = useState(false);
   const [showGrading, setShowGrading] = useState(false);
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -82,23 +78,6 @@ export const MockupTab: React.FC<MockupTabProps> = ({ onExtractPalette }) => {
       const url = URL.createObjectURL(file);
       setTertiaryImageUrl(url);
       showToast("Terceira imagem carregada! 📱", "success");
-    }
-  };
-
-  const handleExtractMagicPalette = async () => {
-    if (!imageUrl) {
-      showToast("Envie uma imagem para extrair a paleta mágica!", "error");
-      return;
-    }
-    setIsExtracting(true);
-    try {
-      const grads = await extractPaletteFromImage(imageUrl);
-      if (onExtractPalette) onExtractPalette(grads);
-      showToast("Paleta de estúdio extraída! ✨", "success");
-    } catch {
-      showToast("Não foi possível extrair cores da imagem", "error");
-    } finally {
-      setIsExtracting(false);
     }
   };
 

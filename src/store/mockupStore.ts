@@ -39,6 +39,11 @@ interface MockupStore {
   setTemplatesModalOpen: (open: boolean) => void;
   setCommandPaletteOpen: (open: boolean) => void;
   updateConfig: (partial: Partial<MockupConfig>) => void;
+  loadProjectBundle: (payload: {
+    config: MockupConfig;
+    slides?: SlideItem[];
+    activeSlideIndex?: number;
+  }) => void;
   undo: () => void;
   redo: () => void;
   randomize: () => void;
@@ -311,6 +316,29 @@ export const useMockupStore = create<MockupStore>((set, get) => ({
   setExportSettingsOpen: (open) => set({ isExportSettingsOpen: open }),
   setTemplatesModalOpen: (open) => set({ isTemplatesModalOpen: open }),
   setCommandPaletteOpen: (open) => set({ isCommandPaletteOpen: open }),
+  loadProjectBundle: ({ config, slides, activeSlideIndex = 0 }) => {
+    const safeSlides = slides?.length
+      ? slides
+      : [
+          {
+            id: "slide-1",
+            title: "Slide 1",
+            imageUrl: null,
+            config: { ...defaultConfig, ...config },
+          },
+        ];
+    const safeIndex = Math.max(0, Math.min(activeSlideIndex, safeSlides.length - 1));
+    const activeSlide = safeSlides[safeIndex];
+    const mergedConfig = { ...defaultConfig, ...config };
+    set({
+      config: mergedConfig,
+      slides: safeSlides,
+      activeSlideIndex: safeIndex,
+      imageUrl: activeSlide?.imageUrl ?? null,
+      history: [mergedConfig],
+      historyIndex: 0,
+    });
+  },
   updateConfig: (partial) => {
     const current = get().config;
     const nextConfig = { ...current, ...partial };
