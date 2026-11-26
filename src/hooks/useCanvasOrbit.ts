@@ -38,12 +38,17 @@ export function useCanvasOrbit() {
 
     // Shift key enables precision micro-adjustments
     const factor = e.shiftKey ? 0.08 : 0.22;
-    const newTiltY = Math.round(
+    const rawTiltY = Math.round(
       Math.max(-45, Math.min(45, orbitStartRef.current.tiltY + deltaX * factor))
     );
-    const newTiltX = Math.round(
+    const rawTiltX = Math.round(
       Math.max(-45, Math.min(45, orbitStartRef.current.tiltX - deltaY * factor))
     );
+
+    // Smart Snapping to 0° axis within ±3° threshold (unless holding Shift)
+    const snapEnabled = config.snapGuidesEnabled !== false && !e.shiftKey;
+    const newTiltY = snapEnabled && Math.abs(rawTiltY) <= 3 ? 0 : rawTiltY;
+    const newTiltX = snapEnabled && Math.abs(rawTiltX) <= 3 ? 0 : rawTiltX;
 
     updateConfig({
       tiltX: newTiltX,

@@ -20,6 +20,7 @@ import {
   Archive,
   FileDown,
   FileUp,
+  Search,
 } from "lucide-react";
 import { SavedShotsModal } from "./SavedShotsModal";
 import { exportProjectBundle, importProjectBundle } from "@/lib/projectBundle";
@@ -43,6 +44,7 @@ export const TopBar = () => {
     setActiveSlideIndex,
     isCarouselOpen,
     setCarouselOpen,
+    setCommandPaletteOpen,
   } = useMockupStore();
 
   const [showSettings, setShowSettings] = useState(false);
@@ -167,6 +169,20 @@ export const TopBar = () => {
         >
           <Layers className="w-3.5 h-3.5 text-blue-400" />
           <span>Slides ({slides.length})</span>
+        </button>
+
+        {/* Command Palette Trigger (Ctrl+K) */}
+        <button
+          onClick={() => setCommandPaletteOpen(true)}
+          title="Command Palette (Ctrl+K)"
+          aria-label="Abrir Command Palette"
+          className="hidden lg:flex items-center space-x-1.5 px-2.5 py-1.5 rounded-xl border border-[#2b2b2b] bg-[#181818] hover:bg-[#252525] text-neutral-400 hover:text-white text-xs font-medium transition-colors cursor-pointer"
+        >
+          <Search className="w-3.5 h-3.5 text-indigo-400" />
+          <span>Buscar</span>
+          <kbd className="text-[9px] font-mono px-1 py-0.5 rounded bg-[#262626] text-neutral-400">
+            Ctrl+K
+          </kbd>
         </button>
       </div>
 

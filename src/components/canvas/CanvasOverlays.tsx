@@ -146,26 +146,38 @@ export const CanvasOverlays: React.FC<CanvasOverlaysProps> = ({
                 : "bg-black text-white font-bold border border-white/20 shadow-xl")
           )}
         >
-          {(config.watermarkPlatform === "shots" || config.watermarkPlatform === "framecraft") && (
-            <div className="w-3.5 h-3.5 rounded-md bg-white flex items-center justify-center">
-              <span className="w-1.5 h-1.5 bg-black rounded-sm" />
-            </div>
-          )}
-          {config.watermarkPlatform === "twitter" && (
-            <span className="font-bold text-[11px] leading-none text-white px-0.5">𝕏</span>
-          )}
-          {config.watermarkPlatform === "instagram" && (
-            <div className="w-3.5 h-3.5 rounded bg-gradient-to-tr from-amber-500 via-rose-500 to-purple-600 flex items-center justify-center text-[9px] font-bold text-white">
-              ◎
-            </div>
+          {config.watermarkLogoUrl ? (
+            <img
+              src={config.watermarkLogoUrl}
+              alt="Brand Logo"
+              className="h-4 max-w-[90px] object-contain rounded-sm"
+            />
+          ) : (
+            <>
+              {(config.watermarkPlatform === "shots" || config.watermarkPlatform === "framecraft") && (
+                <div className="w-3.5 h-3.5 rounded-md bg-white flex items-center justify-center">
+                  <span className="w-1.5 h-1.5 bg-black rounded-sm" />
+                </div>
+              )}
+              {config.watermarkPlatform === "twitter" && (
+                <span className="font-bold text-[11px] leading-none text-white px-0.5">𝕏</span>
+              )}
+              {config.watermarkPlatform === "instagram" && (
+                <div className="w-3.5 h-3.5 rounded bg-gradient-to-tr from-amber-500 via-rose-500 to-purple-600 flex items-center justify-center text-[9px] font-bold text-white">
+                  ◎
+                </div>
+              )}
+            </>
           )}
           <div className="text-[10px] font-medium leading-none">
-            {(config.watermarkPlatform === "shots" || config.watermarkPlatform === "framecraft") && (
+            {!config.watermarkLogoUrl && (config.watermarkPlatform === "shots" || config.watermarkPlatform === "framecraft") && (
               <span className="opacity-60">Made with </span>
             )}
-            <span className="font-bold">
-              {config.watermarkText || "FrameCraft"}
-            </span>
+            {config.watermarkText && (
+              <span className="font-bold">
+                {config.watermarkText}
+              </span>
+            )}
           </div>
         </div>
       )}

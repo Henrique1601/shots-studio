@@ -7,6 +7,7 @@ import {
   Sparkles,
   Box,
   Wand2,
+  Pipette,
 } from "lucide-react";
 import { useMockupStore } from "@/store/mockupStore";
 import {
@@ -42,6 +43,26 @@ export const FrameTab: React.FC<FrameTabProps> = ({
   const [inputH, setInputH] = useState(config.customHeight.toString());
   const [isRatioDropdownOpen, setIsRatioDropdownOpen] = useState(false);
   const [isExtracting, setIsExtracting] = useState(false);
+  const colorFallbackRef = React.useRef<HTMLInputElement>(null);
+
+  const handleEyeDropper = async () => {
+    if (typeof window !== "undefined" && "EyeDropper" in window) {
+      try {
+        const eyeDropper = new (window as unknown as { EyeDropper: new () => { open: () => Promise<{ sRGBHex: string }> } }).EyeDropper();
+        const result = await eyeDropper.open();
+        updateConfig({
+          backgroundType: "solid",
+          backgroundValue: result.sRGBHex,
+        });
+        showToast(`Cor capturada: ${result.sRGBHex} 🎨`, "success");
+      } catch {
+        // User cancelled EyeDropper
+      }
+    } else {
+      colorFallbackRef.current?.click();
+      showToast("EyeDropper nativo indisponível; usando seletor de cor.", "info");
+    }
+  };
   const [bgCategory, setBgCategory] = useState<
     "transparent" | "color" | "image" | "unsplash"
   >(
@@ -709,10 +730,33 @@ export const FrameTab: React.FC<FrameTabProps> = ({
                 </div>
               </div>
 
-              {/* 7. Solid Swatches Row (with Expand [v]) */}
+              {/* 7. Solid Swatches Row (with Expand [v] & EyeDropper) */}
               <div>
                 <div className="flex items-center justify-between mb-1.5">
-                  <span className="text-[10px] font-bold text-neutral-300">Solid</span>
+                  <div className="flex items-center space-x-1.5">
+                    <span className="text-[10px] font-bold text-neutral-300">Solid</span>
+                    <button
+                      onClick={handleEyeDropper}
+                      title="Conta-Gotas de Tela (EyeDropper)"
+                      aria-label="Capturar cor da tela com EyeDropper"
+                      className="flex items-center space-x-1 px-1.5 py-0.5 rounded-md bg-white/5 hover:bg-indigo-500/20 border border-white/10 hover:border-indigo-400/40 text-[9px] font-semibold text-neutral-300 hover:text-indigo-300 transition-colors cursor-pointer"
+                    >
+                      <Pipette className="w-2.5 h-2.5" />
+                      <span>Conta-gotas</span>
+                    </button>
+                    <input
+                      ref={colorFallbackRef}
+                      type="color"
+                      value={config.backgroundType === "solid" ? config.backgroundValue : "#111111"}
+                      onChange={(e) =>
+                        updateConfig({
+                          backgroundType: "solid",
+                          backgroundValue: e.target.value,
+                        })
+                      }
+                      className="sr-only"
+                    />
+                  </div>
                   <button
                     onClick={() =>
                       setExpandedSection(expandedSection === "solid" ? "none" : "solid")

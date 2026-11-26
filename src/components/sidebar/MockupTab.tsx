@@ -182,17 +182,93 @@ export const MockupTab: React.FC<MockupTabProps> = ({ onExtractPalette }) => {
 
           {/* Browser / Desktop Window Title or URL */}
           {(config.frameType === "browser" || config.frameType === "minimal-desktop") && (
-            <div>
-              <div className="text-[10px] font-bold text-neutral-400 tracking-wider mb-1.5">
-                WINDOW URL / TITLE
+            <div className="space-y-2.5 p-2.5 rounded-xl bg-[#242424] border border-white/10">
+              <div>
+                <div className="text-[10px] font-bold text-neutral-400 tracking-wider mb-1.5">
+                  WINDOW URL / TITLE
+                </div>
+                <input
+                  type="text"
+                  value={config.browserUrl ?? ""}
+                  onChange={(e) => updateConfig({ browserUrl: e.target.value })}
+                  placeholder={config.frameType === "minimal-desktop" ? "Studio Workspace" : "framecraft.app/editor"}
+                  className="w-full px-2.5 py-1.5 rounded-xl bg-[#181818] border border-neutral-700 hover:border-neutral-500 focus:border-indigo-500 text-xs text-white placeholder-neutral-500 focus:outline-none transition-colors"
+                />
               </div>
-              <input
-                type="text"
-                value={config.browserUrl ?? ""}
-                onChange={(e) => updateConfig({ browserUrl: e.target.value })}
-                placeholder={config.frameType === "minimal-desktop" ? "Studio Workspace" : "framecraft.app/editor"}
-                className="w-full px-2.5 py-1.5 rounded-xl bg-[#222222] border border-neutral-700 hover:border-neutral-500 focus:border-indigo-500 text-xs text-white placeholder-neutral-500 focus:outline-none transition-colors"
-              />
+
+              {config.frameType === "browser" && (
+                <>
+                  {/* Safari Dark / Light Theme */}
+                  <div className="flex items-center justify-between pt-1">
+                    <span className="text-[10px] font-bold text-neutral-400 tracking-wider">
+                      SAFARI THEME
+                    </span>
+                    <div className="flex bg-[#181818] p-0.5 rounded-lg border border-white/5 text-[10px] font-semibold">
+                      <button
+                        onClick={() => updateConfig({ browserTheme: "dark" })}
+                        className={`px-2 py-0.5 rounded-md transition-colors cursor-pointer ${
+                          config.browserTheme !== "light"
+                            ? "bg-[#333] text-white"
+                            : "text-neutral-400 hover:text-white"
+                        }`}
+                      >
+                        Dark
+                      </button>
+                      <button
+                        onClick={() => updateConfig({ browserTheme: "light" })}
+                        className={`px-2 py-0.5 rounded-md transition-colors cursor-pointer ${
+                          config.browserTheme === "light"
+                            ? "bg-white text-black"
+                            : "text-neutral-400 hover:text-white"
+                        }`}
+                      >
+                        Light
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Realistic Multi-Tabs Toggle */}
+                  <div className="flex items-center justify-between">
+                    <span className="text-[10px] font-bold text-neutral-400 tracking-wider">
+                      ABAS REAIS (TABS)
+                    </span>
+                    <button
+                      onClick={() =>
+                        updateConfig({ browserTabsEnabled: !config.browserTabsEnabled })
+                      }
+                      className={`px-2.5 py-1 rounded-lg text-[10px] font-bold transition-colors cursor-pointer ${
+                        config.browserTabsEnabled
+                          ? "bg-indigo-600 text-white"
+                          : "bg-[#181818] text-neutral-400 hover:text-white border border-white/10"
+                      }`}
+                    >
+                      {config.browserTabsEnabled ? "Ativo" : "Desativado"}
+                    </button>
+                  </div>
+
+                  {config.browserTabsEnabled && (
+                    <div>
+                      <label className="text-[9px] text-neutral-400 block mb-1">
+                        Títulos das Abas (separados por vírgula)
+                      </label>
+                      <input
+                        type="text"
+                        value={(config.browserTabs || ["FrameCraft Studio", "Analytics", "Docs"]).join(", ")}
+                        onChange={(e) =>
+                          updateConfig({
+                            browserTabs: e.target.value
+                              .split(",")
+                              .map((s) => s.trim())
+                              .filter(Boolean),
+                          })
+                        }
+                        placeholder="App, Dashboard, Docs"
+                        className="w-full px-2 py-1 rounded-lg bg-[#181818] border border-neutral-700 text-[11px] text-white font-mono focus:outline-none focus:border-indigo-500"
+                      />
+                    </div>
+                  )}
+                </>
+              )}
             </div>
           )}
 

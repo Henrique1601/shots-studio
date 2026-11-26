@@ -118,6 +118,7 @@ export interface WatermarkProfile {
   size: number;
   inset: number;
   position: WatermarkPosition;
+  logoUrl?: string | null;
 }
 
 export type VfxType =
@@ -254,6 +255,14 @@ export interface MockupConfig {
   grayscale?: boolean;
   sepia?: boolean;
   hueRotate?: number;  // 0 to 360 (deg)
+  // Custom Watermark Logo
+  watermarkLogoUrl?: string | null;
+  // Safari Browser Tabs & Theme
+  browserTabsEnabled?: boolean;
+  browserTabs?: string[];
+  browserTheme?: "dark" | "light";
+  // Smart Snapping Guides
+  snapGuidesEnabled?: boolean;
 }
 
 export interface DeviceSpec {

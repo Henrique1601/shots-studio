@@ -14,6 +14,7 @@ interface MockupStore {
   isDeviceModalOpen: boolean;
   isExportSettingsOpen: boolean;
   isTemplatesModalOpen: boolean;
+  isCommandPaletteOpen: boolean;
   history: MockupConfig[];
   historyIndex: number;
   toasts: ToastItem[];
@@ -36,6 +37,7 @@ interface MockupStore {
   setDeviceModalOpen: (open: boolean) => void;
   setExportSettingsOpen: (open: boolean) => void;
   setTemplatesModalOpen: (open: boolean) => void;
+  setCommandPaletteOpen: (open: boolean) => void;
   updateConfig: (partial: Partial<MockupConfig>) => void;
   undo: () => void;
   redo: () => void;
@@ -168,6 +170,12 @@ const defaultConfig: MockupConfig = {
   grayscale: false,
   sepia: false,
   hueRotate: 0,
+  // Custom Watermark Logo & Safari Tabs Defaults
+  watermarkLogoUrl: null,
+  browserTabsEnabled: false,
+  browserTabs: ["FrameCraft Studio", "Analytics", "Docs"],
+  browserTheme: "dark",
+  snapGuidesEnabled: true,
 };
 
 export const useMockupStore = create<MockupStore>((set, get) => ({
@@ -177,6 +185,7 @@ export const useMockupStore = create<MockupStore>((set, get) => ({
   isDeviceModalOpen: false,
   isExportSettingsOpen: false,
   isTemplatesModalOpen: false,
+  isCommandPaletteOpen: false,
   history: [defaultConfig],
   historyIndex: 0,
   toasts: [],
@@ -301,6 +310,7 @@ export const useMockupStore = create<MockupStore>((set, get) => ({
   setDeviceModalOpen: (open) => set({ isDeviceModalOpen: open }),
   setExportSettingsOpen: (open) => set({ isExportSettingsOpen: open }),
   setTemplatesModalOpen: (open) => set({ isTemplatesModalOpen: open }),
+  setCommandPaletteOpen: (open) => set({ isCommandPaletteOpen: open }),
   updateConfig: (partial) => {
     const current = get().config;
     const nextConfig = { ...current, ...partial };

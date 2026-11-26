@@ -697,20 +697,91 @@ export const MockupCanvas = () => {
           config.frameStyle === "default" && "bg-[#0d0d0d]"
         )}
       >
-        {/* Browser & Minimal Desktop Header */}
-        {(config.frameType === "browser" || config.frameType === "minimal-desktop") && (
-          <div className="w-full flex items-center justify-between px-3.5 py-2.5 bg-neutral-900/90 border-b border-white/10 shrink-0 select-none">
-            <div className="flex items-center space-x-2">
-              <span className="w-2.5 h-2.5 rounded-full bg-[#FF5F56] shadow-sm" />
-              <span className="w-2.5 h-2.5 rounded-full bg-[#FFBD2E] shadow-sm" />
-              <span className="w-2.5 h-2.5 rounded-full bg-[#27C93F] shadow-sm" />
+        {/* Browser & Minimal Desktop Header (with Realistic Safari Tabs & Light/Dark Theme) */}
+        {(config.frameType === "browser" || config.frameType === "minimal-desktop") && (() => {
+          const isLightBrowser = config.frameType === "browser" && config.browserTheme === "light";
+          const tabs = config.browserTabs?.length
+            ? config.browserTabs
+            : ["FrameCraft Studio", "Analytics", "Docs"];
+
+          return (
+            <div
+              className={cn(
+                "w-full flex flex-col shrink-0 select-none border-b transition-colors",
+                isLightBrowser
+                  ? "bg-[#f5f5f7] border-neutral-200 text-neutral-700"
+                  : "bg-neutral-900/95 border-white/10 text-neutral-300"
+              )}
+            >
+              {/* Top Row: Traffic Lights + Optional Safari Tabs + Address Bar */}
+              <div className="w-full flex items-center justify-between px-3.5 py-2">
+                <div className="flex items-center space-x-2 shrink-0">
+                  <span className="w-2.5 h-2.5 rounded-full bg-[#FF5F56] shadow-sm" />
+                  <span className="w-2.5 h-2.5 rounded-full bg-[#FFBD2E] shadow-sm" />
+                  <span className="w-2.5 h-2.5 rounded-full bg-[#27C93F] shadow-sm" />
+                </div>
+
+                <div
+                  className={cn(
+                    "h-5 px-3 rounded-md border text-[9px] flex items-center justify-center font-mono max-w-[220px] truncate mx-2",
+                    isLightBrowser
+                      ? "bg-black/5 border-black/10 text-neutral-700"
+                      : "bg-white/5 border-white/5 text-neutral-300"
+                  )}
+                >
+                  {config.browserUrl ||
+                    (config.frameType === "minimal-desktop"
+                      ? "Studio Workspace"
+                      : "framecraft.app/editor")}
+                </div>
+
+                <div className="w-8 shrink-0 text-right text-[10px] opacity-40 font-mono">
+                  {config.frameType === "browser" && config.browserTabsEnabled ? "+" : ""}
+                </div>
+              </div>
+
+              {/* Safari Realistic Multi-Tab Strip */}
+              {config.frameType === "browser" && config.browserTabsEnabled && (
+                <div
+                  className={cn(
+                    "w-full flex items-end px-2.5 pt-1 gap-1 border-t",
+                    isLightBrowser ? "border-neutral-200/80 bg-[#e8e8ed]" : "border-white/5 bg-[#121214]"
+                  )}
+                >
+                  {tabs.slice(0, 4).map((tabTitle, idx) => {
+                    const isActive = idx === 0;
+                    return (
+                      <div
+                        key={idx}
+                        className={cn(
+                          "flex-1 max-w-[140px] flex items-center justify-between px-2.5 py-1 rounded-t-lg text-[9px] font-medium truncate transition-colors",
+                          isActive
+                            ? isLightBrowser
+                              ? "bg-[#f5f5f7] text-neutral-900 shadow-sm border-x border-t border-neutral-200"
+                              : "bg-neutral-800 text-white border-x border-t border-white/10"
+                            : isLightBrowser
+                            ? "text-neutral-500 hover:bg-black/5"
+                            : "text-neutral-500 hover:bg-white/5"
+                        )}
+                      >
+                        <div className="flex items-center space-x-1.5 truncate">
+                          <span
+                            className={cn(
+                              "w-1.5 h-1.5 rounded-full shrink-0",
+                              isActive ? "bg-indigo-500" : "bg-neutral-500/50"
+                            )}
+                          />
+                          <span className="truncate">{tabTitle}</span>
+                        </div>
+                        <span className="text-[8px] opacity-40 ml-1">×</span>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
             </div>
-            <div className="h-5 px-3 rounded-md bg-white/5 border border-white/5 text-[9px] text-neutral-300 flex items-center justify-center font-mono max-w-[220px] truncate">
-              {config.browserUrl || (config.frameType === "minimal-desktop" ? "Studio Workspace" : "framecraft.app/editor")}
-            </div>
-            <div className="w-8" />
-          </div>
-        )}
+          );
+        })()}
 
         {/* Stacked Underlay Cards for Stack & Stack-2 Styles */}
         {config.frameStyle === "stack" && (
@@ -876,6 +947,41 @@ export const MockupCanvas = () => {
 
         {/* Canvas Visual Overlays: VFX, Lighting, Annotations, Watermarks, 3D Shapes */}
         <CanvasOverlays config={config} currentShapesLayout={currentShapesLayout} />
+
+        {/* Smart Snapping & Alignment Guides (Active during 3D Orbiting) */}
+        {isOrbiting && config.snapGuidesEnabled !== false && (
+          <div className="absolute inset-0 pointer-events-none z-40">
+            {/* Rule of thirds subtle grid */}
+            <div className="absolute inset-x-0 top-1/3 h-px bg-white/10" />
+            <div className="absolute inset-x-0 top-2/3 h-px bg-white/10" />
+            <div className="absolute inset-y-0 left-1/3 w-px bg-white/10" />
+            <div className="absolute inset-y-0 left-2/3 w-px bg-white/10" />
+
+            {/* Horizontal Center Snap Guide (tiltX === 0) */}
+            <div
+              className={cn(
+                "absolute inset-x-0 top-1/2 -translate-y-1/2 transition-all duration-100",
+                config.tiltX === 0
+                  ? "h-[1.5px] bg-cyan-400 shadow-[0_0_8px_rgba(34,211,238,0.8)]"
+                  : "h-px bg-white/15 border-t border-dashed border-white/20"
+              )}
+            />
+            {/* Vertical Center Snap Guide (tiltY === 0) */}
+            <div
+              className={cn(
+                "absolute inset-y-0 left-1/2 -translate-x-1/2 transition-all duration-100",
+                config.tiltY === 0
+                  ? "w-[1.5px] bg-cyan-400 shadow-[0_0_8px_rgba(34,211,238,0.8)]"
+                  : "w-px bg-white/15 border-l border-dashed border-white/20"
+              )}
+            />
+            {(config.tiltX === 0 || config.tiltY === 0) && (
+              <div className="absolute top-3 left-1/2 -translate-x-1/2 px-2 py-0.5 rounded-full bg-cyan-500/90 text-black text-[9px] font-bold tracking-wider shadow-lg">
+                SMART SNAP 0°
+              </div>
+            )}
+          </div>
+        )}
 
         {/* 3D Spatial Container with Auto-Contain & Smooth Spring Physics */}
         {config.showMockup && (

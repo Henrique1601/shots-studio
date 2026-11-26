@@ -11,6 +11,8 @@ import {
   Aperture,
   Box,
   SunMedium,
+  Upload,
+  Trash2,
 } from "lucide-react";
 import { useMockupStore } from "@/store/mockupStore";
 import { SHAPES_LAYOUTS } from "@/constants/shapes";
@@ -41,7 +43,21 @@ export const MiniSidebars: React.FC<MiniSidebarsProps> = ({
   activeMiniSidebar,
   setActiveMiniSidebar,
 }) => {
-  const { config, updateConfig } = useMockupStore();
+  const { config, updateConfig, showToast } = useMockupStore();
+  const logoInputRef = React.useRef<HTMLInputElement>(null);
+
+  const handleLogoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      const dataUrl = reader.result as string;
+      handleUpdateActiveWatermark({ logoUrl: dataUrl, enabled: true });
+      showToast("Logo customizada aplicada na marca d'água! 🏷️", "success");
+    };
+    reader.readAsDataURL(file);
+    e.target.value = "";
+  };
 
   const handleSwitchWatermarkProfile = (targetIdx: number) => {
     const profiles = config.watermarkProfiles || [];
@@ -57,6 +73,7 @@ export const MiniSidebars: React.FC<MiniSidebarsProps> = ({
       watermarkSize: targetProfile.size,
       watermarkInset: targetProfile.inset,
       watermarkPosition: targetProfile.position,
+      watermarkLogoUrl: targetProfile.logoUrl ?? null,
     });
   };
 
@@ -72,6 +89,7 @@ export const MiniSidebars: React.FC<MiniSidebarsProps> = ({
       size: 80,
       inset: 5,
       position: "top-left",
+      logoUrl: null,
     };
     const updatedProfile = { ...currentProfile, ...updates };
     profiles[activeIdx] = updatedProfile;
@@ -86,6 +104,7 @@ export const MiniSidebars: React.FC<MiniSidebarsProps> = ({
       ...(updates.size !== undefined ? { watermarkSize: updates.size } : {}),
       ...(updates.inset !== undefined ? { watermarkInset: updates.inset } : {}),
       ...(updates.position !== undefined ? { watermarkPosition: updates.position } : {}),
+      ...(updates.logoUrl !== undefined ? { watermarkLogoUrl: updates.logoUrl } : {}),
       watermarkProfiles: profiles,
     });
   };
@@ -340,6 +359,33 @@ export const MiniSidebars: React.FC<MiniSidebarsProps> = ({
                     }
                     placeholder="Watermark / Marca"
                     className="flex-1 bg-transparent outline-none text-xs text-white placeholder-neutral-500"
+                  />
+                </div>
+
+                {/* Custom Brand Logo Upload (PNG / SVG) */}
+                <div className="flex items-center space-x-1.5">
+                  <button
+                    onClick={() => logoInputRef.current?.click()}
+                    className="flex-1 flex items-center justify-center space-x-1.5 py-1.5 px-2.5 rounded-xl bg-[#242424] hover:bg-[#2c2c2c] border border-white/10 text-[11px] font-semibold text-neutral-200 transition-colors cursor-pointer"
+                  >
+                    <Upload className="w-3.5 h-3.5 text-cyan-400" />
+                    <span>{config.watermarkLogoUrl ? "Trocar Logo" : "Upload Logo (PNG/SVG)"}</span>
+                  </button>
+                  {config.watermarkLogoUrl && (
+                    <button
+                      onClick={() => handleUpdateActiveWatermark({ logoUrl: null })}
+                      title="Remover Logo Customizada"
+                      className="p-1.5 rounded-xl bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 text-red-400 transition-colors cursor-pointer"
+                    >
+                      <Trash2 className="w-3.5 h-3.5" />
+                    </button>
+                  )}
+                  <input
+                    ref={logoInputRef}
+                    type="file"
+                    accept="image/png,image/svg+xml,image/jpeg,image/webp"
+                    onChange={handleLogoUpload}
+                    className="hidden"
                   />
                 </div>
 

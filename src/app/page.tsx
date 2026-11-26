@@ -12,6 +12,7 @@ import { CarouselBar } from "@/components/CarouselBar";
 import { MobileDrawer } from "@/components/MobileDrawer";
 import { ToastContainer } from "@/components/ToastContainer";
 import { KeyboardShortcutsModal } from "@/components/common/KeyboardShortcutsModal";
+import { CommandPalette } from "@/components/common/CommandPalette";
 import { useMockupStore } from "@/store/mockupStore";
 import { useExportStudio } from "@/hooks/useExportStudio";
 
@@ -25,8 +26,10 @@ export default function Home() {
     showToast,
     isDeviceModalOpen,
     isTemplatesModalOpen,
+    isCommandPaletteOpen,
     setDeviceModalOpen,
     setTemplatesModalOpen,
+    setCommandPaletteOpen,
   } = useMockupStore();
 
   const { handleExport, handleCopy } = useExportStudio();
@@ -41,6 +44,13 @@ export default function Home() {
 
       const isMac = navigator.platform.toUpperCase().indexOf("MAC") >= 0;
       const modKey = isMac ? e.metaKey : e.ctrlKey;
+
+      // 0. Ctrl/Cmd + K: Toggle Command Palette
+      if (modKey && e.key.toLowerCase() === "k") {
+        e.preventDefault();
+        setCommandPaletteOpen(!isCommandPaletteOpen);
+        return;
+      }
 
       // 1. D: Toggle Devices Modal
       if (e.key.toLowerCase() === "d" && !modKey && !e.altKey) {
@@ -168,8 +178,10 @@ export default function Home() {
     showToast,
     isDeviceModalOpen,
     isTemplatesModalOpen,
+    isCommandPaletteOpen,
     setDeviceModalOpen,
     setTemplatesModalOpen,
+    setCommandPaletteOpen,
     handleCopy,
     handleExport,
   ]);
@@ -208,6 +220,9 @@ export default function Home() {
 
       {/* Global Keyboard Shortcuts Modal (?) */}
       <KeyboardShortcutsModal />
+
+      {/* Global Command Palette (Ctrl+K) */}
+      <CommandPalette />
 
       {/* Global Toast Notification System */}
       <ToastContainer />
