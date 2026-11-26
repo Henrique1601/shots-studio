@@ -5,6 +5,7 @@ const nextConfig: NextConfig = {
   cacheComponents: true,
   partialPrefetching: true,
   experimental: {
+    agentUpgrade: "security",
     optimizePackageImports: ["lucide-react", "framer-motion", "clsx", "tailwind-merge"],
   },
   async headers() {

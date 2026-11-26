@@ -45,8 +45,9 @@ export function useExportStudio() {
         dataUrl = await htmlToImage.toPng(node, exportOptions);
       }
 
+      const timestamp = new Date().toISOString().slice(0, 19).replace(/[:T]/g, "-");
       const link = document.createElement("a");
-      link.download = `framecraft-${Date.now()}.${config.exportFormat.toLowerCase()}`;
+      link.download = `framecraft-${timestamp}.${config.exportFormat.toLowerCase()}`;
       link.href = dataUrl;
       link.click();
 

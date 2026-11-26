@@ -3,7 +3,7 @@
 import { useCanvasOrbit } from "@/hooks/useCanvasOrbit";
 import { CanvasOverlays } from "./canvas/CanvasOverlays";
 
-import React, { useRef, useState, useEffect, useCallback } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import { useMockupStore } from "@/store/mockupStore";
 import { SHAPES_LAYOUTS, DEVICE_SPECS, parseAspectRatio } from "@/types/mockup";
 import { Plus, RotateCcw, Compass } from "lucide-react";
@@ -206,12 +206,6 @@ export const MockupCanvas = () => {
     showToast("Terceira imagem carregada com sucesso! 📱", "success");
   };
 
-  const triggerSlotUpload = useCallback((slot: "primary" | "secondary" | "tertiary") => {
-    if (slot === "primary") fileInputRef.current?.click();
-    else if (slot === "secondary") secondaryFileInputRef.current?.click();
-    else tertiaryFileInputRef.current?.click();
-  }, []);
-
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault();
     setIsDragging(false);
@@ -402,7 +396,9 @@ export const MockupCanvas = () => {
     slot: "primary" | "secondary" | "tertiary",
     isSecondary = false
   ) => {
-    const onSlotClick = () => triggerSlotUpload(slot);
+    const onSlotClick = () => {
+      document.getElementById(`mockup-file-${slot}`)?.click();
+    };
     // 1. Ray.so / Carbon Code Snippet Studio
     if (config.frameType === "code") {
       return (
@@ -1010,6 +1006,7 @@ export const MockupCanvas = () => {
         )}
 
         <input
+          id="mockup-file-primary"
           ref={fileInputRef}
           type="file"
           accept="image/*"
@@ -1020,6 +1017,7 @@ export const MockupCanvas = () => {
           }}
         />
         <input
+          id="mockup-file-secondary"
           ref={secondaryFileInputRef}
           type="file"
           accept="image/*"
@@ -1030,6 +1028,7 @@ export const MockupCanvas = () => {
           }}
         />
         <input
+          id="mockup-file-tertiary"
           ref={tertiaryFileInputRef}
           type="file"
           accept="image/*"
